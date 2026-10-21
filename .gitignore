@@ -1,0 +1,61 @@
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+*.egg-info/
+build/
+dist/
+
+# --- Virtual environments ---------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# --- Project data and generated artifacts -----------------------------------
+# Downloaded datasets, caches, manifests and model outputs are reproducible;
+# they must not be committed. Keep the directory shape with .gitkeep files.
+data/*
+!data/.gitkeep
+artifacts/*
+!artifacts/.gitkeep
+reports/*
+!reports/.gitkeep
+
+# --- Streamlit --------------------------------------------------------------
+.streamlit/secrets.toml
+
+# --- Notebooks --------------------------------------------------------------
+.ipynb_checkpoints/
+
+# --- Secrets and local config ----------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- OS / editor ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- Logs -------------------------------------------------------------------
+*.log
+
+# --- Agent / tooling metadata ----------------------------------------------
+.freebuff/
+.cache/
+*.orig
+*.rej
