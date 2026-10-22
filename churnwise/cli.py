@@ -10,6 +10,7 @@ Usage:
     python -m churnwise.cli evaluate --cv-folds 5
     python -m churnwise.cli evaluate --regenerate <benchmark-run-id>
     python -m churnwise.cli score --population val
+    python -m churnwise.cli simulate --budget 1000 --cost-per-contact 5 --effectiveness 0.3
 Exit codes: 0 = success (a candidate was selected / an artifact was acquired /
 validation passed), 2 = structured failure or rejection, 3 = invalid
 configuration or report write failure.
@@ -463,6 +464,107 @@ def build_parser() -> argparse.ArgumentParser:
     explain_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
     explain_parser.add_argument("--log-file", metavar="PATH")
 
+    score_parser = subparsers.add_parser(
+        "score",
+        help="score customer churn risk and persist a ranked risk run (Phase 9)",
+        description=(
+            "Score raw customer records or a persisted Phase 5 split with the "
+            "Phase 7 selected model, assign configurable risk tiers, attach Phase 8 "
+            "drivers, rank and persist the result."
+        ),
+    )
+    source = score_parser.add_mutually_exclusive_group()
+    source.add_argument("--input", metavar="CSV", help="raw customer records to score")
+    source.add_argument(
+        "--population",
+        choices=("train", "val", "test", "all"),
+        help="persisted Phase 5 split to score (default: val)",
+    )
+    score_parser.add_argument("--benchmark-run-id", metavar="RUN")
+    score_parser.add_argument("--run-id", metavar="RUN", help="optional risk run id")
+    score_parser.add_argument(
+        "--risk-tiers",
+        metavar="BOUNDARIES",
+        help="two or three comma-separated tier boundaries (default: 0.30,0.50,0.70)",
+    )
+    score_parser.add_argument(
+        "--classification-threshold",
+        type=float,
+        default=None,
+        help="override the model classification threshold for this run",
+    )
+    score_parser.add_argument("--batch-size", type=int, default=None)
+    score_parser.add_argument(
+        "--explain",
+        choices=("none", "top", "all", "selected"),
+        default=None,
+        help="driver coverage: none, highest-risk top rows, all rows, or selected positions",
+    )
+    score_parser.add_argument("--explain-top-n", type=int, default=10)
+    score_parser.add_argument(
+        "--explain-position",
+        action="append",
+        type=int,
+        dest="explain_positions",
+        metavar="POSITION",
+        help="input position to explain; repeatable and only with --explain selected",
+    )
+    score_parser.add_argument("--top-k", type=int, default=5)
+    score_parser.add_argument("--max-driver-rows", type=int, default=1000)
+    score_parser.add_argument("--value-column", metavar="COLUMN")
+    score_parser.add_argument("--reference-column", metavar="COLUMN")
+    score_parser.add_argument(
+        "--segment-field",
+        action="append",
+        dest="segment_fields",
+        metavar="COLUMN",
+        help="raw field to retain for filtering (never exported by default)",
+    )
+    score_parser.add_argument(
+        "--export",
+        action="append",
+        choices=("csv", "json", "parquet"),
+        dest="export_formats",
+        help="export format; repeatable (default: csv)",
+    )
+    score_parser.add_argument("--output-dir", metavar="DIR")
+    score_parser.add_argument("--artifact-dir", metavar="DIR")
+    score_parser.add_argument("--report-dir", metavar="DIR")
+    score_parser.add_argument("--json", action="store_true", dest="as_json")
+    score_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
+    score_parser.add_argument("--log-file", metavar="PATH")
+
+    export_parser = subparsers.add_parser(
+        "risk-export",
+        help="filter, rank and export a persisted Phase 9 risk run",
+        description="Apply stored-probability filters and export CSV, JSON or Parquet.",
+    )
+    export_parser.add_argument("--run-id", metavar="RUN", help="risk run id (default: latest)")
+    export_parser.add_argument("--tier", action="append", dest="tiers", metavar="TIER")
+    export_parser.add_argument("--min-probability", type=float, default=None)
+    export_parser.add_argument("--max-probability", type=float, default=None)
+    export_parser.add_argument("--reference", action="append", dest="references")
+    export_parser.add_argument(
+        "--sort",
+        choices=("probability", "value_at_risk", "record_reference", "risk_tier"),
+        default="probability",
+    )
+    export_parser.add_argument("--limit", type=int, default=100)
+    export_parser.add_argument("--offset", type=int, default=0)
+    export_parser.add_argument(
+        "--format",
+        action="append",
+        choices=("csv", "json", "parquet"),
+        dest="export_formats",
+        help="export format; repeatable (default: csv)",
+    )
+    export_parser.add_argument("--output-dir", metavar="DIR")
+    export_parser.add_argument("--artifact-dir", metavar="DIR")
+    export_parser.add_argument("--report-dir", metavar="DIR")
+    export_parser.add_argument("--json", action="store_true", dest="as_json")
+    export_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
+    export_parser.add_argument("--log-file", metavar="PATH")
+
     return parser
 
 
@@ -529,6 +631,20 @@ def main(
             log_file=Path(args.log_file) if args.log_file else None,
         )
         return _run_explain(args, resolved)
+
+    if args.command == "score":
+        configure_logging(
+            verbose=args.verbose,
+            log_file=Path(args.log_file) if args.log_file else None,
+        )
+        return _run_score(args, resolved)
+
+    if args.command == "risk-export":
+        configure_logging(
+            verbose=args.verbose,
+            log_file=Path(args.log_file) if args.log_file else None,
+        )
+        return _run_risk_export(args, resolved)
 
 
     overrides: dict[str, object] = {}
@@ -1194,6 +1310,195 @@ def _risk_config(args: argparse.Namespace, settings: Settings):
     )
     config.validate_or_raise()
     return config
+
+
+def _run_score(args: argparse.Namespace, settings: Settings) -> int:
+    settings = _apply_common_overrides(args, settings)
+    problems = settings.validate()
+    if problems:
+        print("error: invalid risk settings: " + "; ".join(problems), file=sys.stderr)
+        return 3
+
+    from churnwise.intelligence import (
+        CODE_INVALID_CONFIG,
+        RiskError,
+        RiskFilter,
+        RiskService,
+        render_summary,
+    )
+
+    try:
+        config = _risk_config(args, settings)
+    except RiskError as exc:
+        print(f"error: {exc.code}: {exc.message}", file=sys.stderr)
+        if exc.remediation:
+            print(f"  next: {exc.remediation}", file=sys.stderr)
+        return 3
+
+    progress = (
+        None
+        if args.as_json
+        else lambda message: print(f"  {message}", file=sys.stderr)
+    )
+    try:
+        service = RiskService(
+            settings, config, benchmark_run_id=args.benchmark_run_id
+        )
+        formats = tuple(args.export_formats or ("csv",))
+        if args.input:
+            import pandas as pd
+
+            try:
+                # Keep categorical labels as written. Reading 0/1 plan flags as
+                # integers would no longer match the fitted string vocabulary
+                # ("0"/"1") and would silently encode them as unknown levels.
+                frame = pd.read_csv(args.input, dtype=str)
+            except (OSError, ValueError) as exc:
+                print(f"error: could not read {args.input}: {exc}", file=sys.stderr)
+                return 3
+            run = service.score_frame(
+                frame,
+                explain=args.explain or "top",
+                explain_top_n=args.explain_top_n,
+                explain_positions=tuple(args.explain_positions or ()) or None,
+                reference_column=args.reference_column,
+                value_column=args.value_column,
+                segment_fields=tuple(args.segment_fields or ()),
+                batch_size=args.batch_size,
+                run_id=args.run_id,
+            )
+        else:
+            if args.value_column:
+                print(
+                    "error: --value-column requires --input; population rows have no "
+                    "revenue proxy unless one is supplied explicitly",
+                    file=sys.stderr,
+                )
+                return 3
+            run = service.score_population(
+                split=args.population or "val",
+                explain=args.explain or "all",
+                explain_top_n=args.explain_top_n,
+                explain_positions=tuple(args.explain_positions or ()) or None,
+                run_id=args.run_id,
+                progress=progress,
+            )
+        exported = service.export(
+            run.run_id,
+            formats=formats,
+            output_dir=args.output_dir,
+        )
+    except RiskError as exc:
+        if args.as_json:
+            print(json.dumps({"status": "error", "error": exc.to_dict()}, indent=2))
+        else:
+            print(f"error: {exc.code}: {exc.message}", file=sys.stderr)
+            if exc.remediation:
+                print(f"  next: {exc.remediation}", file=sys.stderr)
+        return 3 if exc.code == CODE_INVALID_CONFIG else 2
+
+    if args.as_json:
+        payload = run.to_dict()
+        payload["export"] = exported.to_dict()
+        print(json.dumps(payload, indent=2))
+    else:
+        print(render_summary(run))
+        if exported.paths:
+            print("Exports:")
+            for name, path in exported.paths.items():
+                print(f"  {name}: {path}")
+    return 0 if run.table.records else 2
+
+
+def _run_risk_export(args: argparse.Namespace, settings: Settings) -> int:
+    settings = _apply_common_overrides(args, settings)
+    problems = settings.validate()
+    if problems:
+        print("error: invalid risk settings: " + "; ".join(problems), file=sys.stderr)
+        return 3
+
+    from churnwise.intelligence import (
+        CODE_INVALID_CONFIG,
+        RiskError,
+        RiskFilter,
+        RiskService,
+        render_table,
+    )
+
+    try:
+        service = RiskService(settings)
+        criteria = RiskFilter(
+            tiers=tuple(args.tiers or ()),
+            min_probability=args.min_probability,
+            max_probability=args.max_probability,
+            record_references=tuple(args.references or ()),
+        )
+        formats = tuple(args.export_formats or ("csv",))
+        run = service.load_run(args.run_id or service.latest_run_id() or "")
+        table = service.ranked(
+            run_id=run.run_id,
+            filters=criteria,
+            sort_by=args.sort,
+            limit=args.limit,
+            offset=args.offset,
+        )
+        exported = service.export(
+            run.run_id,
+            formats=formats,
+            filters=criteria,
+            sort_by=args.sort,
+            limit=args.limit,
+            offset=args.offset,
+            output_dir=args.output_dir,
+        )
+    except RiskError as exc:
+        if args.as_json:
+            print(json.dumps({"status": "error", "error": exc.to_dict()}, indent=2))
+        else:
+            print(f"error: {exc.code}: {exc.message}", file=sys.stderr)
+            if exc.remediation:
+                print(f"  next: {exc.remediation}", file=sys.stderr)
+        return 3 if exc.code == CODE_INVALID_CONFIG else 2
+
+    if args.as_json:
+        print(
+            json.dumps(
+                {
+                    "run": run.to_dict(),
+                    "page": {
+                        "rows": len(table.records),
+                        "records": [item.to_dict() for item in table.records],
+                    },
+                    "export": exported.to_dict(),
+                },
+                indent=2,
+            )
+        )
+    else:
+        print(render_table(table, limit=args.limit))
+        if exported.paths:
+            print("Exports:")
+            for name, path in exported.paths.items():
+                print(f"  {name}: {path}")
+    return 0
+
+
+def _simulation_scenario_from_file(path: str):
+    from churnwise.simulation import (
+        CODE_INVALID_INPUT,
+        CampaignScenario,
+        SimulationError,
+    )
+
+    try:
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise SimulationError(
+            CODE_INVALID_INPUT,
+            f"could not read comparison scenario {path}: {exc}",
+            "Pass a JSON object produced by CampaignScenario.to_dict().",
+        ) from exc
+    return CampaignScenario.from_dict(payload)
 
 
 if __name__ == "__main__":

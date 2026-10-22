@@ -44,6 +44,22 @@ def _env_bool(name: str, default: bool) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _env_thresholds(
+    name: str, default: tuple[float, ...]
+) -> tuple[float, ...]:
+    raw = os.environ.get(name)
+    if raw in (None, ""):
+        return default
+    parts = [part.strip() for part in raw.split(",") if part.strip()]
+    try:
+        values = tuple(float(part) for part in parts)
+    except ValueError as exc:
+        raise ValueError(
+            f"{name} must be comma-separated numbers, got {raw!r}"
+        ) from exc
+    return values
+
+
 @dataclass(frozen=True)
 class Settings:
     """Resolved project settings.
@@ -67,6 +83,7 @@ class Settings:
     allow_unverified_license: bool = False
     offline: bool = False
     user_agent: str = "ChurnWiseAI/0.3 (dataset discovery and acquisition)"
+    risk_tiers: tuple[float, ...] = (0.30, 0.50, 0.70)
 
     def __post_init__(self) -> None:
         root = Path(self.project_root)
@@ -99,6 +116,9 @@ class Settings:
             allow_unverified_license=_env_bool("CHURNWISE_ALLOW_UNVERIFIED_LICENSE", False),
             offline=_env_bool("CHURNWISE_OFFLINE", False),
             user_agent=_env_str("CHURNWISE_USER_AGENT", "ChurnWiseAI/0.3 (dataset discovery and acquisition)"),
+            risk_tiers=_env_thresholds(
+                "CHURNWISE_RISK_TIERS", (0.30, 0.50, 0.70)
+            ),
         )
 
     def validate(self) -> list[str]:
@@ -121,4 +141,15 @@ class Settings:
             problems.append("max_archive_members must be between 1 and 10,000")
         if not self.user_agent.strip():
             problems.append("user_agent must not be empty")
+        tiers = tuple(self.risk_tiers)
+        if len(tiers) not in (2, 3):
+            problems.append("risk_tiers must contain exactly two or three boundaries")
+        elif any(
+            not isinstance(value, (int, float))
+            or not 0.0 < float(value) < 1.0
+            for value in tiers
+        ):
+            problems.append("risk_tiers boundaries must be strictly between 0 and 1")
+        elif any(right <= left for left, right in zip(tiers, tiers[1:])):
+            problems.append("risk_tiers boundaries must be strictly increasing")
         return problems
