@@ -9,7 +9,7 @@ Usage:
     python -m churnwise.cli predict --input customers.csv
     python -m churnwise.cli evaluate --cv-folds 5
     python -m churnwise.cli evaluate --regenerate <benchmark-run-id>
-
+    python -m churnwise.cli score --population val
 Exit codes: 0 = success (a candidate was selected / an artifact was acquired /
 validation passed), 2 = structured failure or rejection, 3 = invalid
 configuration or report write failure.
@@ -418,6 +418,51 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate_parser.add_argument("--json", action="store_true", dest="as_json")
     evaluate_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
     evaluate_parser.add_argument("--log-file", metavar="PATH")
+
+    explain_parser = subparsers.add_parser(
+        "explain",
+        help="explain churn predictions with SHAP (Phase 8)",
+        description=(
+            "Load a verified Phase 6/7 model, compute global and customer-level "
+            "SHAP explanations on validation rows, and persist JSON plus figures "
+            "with full provenance. The test partition is never used."
+        ),
+    )
+    explain_parser.add_argument(
+        "--family",
+        choices=("logistic_regression", "random_forest", "mlp"),
+        default=None,
+        help="model family to explain (default: the Phase 7 selected family)",
+    )
+    explain_parser.add_argument(
+        "--benchmark-run-id",
+        metavar="RUN",
+        help="Phase 7 benchmark run (default: latest with metrics.json)",
+    )
+    explain_parser.add_argument(
+        "--model-run-id", metavar="RUN", help="Phase 6 MLP run id (mlp only)"
+    )
+    explain_parser.add_argument(
+        "--explain-run-id", metavar="RUN", help="optional explanation run id"
+    )
+    explain_parser.add_argument(
+        "--input",
+        metavar="CSV",
+        help="explain raw customer rows from a CSV instead of a validation sample",
+    )
+    explain_parser.add_argument("--sample-size", type=int, default=None)
+    explain_parser.add_argument("--background-size", type=int, default=None)
+    explain_parser.add_argument("--mlp-sample-size", type=int, default=None)
+    explain_parser.add_argument("--mlp-background-size", type=int, default=None)
+    explain_parser.add_argument("--local-examples", type=int, default=None)
+    explain_parser.add_argument("--top-k", type=int, default=None)
+    explain_parser.add_argument("--seed", type=int, default=None)
+    explain_parser.add_argument("--artifact-dir", metavar="DIR")
+    explain_parser.add_argument("--report-dir", metavar="DIR")
+    explain_parser.add_argument("--json", action="store_true", dest="as_json")
+    explain_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
+    explain_parser.add_argument("--log-file", metavar="PATH")
+
     return parser
 
 
@@ -477,6 +522,14 @@ def main(
             log_file=Path(args.log_file) if args.log_file else None,
         )
         return _run_evaluate(args, resolved)
+
+    if args.command == "explain":
+        configure_logging(
+            verbose=args.verbose,
+            log_file=Path(args.log_file) if args.log_file else None,
+        )
+        return _run_explain(args, resolved)
+
 
     overrides: dict[str, object] = {}
     if args.report_dir:
@@ -1021,6 +1074,126 @@ def _run_evaluate(args: argparse.Namespace, settings: Settings) -> int:
     else:
         print(result.metrics.get("summary") or render_benchmark_summary(result))
     return 0 if result.complete else 2
+
+
+def _run_explain(args: argparse.Namespace, settings: Settings) -> int:
+    settings = _apply_common_overrides(args, settings)
+    problems = settings.validate()
+    if problems:
+        print("error: invalid explanation settings: " + "; ".join(problems), file=sys.stderr)
+        return 3
+
+    from churnwise.evaluation import EvaluationError
+    from churnwise.explain import (
+        CODE_INVALID_CONFIG,
+        ExplainConfig,
+        ExplainCoordinator,
+        ExplainError,
+    )
+    from churnwise.explain.reporting import render_summary as render_explain_summary
+    from churnwise.models import ModelingError
+    from churnwise.preprocessing import PreprocessingError
+
+    defaults = ExplainConfig(seed=settings.seed if args.seed is None else args.seed)
+    config = ExplainConfig(
+        sample_size=defaults.sample_size if args.sample_size is None else args.sample_size,
+        background_size=(
+            defaults.background_size if args.background_size is None else args.background_size
+        ),
+        mlp_sample_size=(
+            defaults.mlp_sample_size if args.mlp_sample_size is None else args.mlp_sample_size
+        ),
+        mlp_background_size=(
+            defaults.mlp_background_size
+            if args.mlp_background_size is None
+            else args.mlp_background_size
+        ),
+        local_examples=(
+            defaults.local_examples if args.local_examples is None else args.local_examples
+        ),
+        top_k=defaults.top_k if args.top_k is None else args.top_k,
+        seed=defaults.seed,
+        tolerance=defaults.tolerance,
+        chunk_size=defaults.chunk_size,
+        max_local_batch=defaults.max_local_batch,
+        permutation_max_evals=defaults.permutation_max_evals,
+    )
+    try:
+        coordinator = ExplainCoordinator(settings, config)
+        if args.input:
+            import pandas as pd
+
+            try:
+                frame = pd.read_csv(args.input)
+            except (OSError, ValueError) as exc:
+                print(f"error: could not read {args.input}: {exc}", file=sys.stderr)
+                return 3
+            result = coordinator.explain_records(
+                frame,
+                family=args.family,
+                benchmark_run_id=args.benchmark_run_id,
+                model_run_id=args.model_run_id,
+                explain_run_id=args.explain_run_id,
+            )
+        else:
+            progress = (
+                None
+                if args.as_json
+                else lambda message: print(f"  {message}", file=sys.stderr)
+            )
+            result = coordinator.run(
+                args.family,
+                benchmark_run_id=args.benchmark_run_id,
+                model_run_id=args.model_run_id,
+                explain_run_id=args.explain_run_id,
+                progress=progress,
+            )
+    except (ExplainError, ModelingError, PreprocessingError, EvaluationError) as exc:
+        if args.as_json:
+            payload = exc.to_dict() if hasattr(exc, "to_dict") else {"message": str(exc)}
+            print(json.dumps({"status": "error", "error": payload}, indent=2))
+        else:
+            print(f"error: {exc.code}: {exc.message}", file=sys.stderr)
+            if getattr(exc, "remediation", ""):
+                print(f"  next: {exc.remediation}", file=sys.stderr)
+        return 3 if exc.code == CODE_INVALID_CONFIG else 2
+    except OSError as exc:
+        print(f"error: could not write explanation artifacts: {exc}", file=sys.stderr)
+        return 3
+
+    if args.as_json:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        print(render_explain_summary(result))
+    return 0 if result.complete else 2
+
+
+def _risk_config(args: argparse.Namespace, settings: Settings):
+    from churnwise.intelligence import RiskConfig, RiskThresholds
+
+    boundaries = (
+        args.risk_tiers
+        if getattr(args, "risk_tiers", None)
+        else settings.risk_tiers
+    )
+    config = RiskConfig(
+        thresholds=RiskThresholds.from_value(boundaries),
+        classification_threshold=getattr(args, "classification_threshold", None),
+        batch_size=getattr(args, "batch_size", None) or 200,
+        top_k=getattr(args, "top_k", None) or 5,
+        max_driver_rows=(
+            getattr(args, "max_driver_rows", None)
+            if getattr(args, "max_driver_rows", None) is not None
+            else 1000
+        ),
+        population_split="val",
+        population_explain="all",
+        value_column=getattr(args, "value_column", None),
+        reference_column=getattr(args, "reference_column", None),
+        segment_fields=tuple(getattr(args, "segment_fields", None) or ()),
+    )
+    config.validate_or_raise()
+    return config
 
 
 if __name__ == "__main__":
