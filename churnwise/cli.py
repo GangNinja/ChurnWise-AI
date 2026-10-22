@@ -11,6 +11,7 @@ Usage:
     python -m churnwise.cli evaluate --regenerate <benchmark-run-id>
     python -m churnwise.cli score --population val
     python -m churnwise.cli simulate --budget 1000 --cost-per-contact 5 --effectiveness 0.3
+
 Exit codes: 0 = success (a candidate was selected / an artifact was acquired /
 validation passed), 2 = structured failure or rejection, 3 = invalid
 configuration or report write failure.
@@ -39,6 +40,12 @@ from churnwise.preprocessing import (
     PreprocessingError,
 )
 from churnwise.preprocessing.reporting import render_summary as render_preprocessing_summary
+from churnwise.simulation.contracts import (
+    DEFAULT_BUDGET as DEFAULT_SIM_BUDGET,
+    DEFAULT_COST_PER_CONTACT as DEFAULT_SIM_COST,
+    DEFAULT_EFFECTIVENESS as DEFAULT_SIM_EFFECTIVENESS,
+    DEFAULT_HORIZON_MONTHS as DEFAULT_SIM_HORIZON,
+)
 from churnwise.validation import ValidationCoordinator, ValidationResult, ValidationStatus
 from churnwise.validation.reporting import render_summary as render_validation_summary
 
@@ -565,6 +572,123 @@ def build_parser() -> argparse.ArgumentParser:
     export_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
     export_parser.add_argument("--log-file", metavar="PATH")
 
+    simulate_parser = subparsers.add_parser(
+        "simulate",
+        help="simulate a retention campaign against a Phase 9 risk run (Phase 10)",
+        description=(
+            "Combine measured Phase 9 churn probabilities with explicit campaign "
+            "assumptions to project selections, spend, expected prevented churn, "
+            "ROI, break-even and sensitivity. Outcomes are projections, not "
+            "measured retention results."
+        ),
+    )
+    simulate_parser.add_argument(
+        "--run-id", metavar="RUN", help="Phase 9 risk run id (default: latest)"
+    )
+    simulate_parser.add_argument("--scenario-id", metavar="ID")
+    simulate_parser.add_argument("--name", default="Retention campaign")
+    simulate_parser.add_argument("--description", default="")
+    simulate_parser.add_argument(
+        "--budget",
+        type=float,
+        default=DEFAULT_SIM_BUDGET,
+        help=f"total campaign budget in value units (default: {DEFAULT_SIM_BUDGET:g})",
+    )
+    simulate_parser.add_argument(
+        "--cost-per-contact",
+        type=float,
+        default=DEFAULT_SIM_COST,
+        help=f"intervention cost per contacted customer (default: {DEFAULT_SIM_COST:g})",
+    )
+    simulate_parser.add_argument(
+        "--effectiveness",
+        type=float,
+        default=DEFAULT_SIM_EFFECTIVENESS,
+        help=(
+            "assumed probability that an intervention prevents churn for a "
+            f"customer who would otherwise churn (default: {DEFAULT_SIM_EFFECTIVENESS:g})"
+        ),
+    )
+    simulate_parser.add_argument(
+        "--monthly-value",
+        type=float,
+        default=None,
+        help="assumed value of retaining one customer for one month (default: not supplied)",
+    )
+    simulate_parser.add_argument(
+        "--horizon-months", type=float, default=DEFAULT_SIM_HORIZON
+    )
+    simulate_parser.add_argument(
+        "--value-unit",
+        default="value_units",
+        help="label for budget/cost/value, e.g. USD (default: value_units)",
+    )
+    simulate_parser.add_argument(
+        "--strategy",
+        choices=("highest_risk", "risk_threshold", "risk_category", "budget_constrained"),
+        default="highest_risk",
+    )
+    simulate_parser.add_argument(
+        "--min-risk",
+        type=float,
+        default=None,
+        help="minimum churn probability for eligibility (required for risk_threshold)",
+    )
+    simulate_parser.add_argument(
+        "--risk-tier",
+        action="append",
+        dest="risk_tiers",
+        metavar="TIER",
+        help="targeted risk tier; repeatable (required for risk_category)",
+    )
+    simulate_parser.add_argument("--max-contacts", type=int, default=None)
+    simulate_parser.add_argument(
+        "--sensitivity-effectiveness",
+        metavar="VALUES",
+        help="comma-separated effectiveness grid (default: 0.10,0.20,0.30,0.40,0.50)",
+    )
+    simulate_parser.add_argument(
+        "--sensitivity-budget",
+        metavar="VALUES",
+        help="comma-separated budget grid (default: 0.5x,1x,1.5x,2x the scenario budget)",
+    )
+    simulate_parser.add_argument(
+        "--sensitivity-cost",
+        metavar="VALUES",
+        help="comma-separated cost grid (default: 0.5x,1x,2x the scenario cost)",
+    )
+    simulate_parser.add_argument(
+        "--sensitivity-dimension",
+        action="append",
+        choices=("effectiveness", "budget", "cost_per_contact"),
+        dest="sensitivity_dimensions",
+        help="restrict sensitivity to these dimensions; repeatable",
+    )
+    simulate_parser.add_argument(
+        "--no-sensitivity",
+        action="store_true",
+        help="skip the sensitivity analysis",
+    )
+    simulate_parser.add_argument(
+        "--compare",
+        action="append",
+        dest="compare_files",
+        metavar="FILE",
+        help=(
+            "scenario JSON to run against the same risk rows and compare; "
+            "repeatable"
+        ),
+    )
+    simulate_parser.add_argument(
+        "--output-dir",
+        metavar="DIR",
+        help="override the simulations directory (default: artifacts/simulations)",
+    )
+    simulate_parser.add_argument("--artifact-dir", metavar="DIR")
+    simulate_parser.add_argument("--report-dir", metavar="DIR")
+    simulate_parser.add_argument("--json", action="store_true", dest="as_json")
+    simulate_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
+    simulate_parser.add_argument("--log-file", metavar="PATH")
     return parser
 
 
@@ -646,6 +770,12 @@ def main(
         )
         return _run_risk_export(args, resolved)
 
+    if args.command == "simulate":
+        configure_logging(
+            verbose=args.verbose,
+            log_file=Path(args.log_file) if args.log_file else None,
+        )
+        return _run_simulate(args, resolved)
 
     overrides: dict[str, object] = {}
     if args.report_dir:
@@ -1499,6 +1629,74 @@ def _simulation_scenario_from_file(path: str):
             "Pass a JSON object produced by CampaignScenario.to_dict().",
         ) from exc
     return CampaignScenario.from_dict(payload)
+
+
+def _run_simulate(args: argparse.Namespace, settings: Settings) -> int:
+    settings = _apply_common_overrides(args, settings)
+    problems = settings.validate()
+    if problems:
+        print("error: invalid settings: " + "; ".join(problems), file=sys.stderr)
+        return 3
+
+    from churnwise.simulation import (
+        CODE_INVALID_CONFIG,
+        CODE_INVALID_INPUT,
+        SimulationError,
+        SimulationService,
+        assume_scenario,
+        render_comparison,
+    )
+
+    try:
+        scenario = assume_scenario(
+            args.name,
+            description=args.description,
+            budget=args.budget,
+            cost_per_contact=args.cost_per_contact,
+            effectiveness=args.effectiveness,
+            monthly_value=args.monthly_value,
+            horizon_months=args.horizon_months,
+            value_unit=args.value_unit,
+            strategy=args.strategy,
+            min_risk_probability=args.min_risk,
+            risk_tiers=tuple(args.risk_tiers or ()),
+            max_contacts=args.max_contacts,
+        )
+        comparison_scenarios = [
+            _simulation_scenario_from_file(path) for path in (args.compare_files or ())
+        ]
+        service = SimulationService(
+            settings,
+            simulations_dir=Path(args.output_dir) if args.output_dir else None,
+        )
+        run = service.run_scenario(
+            scenario,
+            run_id=args.run_id,
+            scenario_id=args.scenario_id,
+            include_sensitivity=not args.no_sensitivity,
+            sensitivity_dimensions=tuple(args.sensitivity_dimensions or ()) or None,
+            effectiveness_values=args.sensitivity_effectiveness,
+            budget_values=args.sensitivity_budget,
+            cost_values=args.sensitivity_cost,
+            compare_with=comparison_scenarios,
+        )
+    except SimulationError as exc:
+        if args.as_json:
+            print(json.dumps({"status": "error", "error": exc.to_dict()}, indent=2))
+        else:
+            print(f"error: {exc.code}: {exc.message}", file=sys.stderr)
+            if exc.remediation:
+                print(f"  next: {exc.remediation}", file=sys.stderr)
+        return 3 if exc.code in (CODE_INVALID_CONFIG, CODE_INVALID_INPUT) else 2
+
+    if args.as_json:
+        print(json.dumps(run.to_dict(), indent=2))
+    else:
+        print(service.render(run))
+        if run.comparison is not None:
+            print()
+            print(render_comparison(run.comparison))
+    return 0
 
 
 if __name__ == "__main__":

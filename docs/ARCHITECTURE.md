@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Document status | Phase 1 baseline (approved for implementation pending review) |
-| Version | 1.0 |
-| Date | 2026-10-20 |
+| Document status | Living architecture; Phase 1 baseline updated with verified Phase 2–10 implementation status |
+| Version | 1.2 |
+| Date | 2026-10-22 |
 | Scope | Architecture and design constraints only. No application code is implemented in Phase 1. |
 | Related | [README.md](../README.md) · [ROADMAP.md](ROADMAP.md) · [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) · [PHASE1_REPORT.md](PHASE1_REPORT.md) |
 
@@ -66,7 +66,7 @@ Full evidence is in [PHASE1_REPORT.md](PHASE1_REPORT.md#2-environment-findings).
 | OS / Python | Windows 11, Python 3.13.0 (system interpreter, no venv) | CPU-only TensorFlow; `n_jobs` bounded; POSIX-specific tooling avoided |
 | TensorFlow | Not installed; `tensorflow` 2.20.0 / 2.21.0 wheels available for cp313 | MLP is feasible; install is a Phase 2 prerequisite, in an isolated venv |
 | Keras | Standalone Keras 3 installed but **unimportable** (no TF backend) | Must not rely on global site-packages; venv required |
-| SHAP | Not installed; `shap` 0.54.1 available | Explainability feasible; watch explainer runtime on CPU |
+| SHAP | Not installed at Phase 1; `shap` 0.54.1 available (installed in `.venv` by Phase 8) | Explainability feasible; watch explainer runtime on CPU |
 | Present | numpy 2.1.2, pandas 2.2.3, scikit-learn 1.5.2, streamlit 1.56.0, matplotlib, seaborn, plotly, joblib, requests, pytest, scipy, pyarrow, openpyxl | Baseline stack exists; versions must be pinned to avoid drift |
 | Git | Working directory is **not** a Git repository | Code version is recorded as `unversioned` until the repository is initialized |
 | Disk | 158 GB free | Content-addressed cache and multi-run artifacts are affordable |
@@ -126,16 +126,29 @@ churnwise/
 │   ├── plots.py               # confusion/ROC/PR/comparison/threshold figures
 │   └── reporting.py           # benchmark Markdown and console summary
 ├── explain/
-│   ├── explainers.py          # per-family SHAP explainer selection
-│   ├── grouping.py            # one-hot -> source-column attribution rollup
-│   └── service.py             # global + local explanation generation and caching
+│   ├── contracts.py           # explanation config, contribution and run records
+│   ├── explainers.py          # per-family SHAP explainers + additivity validation
+│   ├── features.py            # one-hot -> source-column attribution rollup
+│   ├── engine.py              # sampling, chunked SHAP, global/local summaries
+│   ├── coordinator.py         # model/preprocessor loading, persistence, provenance
+│   ├── plots.py               # importance, beeswarm, dependence, waterfall figures
+│   └── reporting.py           # evidence-only CLI summary
 ├── intelligence/
-│   ├── scoring.py             # batch + single-customer inference, one code path
+│   ├── service.py             # individual/batch/population scoring, retrieval, exports
+│   ├── model.py               # selected-model loading through the Phase 8 verifier
+│   ├── drivers.py             # Phase 8 SHAP driver attachment and provenance
+│   ├── contracts.py           # assessments, thresholds, filters, runs, exports
 │   ├── ranking.py             # risk tiers, ranking, filters, value-at-risk ordering
-│   └── segments.py            # reusable customer segments for targeting
+│   ├── reporting.py           # evidence-only summaries
+│   └── errors.py              # stable CW-RISK-* failures
 ├── simulation/
-│   ├── campaign.py            # scenario engine (targeting, cost, saves, ROI, break-even)
-│   └── assumptions.py         # explicit defaults, validation, sensitivity grids
+│   ├── contracts.py           # scenarios, assumptions, allocation, projection, runs
+│   ├── assumptions.py         # explicit defaults, validation, sensitivity grids
+│   ├── campaign.py            # targeting, budget allocation, projections, comparison, sensitivity
+│   ├── service.py             # Phase 9 loading, execution, persistence, artifact identity
+│   ├── reporting.py           # evidence-only summary, Markdown report, comparison tables
+│   ├── plots.py               # allocation, sensitivity and comparison figures
+│   └── errors.py              # stable CW-SIM-* failures
 ├── dashboard/
 │   ├── app.py                 # Streamlit entry (navigation + artifact availability checks)
 │   ├── data_access.py         # cached, read-only artifact loaders
@@ -150,7 +163,7 @@ Enforced by a Phase 12 import-linter style test:
 
 1. `contracts.py` and `config.py` depend on nothing internal.
 2. Stages depend **forward only**: `discovery → acquisition → validation → eda → preprocessing → models → evaluation → explain → intelligence → simulation`.
-3. `dashboard/` may import `contracts`, `config` and `intelligence.segments` **only**; it must never import training, acquisition or explainer code.
+3. `dashboard/` may import `contracts`, `config` and the read-only `intelligence` contracts/service **only**; it must never import training, acquisition or explainer code directly.
 4. `evaluation/` must not mutate models, preprocessors or data.
 5. `cli.py`/`pipeline.py` orchestrate; they contain no business logic.
 6. No module writes outside its declared artifact directory (§9).
@@ -207,10 +220,10 @@ flowchart TD
 | Prepare | validated frame, profile, config seed | `artifacts/splits/<run_id>.json`, `artifacts/preprocessors/<run_id>/{pipeline.joblib,schema.json}`, `artifacts/prepared/<run_id>/{matrices.npz,summary.json}`, `reports/preprocessing/<run_id>.{json,md}` | split fingerprint reproducible; no target leakage; fitted state from train only |
 | Train | preprocessor, splits, config | `artifacts/models/<run_id>/<family>/{model.keras,best.keras,history.json,learning_curves.png,metadata.json}`, `reports/models/<run_id>.{json,md}` | preprocessor hash + split fingerprint match Phase 5; no test metric used for selection |
 | Evaluate | models, held-out split | `artifacts/evaluation/<run_id>/{metrics.json,benchmark.md,*.png}` | all three families evaluated on identical test rows |
-| Explain | model, preprocessor, reference sample | `artifacts/explanations/<run_id>/{global.json,summary.png,local/*.json}` | additive-consistency tolerance met |
+| Explain | model, preprocessor, reference sample | `artifacts/explanations/<run_id>/{global.json,importance.png,summary.png,dependence_*.png,local/*.json,local/*.png,run_manifest.json}` | additive-consistency tolerance met; test rows unused |
 | Score | model, preprocessor, scoring frame | `artifacts/predictions/<run_id>/churn_scores.parquet` | score count == input row count |
 | Rank | scores, threshold config | `artifacts/predictions/<run_id>/{risk_summary.json,tiers.csv}` | tiers reconcile to 100% of scored rows |
-| Simulate | ranked scores, scenario params | `artifacts/simulations/<scenario_id>.json`, `.md` | assumptions complete and labeled |
+| Simulate | ranked scores, scenario params | `artifacts/simulations/<scenario_id>/{result.json,sensitivity.csv,report.md,run_manifest.json,plots/*.png}` | assumptions complete; population counts reconcile |
 | Present | all artifacts | rendered Streamlit pages | artifacts load; no fabricated placeholders |
 
 **Run identity.** `run_id = <UTC timestamp>Z-<dataset_id>-<config_hash8>`. Every artifact records `run_id`, `dataset_sha256`, `preprocessor_hash`, `seed`, `code_version`. A dashboard page may only combine artifacts sharing `run_id` (or an explicit compatible-derived relationship recorded in `run_manifest.json`).
@@ -345,8 +358,8 @@ The fingerprint lets any later stage prove it is using the same split — and le
 | Contract | Key fields |
 | --- | --- |
 | `PredictionRecord` | `customer_id`, `churn_probability`, `predicted_label`, `model_family`, `run_id`, `scored_at` |
-| `RiskRecord` | prediction fields + `risk_tier`, `risk_rank`, `value_at_risk`, `top_drivers[]` |
-| `SimulationResult` | `scenario_id`, `assumptions{}`, `targeting{}`, `outcomes{}`, `sensitivity[]`, `disclaimer` |
+| `RiskAssessment` | opaque `record_reference`, probability/class, `risk_tier`, `rank`, thresholds, model/preprocessor provenance, optional `value_at_risk`, drivers, warnings |
+| `CampaignResult` | `scenario_id`, `scenario{}`, `assumptions{}`, `targeting{}`, `input{}`, `population{}`, `allocation{}`, `projection{}`, `selected_customers[]`, `exclusions[]`, `warnings[]`, `disclaimers[]`, `provenance{}` |
 
 ---
 
@@ -539,54 +552,71 @@ matrices, and the evidence is recorded in every CV payload.
 
 ### 8.5 Explainability (SHAP)
 
-| Model family | Primary explainer | Fallback |
-| --- | --- | --- |
-| Logistic Regression | `shap.LinearExplainer` on the transformed matrix | `KernelExplainer` on a 200-row background sample |
-| Random Forest | `shap.TreeExplainer` | `KernelExplainer` |
-| MLP | `shap.DeepExplainer` over the Keras model | `KernelExplainer` (200 background rows, 300 explained rows) |
+| Model family | Primary explainer | Background | Output space | Fallback |
+| --- | --- | --- | --- | --- |
+| Logistic Regression | `shap.LinearExplainer` on the transformed matrix | 100 training rows (default) | `log_odds` | none (linear-specific) |
+| Random Forest | `shap.TreeExplainer` (`tree_path_dependent`) | training sample recorded for provenance | `probability` | none (tree-specific) |
+| MLP | `shap.DeepExplainer` over the Keras model | 50 training rows (default) | `probability` | bounded `shap.Explainer(algorithm="permutation")` |
 
-- **Global:** mean absolute SHAP value per feature, ranked bar chart + beeswarm, written to `global.json` and `summary.png`.
-- **Local:** top-5 signed contributions per customer, written as JSON so the dashboard needs no SHAP runtime.
-- **Grouping:** one-hot indicators are rolled back up to their source column (`contract_type=Two year` → `contract_type`) so drivers are human-readable.
-- **Additivity check:** for additive explainers, `sum(shap) + base_value ≈ model_output` within tolerance (1e-3 absolute or 1e-2 relative); a failure is a defect, not a warning.
-- **Cost control:** explanations are precomputed in batches; the dashboard reads cached JSON and never invokes SHAP.
+- **Global:** mean absolute SHAP value per source feature, ranked bar chart, SHAP beeswarm and a dependence plot for the top-ranked numeric feature, written to `global.json` and figures.
+- **Local:** top-5 signed contributions per customer, written as JSON so the dashboard needs no SHAP runtime. Raw-record batches are bounded at 500 rows.
+- **Grouping:** one-hot indicators are summed back to their source column (`international_plan=1` → `international_plan`), with raw column detail retained; native plot labels preserve model column order.
+- **Output spaces:** tree/MLP values sum to P(churn = 1); Logistic Regression values sum to the decision function in log-odds and are never presented as probability changes.
+- **Additivity check:** `sum(shap) + base_value ≈ model_output` within a default `1e-4` absolute tolerance; a failure is a defect (`CW-XAI-004`), not a warning. Plot failures are warnings because JSON remains authoritative.
+- **Cost control:** explanations are sampled (default 200 LR/RF rows, 60 MLP rows), chunked, and precomputed; the dashboard reads cached JSON and never invokes SHAP. The test partition is rejected as an explanation input.
+- **Provenance:** every run records dataset hash, split fingerprint, preprocessing run, benchmark/model run and SHA-256, threshold, output space, sample/background positions and environment versions. Model artifacts are opened read-only.
+
+The Phase 8 implementation is documented in [EXPLAINABILITY.md](EXPLAINABILITY.md) and its verified real-model evidence and limitations in [PHASE8_REPORT.md](PHASE8_REPORT.md). All three families were explained on the OpenML `46915` artifacts; the MLP permutation fallback was tested synthetically but was not needed for the real MLP because Deep SHAP succeeded.
+
+The Phase 9 implementation reuses that Phase 8 model loader and local explanations. Its interface, threshold semantics, export schema and privacy rules are in [RISK_INTELLIGENCE.md](RISK_INTELLIGENCE.md); real-model and synthetic evidence is separated in [PHASE9_REPORT.md](PHASE9_REPORT.md).
 
 ---
 
 ## 9. Risk intelligence and campaign simulation
 
-### 9.1 Scoring and ranking
+### 9.1 Scoring and ranking (Phase 9, implemented)
 
-- **Score:** `churn_probability` from the selected shipped model, produced by a *single* model family chosen on validation evidence and recorded in `run_manifest.json`. The dashboard always displays which family produced a score.
-- **Individual and batch prediction share one path:** `score_batch(frame)` and `score_customer(record)` both call the same `transform → predict_proba` routine with the persisted preprocessor. Batch runs write `churn_scores.parquet`; a single-customer request is answered by the identical function (CLI: `score --customer-id <id>`, dashboard: the precomputed row). There is no second model or divergent preprocessing path, so a customer's detail page and their batch score cannot disagree.
-- **Tiers (configurable, defaults):** Critical ≥ 0.70; High 0.50–0.70; Medium 0.30–0.50; Low < 0.30. Tier boundaries are stored in config and shown in the UI; changing them re-derives tiers from stored probabilities without retraining.
-- **Ranking:** default by descending probability. Optional **value-at-risk ordering**: `expected_loss = p × monthly_value × horizon_months`, used when a revenue proxy exists. Both rankings are exposed; the UI labels which is active.
-- **Filters:** tier, probability range, contract type, tenure band, and free-text segment — implemented over the scored table, no model calls.
-- **Integrity:** every risk table carries `run_id`, model family, threshold, scoring timestamp and dataset hash.
+- **Score:** `churn_probability` from the Phase 7 selected family, loaded through the Phase 8 verifier. The model family, run id, SHA-256 and preprocessing run are written into every assessment and `run_manifest.json`.
+- **Individual and batch prediction share one path:** `RiskService.assess_customer()` is a one-record `assess_batch()` and both call the fitted Phase 5 `transform_new → predict_proba` path. `score_population()` scores a persisted split; `score_frame()` scores caller-supplied raw records. There is no CLI single-customer shortcut and no second model, so batch and individual probabilities cannot diverge.
+- **Tiers (configurable, defaults):** Critical ≥ 0.70; High 0.50–0.70; Medium 0.30–0.50; Low < 0.30. Boundaries are lower-inclusive/upper-exclusive, stored in the run and shown in exports; changing them re-derives tiers from probabilities without retraining. The classification threshold is a separate value chosen in Phase 7.
+- **Ranking:** default by descending probability with reference/position tie-breaks. Optional **value-at-risk ordering**: `expected_loss = p × proxy_value × horizon_months`, available only when the caller supplies a real revenue proxy. Both rankings are exposed; the UI must label which is active.
+- **Filters:** tier, probability range, explicit references, and configured segment equality/min/max — implemented over the stored table with no model calls. Pagination is bounded.
+- **Explainability:** Phase 8 local drivers are attached to selected rows (`none`, `top`, `all`) and are marked unavailable rather than fabricated when absent.
+- **Exports:** filtered CSV, JSON and Parquet with a documented schema, formula-injection protection, opaque references and a path restriction to the run's artifact directory.
+- **Integrity:** every risk table and export carries `run_id`, model family/run id/digest, preprocessing run/hash, classification threshold, tier boundaries, scoring timestamp, dataset hash and split fingerprint. Reload rejects a stale model or preprocessor digest.
 
-### 9.2 Campaign simulation semantics
+The complete Phase 9 contract and limitations are in [RISK_INTELLIGENCE.md](RISK_INTELLIGENCE.md) and [PHASE9_REPORT.md](PHASE9_REPORT.md).
 
-Simulation answers: *"If we contact this segment with this assumed save rate, what does it cost and what is it projected to return?"* It combines **measured risk scores** with **user-supplied assumptions**. It is a projection, never a measured uplift.
+### 9.2 Campaign simulation semantics (Phase 10, implemented)
+
+Simulation answers: *"If we contact this eligible set with these assumed economics, what would it cost and what is it projected to return?"* It combines **measured risk scores** with **user-supplied assumptions**. It is a projection, never a measured uplift.
 
 ```text
-contacted            = |segment|                  (top-N, top-X%, or tier filter)
-p_bar                = mean(churn_probability)    over contacted
-expected_at_risk     = Σ p_i                      over contacted
-save_rate_given_risk = s                          assumption, default 0.30, range 0.05–0.60
-expected_saves       = Σ (p_i × s)                over contacted
-avg_value            = mean(monthly_value) × horizon_months, default horizon 6
-expected_saved_value = expected_saves × avg_value
-campaign_cost        = contacted × cost_per_contact, default 5.00
-net_benefit          = expected_saved_value − campaign_cost
-roi                  = net_benefit / campaign_cost
-break_even_save_rate = campaign_cost / (expected_at_risk × avg_value)   (undefined guard: at-risk = 0)
-targeting_lift       = expected_saves / (s × p_overall × contacted)     (vs. random contact)
+eligible               = Phase 9 customers passing the configured tier/threshold rules
+selected               = eligible in descending p_i (tie-break: record reference, position),
+                         walking the list while max_contacts and budget still permit a contact
+spend                  = Σ actual intervention costs of selected customers
+remaining_budget       = max(0, budget − spend)
+utilization            = spend / budget                              (undefined when budget = 0)
+expected_prevented     = Σ (p_i × e)                                over selected
+expected_saved_value   = expected_prevented × monthly_value × horizon_months
+net_benefit            = expected_saved_value − spend
+roi                    = net_benefit / spend                          (undefined when spend = 0)
+cost_per_prevented     = spend / expected_prevented                   (undefined when expected_prevented = 0)
+break_even_effectiveness = spend / (Σ p_i × monthly_value × horizon_months)
+random_contact         = mean(p over eligible) × |selected| × e
+targeting_lift         = expected_prevented / random_contact          (undefined when baseline = 0)
 ```
 
-- **Assumptions are explicit:** `monthly_value`, `horizon_months`, `cost_per_contact`, `save_rate_given_risk` are inputs with defaults shown inline, and every result JSON embeds the assumptions used.
-- **Sensitivity:** a grid over save rate × cost (and value when a revenue proxy is absent) accompanies every scenario.
-- **Honesty rules:** results are labelled *projected*; no causal claim; no uplift model is fitted; the disclaimers appear in both the JSON and the dashboard panel.
-- **Missing revenue proxy:** if the dataset has no `monthly_charges`-like column, simulation requires a user-entered per-customer value and says so instead of inventing one.
+- **Four strategies:** `highest_risk`, `risk_threshold`, `risk_category` and `budget_constrained`. Eligibility differs by configured threshold/tier; ordering is always deterministic. `budget_constrained` stops at the first unaffordable customer; the others skip one when per-customer cost overrides make later customers affordable.
+- **Explicit assumptions:** `budget`, `cost_per_contact`, `effectiveness`, `monthly_value`, `horizon_months` and `value_unit` are validated inputs (`effectiveness` in `[0, 1]`; negative budget/cost/value, zero horizon, unknown tiers and impossible strategy combinations are rejected with `CW-SIM-001`). Every result embeds the inputs used and a scenario fingerprint.
+- **Undefined metrics are explicit:** zero cost, zero budget, zero at-risk mass, zero expected prevented churn and a missing value assumption yield `null` plus a reason in `undefined_metrics`; ROI is never infinite, and break-even above 1.0 raises a warning.
+- **Comparison:** rows keep budget, cost, effectiveness, threshold/tier and contact-limit columns visible; `shared_inputs` is true only when risk run id, model digest, dataset digest, population size and tier boundaries match.
+- **Sensitivity:** one-at-a-time grids over effectiveness (default 0.10–0.50), budget (0.5×–2×) and cost (0.5×–2×), each point recomputed rather than interpolated.
+- **Honesty rules:** results are labelled *projected* in JSON, Markdown report and CLI, and CSV export columns use `expected_*` names under the same scenario id; no causal claim; no uplift model is fitted. Charts are drawn only from computed points.
+- **Missing revenue proxy:** the reference dataset has none, so saved-value, net-benefit, ROI and break-even remain unavailable unless the caller supplies `monthly_value`; nothing is invented.
+
+Server-side entry point: `churnwise.simulation.SimulationService` (`load_table`, `run_scenario`, `run_comparison`, `sensitivity`, `load_result`), persisting to `artifacts/simulations/<scenario_id>/`. Phase 11 must render these artifacts read-only and keep the projection labels. Full methodology and schemas: [SIMULATION.md](SIMULATION.md); verified evidence: [PHASE10_REPORT.md](PHASE10_REPORT.md).
 
 ---
 
@@ -684,9 +714,14 @@ artifacts/
 ├── prepared/<run_id>/{matrices.npz, summary.json}
 ├── models/<run_id>/<family>/{model.keras, best.keras, metadata.json, history.json, learning_curves.png}
 ├── evaluation/<run_id>/{metrics.json, benchmark.md, roc.png, pr.png, cm_<family>.png}
-├── explanations/<run_id>/{global.json, summary.png, shap_values.parquet, local/<id>.json}
-├── predictions/<run_id>/{churn_scores.parquet, risk_summary.json}
-└── simulations/<scenario_id>/{result.json, sensitivity.csv}
+├── explanations/<run_id>/{global.json, importance.png, summary.png,
+│                           dependence_<feature>.png, run_manifest.json,
+│                           local/row_<position>.{json,png}}
+├── predictions/<run_id>/{churn_scores.parquet, risk_summary.json, tiers.csv,
+│                           run_manifest.json, drivers.json, rejections.json, exports/*}
+└── simulations/<scenario_id>/{result.json, selection.csv, sensitivity.json,
+                            sensitivity.csv, comparison.json, comparison.csv,
+                            report.md, run_manifest.json, plots/*.png}
 
 reports/
 ├── acquisition/{candidates.json, attempts.json, rejections.json}
@@ -738,7 +773,7 @@ Directories are Git-ignored except `.gitkeep` files. Committed fixtures live onl
 
 1. **Primary dataset:** OpenML `45076` vs IBM Telco CSV. Both pass Phase 1 reachability; schema/licence verification in Phases 2–3 decides. Selection is recorded, never assumed.
 2. **Licence policy:** whether `unverified` licences are allowed by default (currently: explicit opt-in only).
-3. **MLP explainer:** `DeepExplainer` vs `KernelExplainer`, decided by Phase 8 runtime and additivity results.
+3. **MLP explainer (resolved in Phase 8):** `DeepExplainer` succeeded with a measured additivity error of `1.05e-07`; a bounded permutation explainer is the documented fallback. See [PHASE8_REPORT.md](PHASE8_REPORT.md).
 4. **Operating threshold:** 0.5 vs validation-tuned; decide once Phase 7 metrics exist.
 5. **Repository initialisation:** the working directory is not a Git repo. `git init` is recommended but was not performed in Phase 1 (see report).
 6. **Revenue proxy default** for simulation when the chosen dataset lacks a charge column.

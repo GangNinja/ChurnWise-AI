@@ -9,6 +9,10 @@ __pycache__/
 htmlcov/
 .coverage
 .coverage.*
+coverage.xml
+.hypothesis/
+.tox/
+.nox/
 *.egg-info/
 build/
 dist/

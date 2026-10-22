@@ -373,18 +373,20 @@ These apply to all 13 phases and are re-checked at Phase 13.
 
 **Objectives and scope.** Explain global behaviour and individual predictions across families. In scope: explainer selection (Linear/Tree/Deep/Kernel), background sampling, additivity verification, one-hot grouping to source columns, global ranking and beeswarm, per-customer top-k signed drivers, precomputed JSON, runtime measurement. Out of scope: counterfactuals, causal claims.
 
-**Inputs and outputs.** Inputs: trained models, preprocessor, feature names, reference rows. Outputs: `global.json`, `summary.png`, `local/<customer_id>.json`, additivity report.
+**Inputs and outputs.** Inputs: trained models, preprocessor, feature names, reference rows. Outputs: `global.json`, `importance.png`, `summary.png`, `dependence_*.png`, `run_manifest.json`, `local/row_<position>.json`, `local/row_<position>.png`, additivity evidence.
 
 **Expected artifacts.**
 
 | Artifact | Contents |
 | --- | --- |
-| `churnwise/explain/explainers.py` | Per-family explainer construction |
-| `churnwise/explain/grouping.py` | One-hot → source-column rollup |
-| `churnwise/explain/service.py` | Global/local generation and caching |
-| `artifacts/explanations/<run_id>/{global.json,summary.png,local/*.json}` | Explanations |
-| `tests/unit/test_shap_grouping.py` | Grouping arithmetic |
-| `tests/integration/test_shap_additivity.py` | Additivity tolerance |
+| `churnwise/explain/explainers.py` | Per-family explainer construction and additivity validation |
+| `churnwise/explain/features.py` | One-hot → source-column rollup and model-order labels |
+| `churnwise/explain/engine.py` | Sampling, chunking, global/local explanation values |
+| `churnwise/explain/coordinator.py` | Model loading, persistence, provenance and raw-record batches |
+| `churnwise/explain/plots.py` | Importance, beeswarm, dependence and waterfall figures |
+| `artifacts/explanations/<run_id>/{global.json,importance.png,summary.png,dependence_*.png,run_manifest.json,local/*}` | Explanations |
+| `tests/unit/test_shap_{features,explainers,local,coordinator}.py` | Grouping, explainers, local semantics and end-to-end coordinator |
+| `tests/integration/test_shap_mlp.py` | Real Keras MLP additivity and fallback |
 
 **Dependencies.** Phase 6 and 7 (trained models), Phase 5 (feature names).
 
@@ -408,25 +410,32 @@ These apply to all 13 phases and are re-checked at Phase 13.
 - [ ] Explanations are cached artifacts; the dashboard does not recompute SHAP.
 - [ ] No causal or "reason for churn" language is used for what are model attributions.
 
-**Risks and unresolved decisions.** `DeepExplainer` compatibility with the Keras artifact; KernelExplainer runtime; SHAP/numpy version friction. Phase 8 records which explainer was used per family.
+T8.4 (explanation covers every customer in the demo/prediction set) remains **unchecked**: Phase 8 explains a bounded validation sample plus caller-supplied batches, and the Phase 9 scoring population does not exist yet. T8.1–T8.3 and T8.5–T8.6 are covered by the tests listed in [PHASE8_REPORT.md](PHASE8_REPORT.md); T8.6 measured 12.93 s (RF), 2.52 s (LR) and 7.19 s (MLP), within the 5-minute budget.
+
+**Verified evidence (Phase 8).** All three real families were explained against the OpenML `46915` Phase 5–7 artifacts: RF `20261022T131420-openml_46915-random_forest-xai-84eecf5d`, LR `20261022T131432-openml_46915-logistic_regression-xai-c160a8be`, MLP `20261022T131446-openml_46915-mlp-xai-4c391837`. Focused tests 42/42; full suite 432 passed / 7 live-network skips. Interface and limitations: [EXPLAINABILITY.md](EXPLAINABILITY.md), [PHASE8_REPORT.md](PHASE8_REPORT.md).
+
+**Risks and unresolved decisions.** `DeepExplainer` compatibility with the Keras artifact was resolved in this environment (Deep SHAP succeeded); the bounded permutation fallback exists and is synthetically tested but was not needed for the real MLP. Permutation runtime remains a risk on larger data. SHAP/numpy version friction is pinned by `requirements.txt`. Phase 8 records the selected explainer per family in every manifest.
 
 ---
 
 ## 10. Phase 9 — Customer Churn Risk Intelligence
 
-**Objectives and scope.** Convert probabilities into an actionable ranked risk list. In scope: batch scoring, tiering from configurable thresholds, deterministic ranking, value-at-risk ordering where a revenue proxy exists, segment filters, driver attachment, Parquet/CSV export, reconciliation. Out of scope: campaign economics (Phase 10), UI (Phase 11).
+**Objectives and scope.** Convert probabilities into an actionable ranked risk list. In scope: individual and batch scoring, tiering from configurable thresholds, deterministic ranking/filtering/pagination, value-at-risk ordering where a revenue proxy exists, segment filters, driver attachment, CSV/JSON/Parquet export, record-level rejection reconciliation and artifact freshness. Out of scope: campaign economics (Phase 10), UI (Phase 11).
 
-**Inputs and outputs.** Inputs: shipped model, preprocessor, scores frame, local explanations. Outputs: `churn_scores.parquet`, `risk_summary.json`, `tiers.csv`.
+**Inputs and outputs.** Inputs: shipped model, preprocessor, raw records or persisted split, Phase 8 local explanations. Outputs: `churn_scores.parquet`, `risk_summary.json`, `tiers.csv`, `run_manifest.json`, optional `drivers.json` / `rejections.json`, and filtered exports.
 
 **Expected artifacts.**
 
 | Artifact | Contents |
 | --- | --- |
-| `churnwise/intelligence/scoring.py` | Batch inference with count reconciliation |
-| `churnwise/intelligence/ranking.py` | Tiers, ranks, value-at-risk ordering |
-| `churnwise/intelligence/segments.py` | Reusable filter predicates |
-| `artifacts/predictions/<run_id>/{churn_scores.parquet,risk_summary.json,tiers.csv}` | Ranked output |
-| `tests/unit/test_ranking_tiers.py`, `tests/integration/test_scoring_counts.py` | Tier/rank/count tests |
+| `churnwise/intelligence/service.py` | Individual/batch/population scoring, persistence, retrieval and exports |
+| `churnwise/intelligence/model.py` | Read-only selected-model loading through the Phase 8 verifier |
+| `churnwise/intelligence/drivers.py` | Phase 8 driver attachment and explanation provenance checks |
+| `churnwise/intelligence/contracts.py` | Assessment, threshold, filter, table, run and export contracts |
+| `churnwise/intelligence/ranking.py` | Tiers, ranks, filters, pagination and value-at-risk ordering |
+| `churnwise/intelligence/reporting.py` | Evidence-only console summaries |
+| `artifacts/predictions/<run_id>/{churn_scores.parquet,risk_summary.json,tiers.csv,run_manifest.json,drivers.json,rejections.json,exports/*}` | Ranked output, drivers, rejection log and exports |
+| `tests/unit/test_ranking_tiers.py`, `tests/integration/test_scoring_counts.py`, `tests/test_risk_cli.py` | Tier/rank/count, scoring, failure and CLI tests |
 
 **Dependencies.** Phase 7 (shipped model, threshold), Phase 8 (drivers), Phase 4 (revenue proxy availability).
 
@@ -441,6 +450,10 @@ These apply to all 13 phases and are re-checked at Phase 13.
 | T9.5 | Filters return exactly the matching rows | Predicate tests |
 | T9.6 | Exports round-trip without losing rows or dtypes | Read back Parquet/CSV |
 | T9.7 | Missing revenue proxy does not fabricate values | Null-handling test |
+| T9.8 | Batch probabilities equal the same records scored in a population run | Real-model comparison (max abs difference) |
+| T9.9 | CSV formula prefixes are neutralised and raw identifiers are excluded | Export round-trip assertions |
+| T9.10 | Stale model/preprocessor artifacts are rejected; export paths cannot escape | Hash-mismatch and path-escape tests |
+| T9.11 | Partial and all-rejected batches retain counts and rejection details | Rejection-summary assertions |
 
 **Completion criteria.**
 
@@ -451,7 +464,9 @@ These apply to all 13 phases and are re-checked at Phase 13.
 - [ ] Value-at-risk ordering present when a revenue proxy exists, absent and explained when it does not.
 - [ ] Exports usable by the dashboard without recomputation.
 
-**Risks and unresolved decisions.** Rank ties; threshold drift between config and UI; value-at-risk misleading when charges are a poor revenue proxy.
+**Implementation status (2026-10-22, verified in [PHASE9_REPORT.md](PHASE9_REPORT.md)).** Individual and batch assessment, configured tiers, ranking, filtering, pagination, optional value-at-risk, Phase 8 drivers and CSV/JSON/Parquet exports are implemented. The real OpenML `46915` validation population produced 1,000 scores in 16.96 s with 1,000 drivers: low 858, medium 31, high 40, critical 71; 121 predicted churn. A six-row real raw batch reproduced the stored validation probabilities exactly. A filtered export returned exactly 111 high/critical rows. Focused risk tests 58/58; full suite 490 passed / 7 live-network skips. A follow-up verification pass fixed blank-identifier fallback, malformed/incompatible artifact handling, tab/CR CSV neutralisation, JSON export schema/filter metadata, misleading missing-value warnings and value-proxy provenance; regression tests are recorded in [PHASE9_REPORT.md](PHASE9_REPORT.md#104-post-implementation-verification-and-fixes). All model and preprocessing artifacts were opened read-only; no model was retrained. Default tier boundaries are not claimed to be business-optimal and probabilities are not recalibrated.
+
+**Risks and unresolved decisions.** Rank ties (resolved by documented reference/position tie-breaks); threshold drift between config and UI (mitigated by recording thresholds in every manifest and export); value-at-risk misleading when charges are a poor revenue proxy (only available when an explicit proxy is supplied, and not exercised on the real dataset).
 
 ---
 
@@ -494,7 +509,9 @@ These apply to all 13 phases and are re-checked at Phase 13.
 - [ ] Missing revenue proxy requires a user value instead of inventing one.
 - [ ] Math verified against independent hand calculations.
 
-**Risks and unresolved decisions.** Projections mistaken for measured uplift; default assumptions may not match the user's business; revenue proxy quality.
+**Verified evidence (Phase 10, report: [PHASE10_REPORT.md](PHASE10_REPORT.md)).** The JSON/CSV/Markdown/CLI half of the projection-label criterion is tested; the UI half stays open until Phase 11. `tests/unit/test_campaign_math.py` (47 passed) covers three hand-computed scenarios, all four strategies, threshold boundaries, tie-breaking, allocation, zero-cost/zero-budget, contact limits, per-customer costs, effectiveness 0/1, undefined metrics, configuration rejection, assumption embedding, comparison (including a value-unit mismatch warning) and sensitivity grids. `tests/integration/test_simulation_assumptions.py` (10 passed) runs against a genuinely fitted Phase 9 Random Forest, matches selected probabilities to the risk table, recomputes every sensitivity point, exercises the CLI and guards artifact identity. A real-data run on risk run `20261022T155236Z-openml_46915-risk-final` selected 142 of 1,000 assessed customers, spent 710 of 1,000 value units, projected 28.8787 prevented churns at assumed effectiveness 0.30 (ROI 1120.22%, break-even 2.46%) and persisted `artifacts/simulations/20261022T160000Z-real-baseline/` and `.../20261022T162000Z-real-comparison/`. A post-implementation audit additionally fixed tier-label derivation for three-tier runs, degenerate sensitivity grids, all-strategy budget warnings, chart projection labels, ASCII scenario ids, report escaping and empty sensitivity selections; see [PHASE10_REPORT.md](PHASE10_REPORT.md#12-post-implementation-verification-audit).
+
+**Risks and unresolved decisions.** Projections mistaken for measured uplift; default assumptions may not match the user's business; revenue proxy quality (the reference dataset has none, so all financial projections require a supplied value).
 
 ---
 

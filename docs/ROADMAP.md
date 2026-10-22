@@ -141,20 +141,22 @@ Each phase lists objective, scope, key artifacts, dependencies and exit gate. Th
 - **Objective:** explain global model behaviour and individual predictions with SHAP, for every model family.
 - **Scope in:** explainer selection per family, background sampling, additivity verification, one-hot grouping to source features, global ranking + beeswarm, per-customer top-k signed contributions, precomputed JSON artifacts, runtime measurement.
 - **Scope out:** counterfactual generation, causal claims.
-- **Artifacts:** `churnwise/explain/*`, `artifacts/explanations/<run_id>/{global.json,summary.png,local/*.json}`, `tests/unit/test_shap_grouping.py`, `tests/integration/test_shap_additivity.py`.
+- **Artifacts:** `churnwise/explain/*`, `artifacts/explanations/<run_id>/{global.json,importance.png,summary.png,dependence_*.png,run_manifest.json,local/*.json,local/*.png}`, `tests/unit/test_shap_{features,explainers,local,coordinator}.py`, `tests/integration/test_shap_mlp.py`.
 - **Dependencies:** P6/P7 (trained models, preprocessor), P5 (feature names).
 - **Exit gate:** additive consistency within tolerance; explanations exist for all scored customers used in the demo; grouped drivers reconcile to raw one-hot contributions; runtime within budget.
-- **Risks:** `DeepExplainer` incompatibility with the Keras model shape; `KernelExplainer` slowness on CPU; SHAP/numpy version friction.
+- **Risks:** `DeepExplainer` incompatibility with the Keras model shape; permutation fallback slowness on CPU; SHAP/numpy version friction.
+- **Implementation status (verified in [PHASE8_REPORT.md](PHASE8_REPORT.md)):** family-specific explainers, explicit probability/log-odds spaces, additivity validation, one-hot grouping, seeded sampling, chunked batches, global/local artifacts, native SHAP figures, raw-record explanations and provenance are implemented. Real explanations were generated for all three families on the OpenML `46915` artifacts (RF 12.93 s, LR 2.52 s, MLP 7.19 s; max additivity error 1.05e-07). Focused tests 42/42 passed; full suite 432 passed / 7 live-network skips. Deep SHAP succeeded for the real MLP; the bounded permutation fallback is tested synthetically. Interface details: [EXPLAINABILITY.md](EXPLAINABILITY.md). Full-population driver persistence remains Phase 9 integration work, not a Phase 8 claim.
 
 ### Phase 9 — Customer Churn Risk Intelligence
 
 - **Objective:** turn probabilities into an actionable, filterable, explainable risk list.
-- **Scope in:** batch scoring, tier derivation from configurable thresholds, deterministic ranking, value-at-risk ordering where revenue proxy exists, segment filters, per-customer driver attachment, exports (Parquet + CSV), score reconciliation.
+- **Scope in:** individual/batch scoring, tier derivation from configurable thresholds, deterministic ranking, value-at-risk ordering where a revenue proxy exists, segment filters, per-customer driver attachment, exports (CSV + JSON + Parquet), record-level rejection reconciliation.
 - **Scope out:** campaign economics (P10), UI (P11).
-- **Artifacts:** `churnwise/intelligence/*`, `artifacts/predictions/<run_id>/{churn_scores.parquet,risk_summary.json,tiers.csv}`, `tests/unit/test_ranking_tiers.py`, `tests/integration/test_scoring_counts.py`.
+- **Artifacts:** `churnwise/intelligence/{contracts,service,model,drivers,ranking,reporting,errors}.py`, `artifacts/predictions/<run_id>/{churn_scores.parquet,risk_summary.json,tiers.csv,run_manifest.json,drivers.json,rejections.json,exports/*}`, `tests/unit/test_ranking_tiers.py`, `tests/integration/test_scoring_counts.py`, `tests/test_risk_cli.py`.
 - **Dependencies:** P7 (shipped model), P8 (drivers).
-- **Exit gate:** every scored row has a probability in [0,1], a tier and a rank; tier counts sum to the scored population; ordering is stable and documented; value-at-risk ordering matches its formula.
-- **Risks:** tie handling in ranks, threshold drift between config and UI, missing revenue proxy skewing value ordering.
+- **Exit gate:** every scored row has a probability in [0,1], a tier and a rank; tier counts sum to the scored population; ordering is stable and documented; value-at-risk ordering matches its formula; CSV/JSON exports round-trip and reject path escape.
+- **Risks:** tie handling in ranks, threshold drift between config and UI, missing revenue proxy skewing value ordering, CSV formula injection, stale model/preprocessor reuse.
+- **Implementation status (verified in [PHASE9_REPORT.md](PHASE9_REPORT.md)):** individual and batch assessment, tier configuration, deterministic ranking/filtering/pagination, Phase 8 driver attachment, CSV/JSON/Parquet exports, rejection records, provenance and artifact freshness checks are implemented. The real OpenML `46915` validation population produced 1,000 scores (16.96 s with 1,000 drivers) and 111 high/critical customers; a six-row real raw batch reproduced the stored population probabilities exactly. Focused risk tests 58/58 passed; full suite 490 passed / 7 live-network skips. Interface and limitations: [RISK_INTELLIGENCE.md](RISK_INTELLIGENCE.md).
 
 ### Phase 10 — Retention Campaign Simulation
 
@@ -165,6 +167,7 @@ Each phase lists objective, scope, key artifacts, dependencies and exit gate. Th
 - **Dependencies:** P9 (ranked scores), P4 (revenue proxy availability).
 - **Exit gate:** results match independently hand-computed expectations; every output carries its assumptions; zero-at-risk and zero-cost edge cases are handled without division errors; projections labelled as projections.
 - **Risks:** users mistaking projections for measured uplift; revenue proxy absent for some datasets.
+- **Implementation status (verified in [PHASE10_REPORT.md](PHASE10_REPORT.md)):** validated scenario/assumption schema with actionable `CW-SIM-*` failures, four targeting strategies with deterministic tie-breaking, budget and contact-limit enforcement (uniform and per-customer costs, zero-cost and zero-budget guards), expected prevented-churn and financial projections with explicit undefined metrics, assumption-visible scenario comparison, one-at-a-time sensitivity grids, Markdown/CSV/JSON reports, PNG charts, and persisted per-scenario artifacts are implemented. A genuine simulation on the real OpenML `46915` Phase 9 run (1,000 assessed customers) selected 142 customers at a 0.30 risk floor, spent 710 of a 1,000 budget and projected 28.8787 prevented churns at assumed effectiveness 0.30 (ROI 1120.22%, break-even effectiveness 2.46%) — labelled as a projection throughout. Focused simulation tests 57/57 passed (47 unit + 10 integration); full suite 547 passed / 7 live-network skips. Methodology and interface: [SIMULATION.md](SIMULATION.md).
 
 ### Phase 11 — Interactive Intelligence Dashboard
 
@@ -203,7 +206,7 @@ Each phase lists objective, scope, key artifacts, dependencies and exit gate. Th
 | Risk | Likelihood | Impact | Mitigation |
 | --- | --- | --- | --- |
 | TensorFlow install friction on Python 3.13/Windows | Medium | High (blocks P6) | Wheel availability already verified (2.20/2.21); isolated `.venv`; if install fails, fall back to a Python 3.12 venv and document it — never substitute a different framework silently |
-| SHAP runtime on CPU for the MLP | Medium | Medium | Background sample ≤200 rows, explained sample ≤300, precomputed and cached; `KernelExplainer` fallback with a hard time budget |
+| SHAP runtime on CPU for the MLP | Medium | Medium | Background ≤50 training rows and 60 explained rows by default; precomputed and chunked; bounded permutation fallback with a hard evaluation budget |
 | Discovery returns thin results | Medium | Medium | Multi-term queries + seed registry + explicit candidate IDs; rejection log proves real evaluation |
 | Licence ambiguity (IBM mirror) | High | Low–Medium | Record `unverified`, require explicit opt-in, prefer MIT/Public OpenML candidates |
 | Streaming/UI work overruns Days 2–4 | Medium | High | Dashboard shell built on Day 2 once P4 artifacts exist; pages are thin readers; only 0.5 h of dashboard work is scheduled on Day 5 |
