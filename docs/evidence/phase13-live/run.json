@@ -1,0 +1,555 @@
+{
+  "schema_version": "1.0",
+  "phase": 12,
+  "run_id": "phase13-final-live",
+  "status": "succeeded",
+  "config_digest": "541ad032ff0387a65a576aceafc8ddf3f9362f06560319f2b46f122d18810085",
+  "code_version": "0.10.0",
+  "started_at": "2026-10-23T00:46:18Z",
+  "finished_at": "2026-10-23T00:47:24Z",
+  "settings": {
+    "seed": 42,
+    "data_dir": ".phase13_final/data",
+    "artifact_dir": ".phase13_final/artifacts",
+    "report_dir": ".phase13_final/reports"
+  },
+  "config": {
+    "seed": 42,
+    "fast": true,
+    "offline": false,
+    "refresh_discovery": true,
+    "max_candidates": 3,
+    "dataset": null,
+    "query": {
+      "terms": [
+        "churn",
+        "customer churn",
+        "attrition"
+      ],
+      "formats": [
+        "csv",
+        "tsv",
+        "arff",
+        "parquet",
+        "xlsx",
+        "zip"
+      ],
+      "min_rows": 1000,
+      "max_rows": null,
+      "min_predictors": 5,
+      "require_numeric_features": false,
+      "require_categorical_features": false,
+      "require_customer_features": false,
+      "max_results_per_source": 10,
+      "enrich_limit": 12,
+      "timeout_s": 12.0,
+      "max_retries": 2,
+      "allow_unverified_license": false,
+      "fingerprint": "85c9b17fdb218193"
+    },
+    "preprocess": {
+      "seed": 42,
+      "train_fraction": 0.6,
+      "val_fraction": 0.2,
+      "test_fraction": 0.2,
+      "imbalance": "class_weight",
+      "oversample_ratio": 1.0,
+      "numeric_imputation": "median",
+      "categorical_imputation": "missing_category",
+      "scaling": "standard",
+      "missing_indicator_threshold": 0.01,
+      "max_categorical_levels": 30,
+      "min_frequency": 0.0,
+      "derived_features": true,
+      "drop_duplicate_rows": true,
+      "min_rows": 100,
+      "min_class_count": 2,
+      "numeric_coerce_threshold": 0.98,
+      "outlier_policy": "report_only",
+      "version": "1.0",
+      "fingerprint": "989d8802b962726b058a2f3300ae30941c859dbe563e851137dd8b1d678cef18"
+    },
+    "mlp": {
+      "seed": 42,
+      "hidden_units": [
+        32,
+        16
+      ],
+      "dropout": [
+        0.2,
+        0.1
+      ],
+      "l2": 0.0001,
+      "learning_rate": 0.001,
+      "batch_size": 64,
+      "epochs": 24,
+      "early_stopping_patience": 5,
+      "reduce_lr_patience": 3,
+      "reduce_lr_factor": 0.5,
+      "min_learning_rate": 1e-05,
+      "threshold": 0.5,
+      "deterministic": false,
+      "shuffle": true,
+      "verbose": 0,
+      "fingerprint": "9f6bdd8b8da8b1f8e249f73c008f732cc324cb03f4befc6151eebf91e9124632"
+    },
+    "evaluation": {
+      "seed": 42,
+      "threshold_strategy": "max_f1",
+      "fixed_threshold": 0.5,
+      "recall_floor": null,
+      "selection_metric": "f1",
+      "selection_min_recall": null,
+      "cv_folds": 3,
+      "version": "1.0",
+      "fingerprint": "b98194f0af6f12e79f9bb587f449d2965cbc9755469b3fe85be17cf87c5e69aa"
+    },
+    "explain": {
+      "sample_size": 40,
+      "background_size": 30,
+      "mlp_sample_size": 20,
+      "mlp_background_size": 20,
+      "local_examples": 3,
+      "top_k": 5,
+      "seed": 42,
+      "tolerance": 0.0001,
+      "chunk_size": 50,
+      "max_local_batch": 500,
+      "permutation_max_evals": 100,
+      "fingerprint": "bf0a78c38895d7d60d1c1a5c728261b2e22a275073ead7c9935b1c191d4aa8df"
+    },
+    "risk": {
+      "thresholds": [
+        0.3,
+        0.5,
+        0.7
+      ],
+      "classification_threshold": null,
+      "batch_size": 100,
+      "top_k": 5,
+      "max_driver_rows": 10,
+      "population_split": "val",
+      "population_explain": "top",
+      "value_column": null,
+      "value_horizon_months": 6.0,
+      "reference_column": null,
+      "segment_fields": [],
+      "max_export_rows": 50000,
+      "strict_record_types": true,
+      "version": "1.0",
+      "fingerprint": "212f6a05802434f9a989856c247427806f170bdaa12ab41b4951c4a32e101c74"
+    },
+    "scenario": {
+      "name": "Baseline retention campaign",
+      "description": "",
+      "budget": 1000.0,
+      "assumptions": {
+        "cost_per_contact": 5.0,
+        "effectiveness": 0.3,
+        "monthly_value": null,
+        "horizon_months": 6.0,
+        "value_unit": "value_units"
+      },
+      "targeting": {
+        "strategy": "highest_risk",
+        "min_risk_probability": null,
+        "risk_tiers": [],
+        "max_contacts": null
+      },
+      "cost_overrides": {},
+      "fingerprint": "1092e8451eb0d8ca005e48f312133d8d29a9e76fbe5dbeac85db08fe600f1bc8"
+    }
+  },
+  "stages": [
+    {
+      "name": "source",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:46:18Z",
+      "finished_at": "2026-10-23T00:46:44Z",
+      "duration_ms": 25903,
+      "outputs": {
+        "dataset_id": "openml:46915",
+        "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+        "source_mode": "network"
+      },
+      "artifacts": {
+        "candidates": ".phase13_final/reports/acquisition/candidates.json",
+        "rejections": ".phase13_final/reports/acquisition/rejections.json",
+        "validation_report_json": ".phase13_final/reports/validation/openml_46915.json",
+        "validation_report_md": ".phase13_final/reports/validation/openml_46915.md",
+        "manifest": ".phase13_final/data/manifests/openml_46915.json"
+      },
+      "summary": {
+        "dataset_id": "openml:46915",
+        "source": "network discovery",
+        "validation_status": "pass_with_warnings",
+        "can_preprocess": true,
+        "target_column": "CustomerChurned",
+        "artifact_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6"
+      },
+      "warnings": [],
+      "error": null
+    },
+    {
+      "name": "preprocess",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:46:44Z",
+      "finished_at": "2026-10-23T00:46:44Z",
+      "duration_ms": 314,
+      "outputs": {
+        "preprocessing_run_id": "phase13-final-live-prep",
+        "dataset_id": "openml:46915"
+      },
+      "artifacts": {
+        "split": ".phase13_final/artifacts/splits/phase13-final-live-prep.json",
+        "preprocessor": ".phase13_final/artifacts/preprocessors/phase13-final-live-prep/pipeline.joblib",
+        "arrays": ".phase13_final/artifacts/prepared/phase13-final-live-prep/matrices.npz",
+        "summary": ".phase13_final/artifacts/prepared/phase13-final-live-prep/summary.json",
+        "report_json": ".phase13_final/reports/preprocessing/phase13-final-live-prep.json",
+        "report_md": ".phase13_final/reports/preprocessing/phase13-final-live-prep.md"
+      },
+      "summary": {
+        "preprocessing_run_id": "phase13-final-live-prep",
+        "dataset_id": "openml:46915",
+        "features": 27,
+        "train_rows": 3000,
+        "val_rows": 1000,
+        "test_rows": 1000,
+        "class_weights": {
+          "0": 0.5822981366459627,
+          "1": 3.5377358490566038
+        },
+        "warnings": 0
+      },
+      "warnings": [],
+      "error": null
+    },
+    {
+      "name": "train",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:46:45Z",
+      "finished_at": "2026-10-23T00:46:53Z",
+      "duration_ms": 8127,
+      "outputs": {
+        "model_run_id": "phase13-final-live-mlp"
+      },
+      "artifacts": {
+        "model": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/model.keras",
+        "metadata": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/metadata.json",
+        "history": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/history.json",
+        "curves": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/learning_curves.png",
+        "report_json": ".phase13_final/reports/models/phase13-final-live-mlp.json",
+        "report_md": ".phase13_final/reports/models/phase13-final-live-mlp.md",
+        "checkpoint": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/best.keras"
+      },
+      "summary": {
+        "model_run_id": "phase13-final-live-mlp",
+        "family": "mlp",
+        "epochs_trained": 24,
+        "best_epoch": 24,
+        "stopped_early": false,
+        "threshold": 0.5,
+        "hidden_units": [
+          32,
+          16
+        ]
+      },
+      "warnings": [
+        "maximum epoch limit (24) reached; early stopping did not trigger",
+        "TensorFlow op determinism is disabled; repeated runs may vary at floating-point precision"
+      ],
+      "error": null
+    },
+    {
+      "name": "evaluate",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:46:53Z",
+      "finished_at": "2026-10-23T00:47:18Z",
+      "duration_ms": 25197,
+      "outputs": {
+        "benchmark_run_id": "phase13-final-live-bench",
+        "selected_family": "random_forest"
+      },
+      "artifacts": {
+        "root": ".phase13_final/artifacts/evaluation/phase13-final-live-bench",
+        "metrics": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/metrics.json",
+        "markdown": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/benchmark.md",
+        "predictions": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/predictions.npz",
+        "curves": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/curves.json",
+        "threshold_analysis": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/threshold_analysis.json",
+        "run_manifest": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/run_manifest.json"
+      },
+      "summary": {
+        "benchmark_run_id": "phase13-final-live-bench",
+        "complete": true,
+        "selected_family": "random_forest",
+        "selected_threshold": 0.45,
+        "selection_metric": "f1",
+        "n_test": 1000,
+        "test_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.45,
+          "n": 1000,
+          "n_positive": 141,
+          "n_negative": 859,
+          "positive_rate": 0.141,
+          "predicted_positive": 132,
+          "predicted_positive_rate": 0.132,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                846,
+                13
+              ],
+              [
+                22,
+                119
+              ]
+            ],
+            "tn": 846,
+            "fp": 13,
+            "fn": 22,
+            "tp": 119,
+            "n": 1000
+          },
+          "accuracy": 0.965,
+          "precision": 0.9015151515151515,
+          "recall": 0.8439716312056738,
+          "f1": 0.8717948717948718,
+          "specificity": 0.9848661233993015,
+          "balanced_accuracy": 0.9144188773024876,
+          "macro_precision": 0.938084764697668,
+          "macro_recall": 0.9144188773024876,
+          "macro_f1": 0.9257642569744481,
+          "roc_auc": 0.9383416309579835,
+          "pr_auc": 0.8973210549326094,
+          "brier": 0.03901493419386898,
+          "log_loss": 0.16835701293839836,
+          "class_metrics": {
+            "0": {
+              "precision": 0.9746543778801844,
+              "recall": 0.9848661233993015,
+              "f1": 0.9797336421540244,
+              "support": 859
+            },
+            "1": {
+              "precision": 0.9015151515151515,
+              "recall": 0.8439716312056738,
+              "f1": 0.8717948717948718,
+              "support": 141
+            }
+          },
+          "undefined": [],
+          "notes": []
+        }
+      },
+      "warnings": [],
+      "error": null
+    },
+    {
+      "name": "explain",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:47:18Z",
+      "finished_at": "2026-10-23T00:47:22Z",
+      "duration_ms": 3887,
+      "outputs": {
+        "explain_run_id": "phase13-final-live-xai",
+        "explain_family": "random_forest"
+      },
+      "artifacts": {
+        "global_json": ".phase13_final/artifacts/explanations/phase13-final-live-xai/global.json",
+        "importance_png": ".phase13_final/artifacts/explanations/phase13-final-live-xai/importance.png",
+        "summary_png": ".phase13_final/artifacts/explanations/phase13-final-live-xai/summary.png",
+        "dependence_png": ".phase13_final/artifacts/explanations/phase13-final-live-xai/dependence_total_day_charge.png",
+        "local_plot_630": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00630.png",
+        "local_json_630": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00630.json",
+        "local_plot_675": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00675.png",
+        "local_json_675": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00675.json",
+        "local_plot_825": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00825.png",
+        "local_json_825": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00825.json",
+        "run_manifest": ".phase13_final/artifacts/explanations/phase13-final-live-xai/run_manifest.json"
+      },
+      "summary": {
+        "explain_run_id": "phase13-final-live-xai",
+        "family": "random_forest",
+        "complete": true,
+        "local_examples": 3,
+        "global_top_features": [
+          "international_plan",
+          "total_day_charge",
+          "number_customer_service_calls",
+          "total_day_minutes",
+          "support_calls_per_usage_hour"
+        ]
+      },
+      "warnings": [],
+      "error": null
+    },
+    {
+      "name": "score",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:47:22Z",
+      "finished_at": "2026-10-23T00:47:22Z",
+      "duration_ms": 705,
+      "outputs": {
+        "risk_run_id": "phase13-final-live-risk"
+      },
+      "artifacts": {
+        "root": ".phase13_final/artifacts/predictions/phase13-final-live-risk",
+        "churn_scores": ".phase13_final/artifacts/predictions/phase13-final-live-risk/churn_scores.parquet",
+        "risk_summary": ".phase13_final/artifacts/predictions/phase13-final-live-risk/risk_summary.json",
+        "tiers": ".phase13_final/artifacts/predictions/phase13-final-live-risk/tiers.csv",
+        "run_manifest": ".phase13_final/artifacts/predictions/phase13-final-live-risk/run_manifest.json",
+        "drivers": ".phase13_final/artifacts/predictions/phase13-final-live-risk/drivers.json"
+      },
+      "summary": {
+        "risk_run_id": "phase13-final-live-risk",
+        "n_scored": 1000,
+        "n_rejected": 0,
+        "classification_threshold": 0.45,
+        "tier_counts": {
+          "low": {
+            "count": 858,
+            "pct": 0.858
+          },
+          "medium": {
+            "count": 31,
+            "pct": 0.031
+          },
+          "high": {
+            "count": 40,
+            "pct": 0.04
+          },
+          "critical": {
+            "count": 71,
+            "pct": 0.071
+          }
+        },
+        "drivers_available": 10
+      },
+      "warnings": [],
+      "error": null
+    },
+    {
+      "name": "simulate",
+      "status": "succeeded",
+      "started_at": "2026-10-23T00:47:22Z",
+      "finished_at": "2026-10-23T00:47:24Z",
+      "duration_ms": 1120,
+      "outputs": {
+        "scenario_id": "phase13-final-live-sim"
+      },
+      "artifacts": {
+        "root": ".phase13_final/artifacts/simulations/phase13-final-live-sim",
+        "selection": ".phase13_final/artifacts/simulations/phase13-final-live-sim/selection.csv",
+        "plot_allocation": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/budget_allocation.png",
+        "sensitivity": ".phase13_final/artifacts/simulations/phase13-final-live-sim/sensitivity.json",
+        "sensitivity_csv": ".phase13_final/artifacts/simulations/phase13-final-live-sim/sensitivity.csv",
+        "plot_sensitivity_effectiveness": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/sensitivity_effectiveness.png",
+        "plot_sensitivity_budget": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/sensitivity_budget.png",
+        "plot_sensitivity_cost_per_contact": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/sensitivity_cost_per_contact.png",
+        "result": ".phase13_final/artifacts/simulations/phase13-final-live-sim/result.json",
+        "report": ".phase13_final/artifacts/simulations/phase13-final-live-sim/report.md",
+        "run_manifest": ".phase13_final/artifacts/simulations/phase13-final-live-sim/run_manifest.json"
+      },
+      "summary": {
+        "scenario_id": "phase13-final-live-sim",
+        "budget": 1000.0,
+        "assumptions": {
+          "cost_per_contact": 5.0,
+          "effectiveness": 0.3,
+          "monthly_value": null,
+          "horizon_months": 6.0,
+          "value_unit": "value_units"
+        },
+        "contacted": 200,
+        "spend": 1000.0,
+        "expected_prevented_churn": 32.83338516165291,
+        "hypothetical": true
+      },
+      "warnings": [
+        "No per-customer value assumption was supplied; saved-value, net-benefit, ROI and break-even projections are unavailable. No revenue or lifetime value was invented.",
+        "800 eligible customer(s) were left untargeted because the remaining budget could not cover their intervention cost."
+      ],
+      "error": null
+    }
+  ],
+  "artifacts": {
+    "dataset_id": "openml:46915",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "source_mode": "network",
+    "source.candidates": ".phase13_final/reports/acquisition/candidates.json",
+    "source.rejections": ".phase13_final/reports/acquisition/rejections.json",
+    "source.validation_report_json": ".phase13_final/reports/validation/openml_46915.json",
+    "source.validation_report_md": ".phase13_final/reports/validation/openml_46915.md",
+    "source.manifest": ".phase13_final/data/manifests/openml_46915.json",
+    "preprocessing_run_id": "phase13-final-live-prep",
+    "preprocess.split": ".phase13_final/artifacts/splits/phase13-final-live-prep.json",
+    "preprocess.preprocessor": ".phase13_final/artifacts/preprocessors/phase13-final-live-prep/pipeline.joblib",
+    "preprocess.arrays": ".phase13_final/artifacts/prepared/phase13-final-live-prep/matrices.npz",
+    "preprocess.summary": ".phase13_final/artifacts/prepared/phase13-final-live-prep/summary.json",
+    "preprocess.report_json": ".phase13_final/reports/preprocessing/phase13-final-live-prep.json",
+    "preprocess.report_md": ".phase13_final/reports/preprocessing/phase13-final-live-prep.md",
+    "model_run_id": "phase13-final-live-mlp",
+    "train.model": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/model.keras",
+    "train.metadata": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/metadata.json",
+    "train.history": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/history.json",
+    "train.curves": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/learning_curves.png",
+    "train.report_json": ".phase13_final/reports/models/phase13-final-live-mlp.json",
+    "train.report_md": ".phase13_final/reports/models/phase13-final-live-mlp.md",
+    "train.checkpoint": ".phase13_final/artifacts/models/phase13-final-live-mlp/mlp/best.keras",
+    "benchmark_run_id": "phase13-final-live-bench",
+    "selected_family": "random_forest",
+    "evaluate.root": ".phase13_final/artifacts/evaluation/phase13-final-live-bench",
+    "evaluate.metrics": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/metrics.json",
+    "evaluate.markdown": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/benchmark.md",
+    "evaluate.predictions": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/predictions.npz",
+    "evaluate.curves": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/curves.json",
+    "evaluate.threshold_analysis": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/threshold_analysis.json",
+    "evaluate.run_manifest": ".phase13_final/artifacts/evaluation/phase13-final-live-bench/run_manifest.json",
+    "explain_run_id": "phase13-final-live-xai",
+    "explain_family": "random_forest",
+    "explain.global_json": ".phase13_final/artifacts/explanations/phase13-final-live-xai/global.json",
+    "explain.importance_png": ".phase13_final/artifacts/explanations/phase13-final-live-xai/importance.png",
+    "explain.summary_png": ".phase13_final/artifacts/explanations/phase13-final-live-xai/summary.png",
+    "explain.dependence_png": ".phase13_final/artifacts/explanations/phase13-final-live-xai/dependence_total_day_charge.png",
+    "explain.local_plot_630": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00630.png",
+    "explain.local_json_630": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00630.json",
+    "explain.local_plot_675": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00675.png",
+    "explain.local_json_675": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00675.json",
+    "explain.local_plot_825": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00825.png",
+    "explain.local_json_825": ".phase13_final/artifacts/explanations/phase13-final-live-xai/local/row_00825.json",
+    "explain.run_manifest": ".phase13_final/artifacts/explanations/phase13-final-live-xai/run_manifest.json",
+    "risk_run_id": "phase13-final-live-risk",
+    "score.root": ".phase13_final/artifacts/predictions/phase13-final-live-risk",
+    "score.churn_scores": ".phase13_final/artifacts/predictions/phase13-final-live-risk/churn_scores.parquet",
+    "score.risk_summary": ".phase13_final/artifacts/predictions/phase13-final-live-risk/risk_summary.json",
+    "score.tiers": ".phase13_final/artifacts/predictions/phase13-final-live-risk/tiers.csv",
+    "score.run_manifest": ".phase13_final/artifacts/predictions/phase13-final-live-risk/run_manifest.json",
+    "score.drivers": ".phase13_final/artifacts/predictions/phase13-final-live-risk/drivers.json",
+    "scenario_id": "phase13-final-live-sim",
+    "simulate.root": ".phase13_final/artifacts/simulations/phase13-final-live-sim",
+    "simulate.selection": ".phase13_final/artifacts/simulations/phase13-final-live-sim/selection.csv",
+    "simulate.plot_allocation": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/budget_allocation.png",
+    "simulate.sensitivity": ".phase13_final/artifacts/simulations/phase13-final-live-sim/sensitivity.json",
+    "simulate.sensitivity_csv": ".phase13_final/artifacts/simulations/phase13-final-live-sim/sensitivity.csv",
+    "simulate.plot_sensitivity_effectiveness": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/sensitivity_effectiveness.png",
+    "simulate.plot_sensitivity_budget": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/sensitivity_budget.png",
+    "simulate.plot_sensitivity_cost_per_contact": ".phase13_final/artifacts/simulations/phase13-final-live-sim/plots/sensitivity_cost_per_contact.png",
+    "simulate.result": ".phase13_final/artifacts/simulations/phase13-final-live-sim/result.json",
+    "simulate.report": ".phase13_final/artifacts/simulations/phase13-final-live-sim/report.md",
+    "simulate.run_manifest": ".phase13_final/artifacts/simulations/phase13-final-live-sim/run_manifest.json"
+  },
+  "warnings": [
+    "maximum epoch limit (24) reached; early stopping did not trigger",
+    "TensorFlow op determinism is disabled; repeated runs may vary at floating-point precision",
+    "No per-customer value assumption was supplied; saved-value, net-benefit, ROI and break-even projections are unavailable. No revenue or lifetime value was invented.",
+    "800 eligible customer(s) were left untargeted because the remaining budget could not cover their intervention cost."
+  ],
+  "error": null
+}

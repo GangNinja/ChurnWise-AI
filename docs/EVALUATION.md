@@ -129,9 +129,11 @@ matrix. `predict_proba(...)[:, 1]` is `P(churn = 1)`.
 
 `RandomForestClassifier(n_estimators=300, max_depth=None, min_samples_split=2,
 min_samples_leaf=2, max_features="sqrt", bootstrap=True,
-class_weight=<Phase 5 weights>, n_jobs=-1, random_state=seed)`. The forest is
+class_weight=<Phase 5 weights>, n_jobs=1, random_state=seed)`. The forest is
 deliberately bounded for CPU-only laptops; `min_samples_leaf=2` limits tree
-memorisation while remaining a genuine ensemble.
+memorisation while remaining a genuine ensemble. Serial execution is the default
+so repeated predictions are bitwise stable; `n_jobs=-1` can be selected
+explicitly as a speed trade-off, at the risk of one-ULP probability drift.
 
 ### MLP
 

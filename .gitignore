@@ -63,3 +63,7 @@ desktop.ini
 .cache/
 *.orig
 *.rej
+
+# --- Local verification working trees (reproducible; evidence is in docs) ---
+.venv_clean/
+.phase*/

@@ -138,7 +138,7 @@ def main() -> int:
     for num, body in accept_phases:
         absent = [s for s in REQUIRED_SUBSECTIONS if s.lower() not in body.lower()]
         check(f"phase {num} documents all seven required subsections", not absent, f"missing {absent}")
-        boxes = len(re.findall(r"- \[ \]", body))
+        boxes = len(re.findall(r"- \[[ xX]\]", body))
         check(f"phase {num} has explicit completion criteria (>=3)", boxes >= 3, f"found {boxes}")
         check(f"phase {num} declares at least one verification test",
               bool(re.search(r"\| T\d+\.\d+", body)), "no T<phase>.<n> test rows")
@@ -246,7 +246,7 @@ def main() -> int:
                 continue
             path_part, _, anchor = target.partition("#")
             resolved = (DOCS / path_part).resolve()
-            if not resolved.is_file():
+            if not (resolved.is_file() or resolved.is_dir()):
                 broken.append(f"{label} -> {target}")
                 continue
             if anchor:

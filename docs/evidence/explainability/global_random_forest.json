@@ -1,0 +1,625 @@
+{
+  "schema_version": "1.0",
+  "phase": 8,
+  "run_id": "20261022T131420-openml_46915-random_forest-xai-84eecf5d",
+  "family": "random_forest",
+  "output_space": "probability",
+  "generated_at": "2026-10-22T13:46:51Z",
+  "base_value": 0.5005006942890591,
+  "feature_importance": [
+    {
+      "rank": 1,
+      "feature": "international_plan",
+      "kind": "categorical",
+      "mean_abs_shap": 0.08055052474721051,
+      "mean_shap": -0.01185087016022801,
+      "share": 0.13954776799063048,
+      "positive_share": 0.15,
+      "n_columns": 2,
+      "columns": [
+        "categorical__international_plan_0",
+        "categorical__international_plan_1"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 2,
+      "feature": "total_day_charge",
+      "kind": "numeric",
+      "mean_abs_shap": 0.06927694209415351,
+      "mean_shap": -0.04342454223109596,
+      "share": 0.12001712804223616,
+      "positive_share": 0.13,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_day_charge"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 3,
+      "feature": "total_day_minutes",
+      "kind": "numeric",
+      "mean_abs_shap": 0.06561590951573769,
+      "mean_shap": -0.04311567043789267,
+      "share": 0.11367466253425568,
+      "positive_share": 0.12,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_day_minutes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 4,
+      "feature": "number_customer_service_calls",
+      "kind": "numeric",
+      "mean_abs_shap": 0.05624527391716134,
+      "mean_shap": -0.03125274997355502,
+      "share": 0.09744073623099891,
+      "positive_share": 0.065,
+      "n_columns": 1,
+      "columns": [
+        "numeric__number_customer_service_calls"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 5,
+      "feature": "support_calls_per_usage_hour",
+      "kind": "numeric",
+      "mean_abs_shap": 0.0445809945372525,
+      "mean_shap": -0.029770311872138105,
+      "share": 0.07723324338357607,
+      "positive_share": 0.08,
+      "n_columns": 1,
+      "columns": [
+        "numeric__support_calls_per_usage_hour"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 6,
+      "feature": "total_eve_minutes",
+      "kind": "numeric",
+      "mean_abs_shap": 0.035255901246552625,
+      "mean_shap": -0.027849176378966493,
+      "share": 0.0610782157272648,
+      "positive_share": 0.11,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_eve_minutes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 7,
+      "feature": "total_eve_charge",
+      "kind": "numeric",
+      "mean_abs_shap": 0.02983284979803638,
+      "mean_shap": -0.024054943667793576,
+      "share": 0.05168318412798271,
+      "positive_share": 0.105,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_eve_charge"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 8,
+      "feature": "total_intl_calls",
+      "kind": "numeric",
+      "mean_abs_shap": 0.028426719562774542,
+      "mean_shap": -0.018131038394856098,
+      "share": 0.049247168516033196,
+      "positive_share": 0.185,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_intl_calls"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 9,
+      "feature": "usage_band",
+      "kind": "categorical",
+      "mean_abs_shap": 0.024899946821556974,
+      "mean_shap": -0.004941205330838039,
+      "share": 0.043137298148439446,
+      "positive_share": 0.405,
+      "n_columns": 4,
+      "columns": [
+        "categorical__usage_band_0-100",
+        "categorical__usage_band_100-200",
+        "categorical__usage_band_200-300",
+        "categorical__usage_band_300+"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 10,
+      "feature": "voice_mail_plan",
+      "kind": "categorical",
+      "mean_abs_shap": 0.02270423310093704,
+      "mean_shap": -0.009603856498037132,
+      "share": 0.03933338812028627,
+      "positive_share": 0.785,
+      "n_columns": 2,
+      "columns": [
+        "categorical__voice_mail_plan_0",
+        "categorical__voice_mail_plan_1"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 11,
+      "feature": "total_intl_minutes",
+      "kind": "numeric",
+      "mean_abs_shap": 0.021615653009602786,
+      "mean_shap": -0.01719809988884274,
+      "share": 0.037447504415599506,
+      "positive_share": 0.12,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_intl_minutes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 12,
+      "feature": "total_intl_charge",
+      "kind": "numeric",
+      "mean_abs_shap": 0.019775929235694132,
+      "mean_shap": -0.015696428255277107,
+      "share": 0.03426032038205114,
+      "positive_share": 0.12,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_intl_charge"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 13,
+      "feature": "total_night_charge",
+      "kind": "numeric",
+      "mean_abs_shap": 0.01591312602500466,
+      "mean_shap": -0.014384058224411723,
+      "share": 0.02756830232344223,
+      "positive_share": 0.145,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_night_charge"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 14,
+      "feature": "total_night_minutes",
+      "kind": "numeric",
+      "mean_abs_shap": 0.013609809038968593,
+      "mean_shap": -0.012826708909062845,
+      "share": 0.023577977674596653,
+      "positive_share": 0.115,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_night_minutes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 15,
+      "feature": "account_length",
+      "kind": "numeric",
+      "mean_abs_shap": 0.010518410471307384,
+      "mean_shap": -0.008994476595454153,
+      "share": 0.01822236054559101,
+      "positive_share": 0.08,
+      "n_columns": 1,
+      "columns": [
+        "numeric__account_length"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 16,
+      "feature": "number_vmail_messages",
+      "kind": "numeric",
+      "mean_abs_shap": 0.009294298787644293,
+      "mean_shap": -0.006606653980827553,
+      "share": 0.016101678479738264,
+      "positive_share": 0.415,
+      "n_columns": 1,
+      "columns": [
+        "numeric__number_vmail_messages"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 17,
+      "feature": "total_day_calls",
+      "kind": "numeric",
+      "mean_abs_shap": 0.008900799616415163,
+      "mean_shap": -0.00830001943817872,
+      "share": 0.015419970555134214,
+      "positive_share": 0.04,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_day_calls"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 18,
+      "feature": "total_eve_calls",
+      "kind": "numeric",
+      "mean_abs_shap": 0.008525033119637385,
+      "mean_shap": -0.007978666905890067,
+      "share": 0.014768983164604356,
+      "positive_share": 0.055,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_eve_calls"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 19,
+      "feature": "total_night_calls",
+      "kind": "numeric",
+      "mean_abs_shap": 0.007697968672000049,
+      "mean_shap": -0.007658799033981612,
+      "share": 0.013336155780618992,
+      "positive_share": 0.025,
+      "n_columns": 1,
+      "columns": [
+        "numeric__total_night_calls"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 20,
+      "feature": "area_code",
+      "kind": "categorical",
+      "mean_abs_shap": 0.003985137949628642,
+      "mean_shap": -0.003679612626861012,
+      "share": 0.006903953856920008,
+      "positive_share": 0.055,
+      "n_columns": 3,
+      "columns": [
+        "categorical__area_code_408.0",
+        "categorical__area_code_415.0",
+        "categorical__area_code_510.0"
+      ],
+      "direction": "decreases_churn"
+    }
+  ],
+  "sample": {
+    "split": "val",
+    "sampled_rows": 200,
+    "available_rows": 1000,
+    "sampling": "seeded uniform without replacement",
+    "seed": 42,
+    "positions": [
+      6,
+      22,
+      28,
+      32,
+      34,
+      37,
+      53,
+      55,
+      57,
+      66,
+      69,
+      71,
+      73,
+      76,
+      84,
+      86,
+      87,
+      103,
+      104,
+      105,
+      113,
+      117,
+      120,
+      125,
+      128,
+      132,
+      138,
+      141,
+      149,
+      150,
+      157,
+      161,
+      162,
+      164,
+      165,
+      180,
+      189,
+      199,
+      202,
+      214,
+      221,
+      225,
+      232,
+      236,
+      252,
+      258,
+      260,
+      267,
+      277,
+      280,
+      282,
+      284,
+      289,
+      298,
+      299,
+      304,
+      310,
+      316,
+      321,
+      323,
+      326,
+      332,
+      338,
+      341,
+      346,
+      348,
+      352,
+      355,
+      359,
+      368,
+      369,
+      374,
+      376,
+      377,
+      385,
+      387,
+      391,
+      394,
+      398,
+      403,
+      404,
+      408,
+      410,
+      414,
+      416,
+      419,
+      425,
+      426,
+      428,
+      435,
+      439,
+      450,
+      452,
+      462,
+      468,
+      484,
+      488,
+      491,
+      496,
+      507,
+      515,
+      520,
+      522,
+      523,
+      525,
+      526,
+      530,
+      531,
+      533,
+      557,
+      563,
+      564,
+      572,
+      575,
+      584,
+      587,
+      589,
+      590,
+      598,
+      600,
+      602,
+      603,
+      604,
+      612,
+      616,
+      619,
+      620,
+      625,
+      632,
+      638,
+      639,
+      641,
+      644,
+      646,
+      661,
+      677,
+      679,
+      681,
+      682,
+      685,
+      687,
+      692,
+      693,
+      700,
+      703,
+      707,
+      709,
+      712,
+      717,
+      718,
+      721,
+      726,
+      736,
+      740,
+      741,
+      743,
+      750,
+      751,
+      752,
+      757,
+      763,
+      779,
+      785,
+      786,
+      790,
+      792,
+      794,
+      803,
+      807,
+      813,
+      821,
+      828,
+      832,
+      835,
+      858,
+      861,
+      870,
+      871,
+      874,
+      881,
+      885,
+      909,
+      911,
+      913,
+      914,
+      920,
+      924,
+      929,
+      938,
+      939,
+      943,
+      954,
+      957,
+      960,
+      961,
+      966,
+      972,
+      980,
+      984,
+      995
+    ],
+    "test_rows_used": 0,
+    "local_selection": "highest and lowest predicted risk within the sample"
+  },
+  "additivity_error": 8.76902717106276e-15,
+  "explainer": {
+    "name": "shap.TreeExplainer",
+    "output_space": "probability",
+    "background_rows": 100,
+    "feature_count": 27,
+    "selected_by_fallback": false,
+    "fallback_reason": null,
+    "notes": [
+      "Tree SHAP is exact for tree ensembles; values sum to P(churn = 1)."
+    ],
+    "warnings": [],
+    "source_features": 20,
+    "transformed_columns": 27,
+    "aggregation": "sum of transformed-column SHAP values per source feature",
+    "mapping": {
+      "aggregation": "sum of transformed-column SHAP values per source feature",
+      "source_features": 20,
+      "transformed_columns": 27,
+      "one_hot_groups": [
+        {
+          "feature": "area_code",
+          "columns": [
+            "categorical__area_code_408.0",
+            "categorical__area_code_415.0",
+            "categorical__area_code_510.0"
+          ],
+          "labels": [
+            "area_code=408.0",
+            "area_code=415.0",
+            "area_code=510.0"
+          ]
+        },
+        {
+          "feature": "international_plan",
+          "columns": [
+            "categorical__international_plan_0",
+            "categorical__international_plan_1"
+          ],
+          "labels": [
+            "international_plan=0",
+            "international_plan=1"
+          ]
+        },
+        {
+          "feature": "usage_band",
+          "columns": [
+            "categorical__usage_band_0-100",
+            "categorical__usage_band_100-200",
+            "categorical__usage_band_200-300",
+            "categorical__usage_band_300+"
+          ],
+          "labels": [
+            "usage_band=0-100",
+            "usage_band=100-200",
+            "usage_band=200-300",
+            "usage_band=300+"
+          ]
+        },
+        {
+          "feature": "voice_mail_plan",
+          "columns": [
+            "categorical__voice_mail_plan_0",
+            "categorical__voice_mail_plan_1"
+          ],
+          "labels": [
+            "voice_mail_plan=0",
+            "voice_mail_plan=1"
+          ]
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "dataset_id": "openml:46915",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "split_fingerprint": "4b0c45db677fa9619de99b6a8b786a3da2c4da93824c46db65412a85829594dd",
+    "preprocessing_run_id": "20261021T123405Z-openml_46915-989d8802",
+    "model_run_id": "20261021T145336Z-openml_46915-bench-04595d7b/random_forest",
+    "model_sha256": "c074db6628fc21afcc7ff71c4bb8f066379cb21c46cb03b7fab0db5cf8e949e4",
+    "model_path": "artifacts\\evaluation\\20261021T145336Z-openml_46915-bench-04595d7b\\models\\random_forest\\model.joblib",
+    "framework": "scikit-learn",
+    "benchmark_run_id": "20261021T145336Z-openml_46915-bench-04595d7b",
+    "config": {
+      "n_estimators": 300,
+      "max_depth": null,
+      "min_samples_split": 2,
+      "min_samples_leaf": 2,
+      "max_features": "sqrt",
+      "bootstrap": true,
+      "class_weight": "balanced_subsample",
+      "n_jobs": -1,
+      "random_state": 42
+    }
+  },
+  "plots": {
+    "importance": "artifacts\\explanations\\20261022T131420-openml_46915-random_forest-xai-84eecf5d\\importance.png",
+    "summary": "artifacts\\explanations\\20261022T131420-openml_46915-random_forest-xai-84eecf5d\\summary.png",
+    "dependence": "artifacts\\explanations\\20261022T131420-openml_46915-random_forest-xai-84eecf5d\\dependence_total_day_charge.png"
+  },
+  "warnings": [],
+  "duration_seconds": 12.928495100000873,
+  "config": {
+    "sample_size": 200,
+    "background_size": 100,
+    "mlp_sample_size": 60,
+    "mlp_background_size": 50,
+    "local_examples": 5,
+    "top_k": 5,
+    "seed": 42,
+    "tolerance": 0.0001,
+    "chunk_size": 100,
+    "max_local_batch": 500,
+    "permutation_max_evals": 500,
+    "fingerprint": "7a89bc7de84298c1946dbac65e641ed5a3094522e49d4639ca67f5bfd4b8f6b7"
+  }
+}

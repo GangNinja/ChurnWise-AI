@@ -167,36 +167,39 @@ Each phase lists objective, scope, key artifacts, dependencies and exit gate. Th
 - **Dependencies:** P9 (ranked scores), P4 (revenue proxy availability).
 - **Exit gate:** results match independently hand-computed expectations; every output carries its assumptions; zero-at-risk and zero-cost edge cases are handled without division errors; projections labelled as projections.
 - **Risks:** users mistaking projections for measured uplift; revenue proxy absent for some datasets.
-- **Implementation status (verified in [PHASE10_REPORT.md](PHASE10_REPORT.md)):** validated scenario/assumption schema with actionable `CW-SIM-*` failures, four targeting strategies with deterministic tie-breaking, budget and contact-limit enforcement (uniform and per-customer costs, zero-cost and zero-budget guards), expected prevented-churn and financial projections with explicit undefined metrics, assumption-visible scenario comparison, one-at-a-time sensitivity grids, Markdown/CSV/JSON reports, PNG charts, and persisted per-scenario artifacts are implemented. A genuine simulation on the real OpenML `46915` Phase 9 run (1,000 assessed customers) selected 142 customers at a 0.30 risk floor, spent 710 of a 1,000 budget and projected 28.8787 prevented churns at assumed effectiveness 0.30 (ROI 1120.22%, break-even effectiveness 2.46%) — labelled as a projection throughout. Focused simulation tests 57/57 passed (47 unit + 10 integration); full suite 547 passed / 7 live-network skips. Methodology and interface: [SIMULATION.md](SIMULATION.md).
+- **Implementation status (verified in [PHASE10_REPORT.md](PHASE10_REPORT.md)):** validated scenario/assumption schema with actionable `CW-SIM-*` failures, four targeting strategies with deterministic tie-breaking, budget and contact-limit enforcement (uniform and per-customer costs, zero-cost and zero-budget guards), expected prevented-churn and financial projections with explicit undefined metrics, assumption-visible scenario comparison, one-at-a-time sensitivity grids, Markdown/CSV/JSON reports, PNG charts, and persisted per-scenario artifacts are implemented. A genuine simulation on the real OpenML `46915` Phase 9 run (1,000 assessed customers) selected 142 customers at a 0.30 risk floor, spent 710 of a 1,000 budget and projected 28.8787 prevented churns at assumed effectiveness 0.30 (ROI 1120.22%, break-even effectiveness 2.46%) — labelled as a projection throughout. Focused simulation tests 57/57 passed (47 unit + 10 integration); full suite was 547 passed / 7 live-network skips at Phase 10 delivery and is **624 passed / 7 skipped** in the final Phase 13 run. Methodology and interface: [SIMULATION.md](SIMULATION.md).
 
 ### Phase 11 — Interactive Intelligence Dashboard
 
-- **Objective:** deliver the complete seven-page Streamlit experience over stored artifacts.
-- **Scope in:** navigation shell, artifact-access layer with caching, pages (Overview, Model performance, Explainability, Risk explorer, Customer detail, Campaign simulator, Reliability & limits), empty/error states, filters, exports, run-identity headers.
-- **Scope out:** any training, acquisition or SHAP execution inside the UI process.
-- **Artifacts:** `churnwise/dashboard/**`, `tests/integration/test_dashboard_apptest.py`, `scripts/run_dashboard.ps1` (or documented command), screenshots in `docs/`.
-- **Dependencies:** P4, P7, P8, P9, P10 artifacts.
-- **Exit gate:** app starts headless, every page renders with real artifacts, missing-artifact states are actionable, no placeholder numbers, `streamlit.testing.v1.AppTest` covers all pages.
-- **Risks:** Streamlit version API drift, cache key mistakes serving stale metrics, slow SHAP payloads.
+- **Objective:** deliver the complete Streamlit experience over stored artifacts and the existing phase services.
+- **Scope in:** navigation shell; cached artifact access; Overview, Data discovery, Data quality, Model training, Model evaluation, Explainability, Risk intelligence, Assess records, Customer detail, Retention simulator and Reliability & limits; action-gated discovery/acquisition/training/assessment/simulation; empty/error states; filters; exports; run-identity headers.
+- **Scope out:** implicit work on page load, new modelling logic, background workers and infrastructure.
+- **Artifacts:** `churnwise/dashboard/**`, `tests/unit/test_dashboard_{analytics,assessment,data_access}.py`, `tests/integration/test_dashboard_apptest.py`, `docs/DASHBOARD.md`, `docs/PHASE11_REPORT.md`.
+- **Dependencies:** P2, P3, P4, P6, P7, P8, P9, P10.
+- **Exit gate:** app starts headless, every page renders with real artifacts, missing-artifact states are actionable, no placeholder numbers, `streamlit.testing.v1.AppTest` covers all pages, and action outputs match the underlying service.
+- **Risks:** Streamlit version API drift, cache key mistakes serving stale metrics, synchronous training blocking the process, slow SHAP payloads.
+- **Implementation status (verified in [PHASE11_REPORT.md](PHASE11_REPORT.md)):** eleven pages, token-keyed caching, schema-driven individual and batch Phase 9 assessment, action-gated discovery/acquisition with fallback, synchronous MLP training, stored SHAP display, configurable risk views/exports, in-memory Phase 10 projections, and reliability audit are implemented. Focused dashboard suite 42/42 passed; full suite 624 passed / 7 live-network skips after Phase 13. The app was started headless, all pages rendered against real artifacts, and one individual record plus a six-row browser batch upload were genuinely scored through the running app. Screenshots of all eleven pages plus Phase 13 overview/risk/simulator captures are in [docs/screenshots](screenshots/). Phase 13 measured a 1.937 s first render and HTTP 200 in under 2 s; an automated browser E2E suite and live discovery/training remain outside the automated suite. Usage: [DASHBOARD.md](DASHBOARD.md).
 
 ### Phase 12 — Integration, Reliability and End-to-End Testing
 
 - **Objective:** prove the whole pipeline runs reproducibly from an empty data directory and is honest under failure.
 - **Scope in:** `run` orchestrator, end-to-end test with network disabled on a committed fixture, contract tests for every JSON artifact, determinism test, failure-path tests (bad hash, incompatible schema, licence block, offline cold cache), import-boundary test, performance measurement, artifact cleanup tooling.
 - **Scope out:** new features.
-- **Artifacts:** `churnwise/pipeline.py`, `tests/integration/test_end_to_end.py`, `tests/test_contracts.py`, `tests/test_import_boundaries.py`, `reports/performance.md`, `docs/RUNBOOK.md`.
+- **Artifacts:** `churnwise/pipeline/**`, `tests/integration/test_pipeline_workflow.py`, `tests/unit/test_pipeline_contracts.py`, `tests/unit/test_pipeline_cleanup.py`, `docs/RUNBOOK.md`, `docs/PERFORMANCE.md`, `docs/DEPENDENCIES.md`.
 - **Dependencies:** P1–P11.
 - **Exit gate:** single command reproduces the full artifact set; all contract and determinism tests pass; every failure path yields its documented error code; measured timings are reported against budget.
 - **Risks:** TF/Streamlit startup overhead in tests, fixture-vs-real-data divergence, Windows path handling.
+- **Implementation status (verified in [PHASE12_REPORT.md](PHASE12_REPORT.md)):** `run` composes all seven stages with a durable manifest, same-configuration resume, cross-phase artifact verification and safe dry-run cleanup. Fixture and live workflows completed; final full suite **624 passed, 7 live-network skips**, and the seven live tests passed with `--run-live`. A fresh environment installed only from `requirements.lock.txt` reproduced the suite after the Phase 13 fix. Timings: fixture 16.668 s, live 58.0 s, both within measured budgets. Limits: fast profile only, default MLP floats not bitwise deterministic, no universal JSON-Schema registry, and the lock is platform-specific. Usage and recovery: [RUNBOOK.md](RUNBOOK.md).
 
 ### Phase 13 — Final Verification, Documentation and Presentation
 
 - **Objective:** verify every acceptance criterion with evidence and produce the final documentation and demo.
 - **Scope in:** criteria-by-criteria verification table, final metrics summary (measured, with run IDs), limitation and ethics statement, README quick start, architecture/roadmap refresh, demo script and screenshots, cleanup of dead code and stale artifacts.
 - **Scope out:** scope expansion.
-- **Artifacts:** `docs/FINAL_VERIFICATION.md`, `docs/PRESENTATION.md`, `README.md`, refreshed architecture docs, demo assets.
+- **Artifacts:** `docs/FINAL_VERIFICATION_REPORT.md`, `docs/FINAL_ACCEPTANCE_MATRIX.md`, `docs/PROJECT_PRESENTATION.md`, `docs/PROJECT_SHOWCASE.md`, `docs/DEMO_SCRIPT.md`, `docs/RESUME_BULLETS.md`, `README.md`, refreshed architecture docs, screenshots.
 - **Dependencies:** P12.
 - **Exit gate:** every criterion in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) marked pass/fail with a concrete artifact reference; no unresolved placeholder; a reviewer can reproduce the demo from a clean checkout in the documented steps.
+- **Implementation status (verified 2026-10-23):** all deliverables exist. Final suite **624 passed / 7 live-network skips**; docs checker 114/114; dashboard 42 focused tests and 1.937 s first render; post-fix live run `phase13-final-live2` completed 7/7 stages with the same metrics, tiers and projection as the earlier run. All 13 phases are marked **VERIFIED** in [FINAL_ACCEPTANCE_MATRIX.md](FINAL_ACCEPTANCE_MATRIX.md); open limits are D-08 (MLP float identity) and D-09 (distributed artifact schemas).
 - **Risks:** late documentation drift, over-claiming results, insufficient time for the presentation.
 
 ---
@@ -223,6 +226,6 @@ The following are **non-negotiable across the roadmap** and must remain true at 
 2. All three model families (MLP, Logistic Regression, Random Forest) are trained, evaluated and reported.
 3. SHAP explanations cover both global behaviour and individual predictions.
 4. Risk ranking, filtering and campaign simulation are functional, not mocked.
-5. The dashboard contains all seven pages and reads only real artifacts.
+5. The dashboard contains every required area (overview, discovery, quality, training, evaluation, explainability, risk, simulator, customer detail, reliability) and reads only real artifacts; actions call existing services explicitly.
 6. Every reported number is traceable to a run ID and an artifact; no fabricated or predetermined results.
 7. No unnecessary infrastructure (database, backend service, auth, cloud) is introduced.

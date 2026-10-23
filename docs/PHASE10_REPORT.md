@@ -1,8 +1,10 @@
 # Phase 10 Report — Retention Campaign Simulation
 
 Status: **implemented and verified** against synthetic hand-computed fixtures and
-the real Phase 9 OpenML `46915` risk run. Scope is limited to Phase 10; no
-dashboard (Phase 11) code exists.
+the real Phase 9 OpenML `46915` risk run. Scope is limited to Phase 10; at the
+time of this report no dashboard (Phase 11) code existed. Phases 11–13 have
+since landed; see [PHASE11_REPORT.md](PHASE11_REPORT.md) and
+[FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md).
 
 > **The simulator estimates hypothetical outcomes.** It does not establish
 > causal intervention effectiveness, does not observe retention, and does not

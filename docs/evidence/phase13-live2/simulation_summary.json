@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "phase": 10,
+  "scenario_id": "phase13-final-live2-sim",
+  "generated_at": "2026-10-23T01:34:26Z",
+  "budget": 1000.0,
+  "assumptions": {
+    "cost_per_contact": 5.0,
+    "effectiveness": 0.3,
+    "monthly_value": null,
+    "horizon_months": 6.0,
+    "average_value_per_prevented_churn": null,
+    "value_unit": "value_units",
+    "financial_metrics_available": false,
+    "effectiveness_definition": "assumed probability that an intervention prevents churn for a customer who would otherwise churn",
+    "semantics": "user-supplied assumptions, not measured uplift"
+  },
+  "hypothetical": true,
+  "targeting": {
+    "strategy": "highest_risk",
+    "strategy_description": "highest churn risk first",
+    "min_risk_probability": null,
+    "risk_tiers": [],
+    "max_contacts": null,
+    "ordering": "descending churn probability, then record reference"
+  },
+  "population": {
+    "assessed": 1000,
+    "eligible": 1000,
+    "selected": 200,
+    "excluded": 800,
+    "exclusion_counts": {
+      "below_risk_threshold": 0,
+      "tier_not_targeted": 0,
+      "budget_exhausted": 800,
+      "contact_limit": 0
+    },
+    "counts_reconcile": true
+  },
+  "projection": {
+    "aggregate_churn_probability": 109.44461720550972,
+    "aggregate_churn_probability_is_probability_mass": true,
+    "expected_churn_count": 109.44461720550972,
+    "expected_prevented_churn": 32.83338516165291,
+    "expected_prevented_churn_is_fractional": true,
+    "assumed_effectiveness": 0.3,
+    "campaign_cost": 1000.0,
+    "assumed_average_value_per_prevented_churn": null,
+    "expected_saved_value": null,
+    "net_benefit": null,
+    "roi": null,
+    "roi_is_ratio": true,
+    "roi_definition": "net_benefit / campaign_cost (reports render it as a percentage)",
+    "cost_per_expected_prevented_churn": 30.45680471497437,
+    "break_even_effectiveness": null,
+    "random_contact_expected_prevented_churn": 9.138484446682218,
+    "targeting_lift_vs_random": 3.592869841078875,
+    "financial_metrics_available": false,
+    "undefined_metrics": {
+      "expected_saved_value": "no per-customer value assumption was supplied (monthly_value is None)",
+      "net_benefit": "no per-customer value assumption was supplied (monthly_value is None)",
+      "roi": "no per-customer value assumption was supplied (monthly_value is None)",
+      "break_even_effectiveness": "no per-customer value assumption was supplied (monthly_value is None)"
+    },
+    "projection": true,
+    "observed_retention_result": false
+  },
+  "limitations": [
+    "Expected prevented churn is a fractional expectation, not a count of customers who were actually retained.",
+    "Effectiveness is applied uniformly to every selected customer; no segment-specific or heterogeneous uplift is modelled.",
+    "The random-contact baseline assumes contact is drawn at random from the same eligible pool and ignores saturation and contact fatigue.",
+    "Sensitivity analysis varies one assumption at a time; interactions between budget, cost and effectiveness are not explored.",
+    "Cost overrides, when supplied, are assumptions about per-customer intervention cost and are not derived from customer records."
+  ],
+  "provenance": {
+    "phase": 10,
+    "simulation_schema_version": "1.0",
+    "risk_run_id": "phase13-final-live2-risk",
+    "risk_generated_at": "2026-10-23T01:34:26Z",
+    "model": {
+      "family": "random_forest",
+      "model_run_id": "phase13-final-live2-bench/random_forest",
+      "model_sha256": "2ca42e70b9add32332bbb49c432ab5bd1125618f5b33dba81a7167fbe77ff24d",
+      "preprocessing_run_id": "phase13-final-live2-prep"
+    },
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "split_fingerprint": "4b0c45db677fa9619de99b6a8b786a3da2c4da93824c46db65412a85829594dd",
+    "risk_thresholds": {
+      "boundaries": [
+        0.3,
+        0.5,
+        0.7
+      ],
+      "labels": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "semantics": "lower-inclusive, upper-exclusive; final tier is upper-inclusive"
+    },
+    "code_version": "0.10.0",
+    "seed": null,
+    "randomness": "none; selection and arithmetic are deterministic",
+    "probability_source": "Phase 9 RiskAssessment.churn_probability",
+    "assumption_source": "user-supplied campaign configuration",
+    "selection_order": "descending churn probability, then record reference",
+    "random_baseline_population": "eligible customers under the same targeting rule",
+    "scenario_fingerprint": "1092e8451eb0d8ca005e48f312133d8d29a9e76fbe5dbeac85db08fe600f1bc8",
+    "generated_at": "2026-10-23T01:34:26Z",
+    "assessed_rows": 1000
+  }
+}

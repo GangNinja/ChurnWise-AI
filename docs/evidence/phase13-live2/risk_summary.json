@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "phase": 9,
+  "run_id": "phase13-final-live2-risk",
+  "generated_at": "2026-10-23T01:34:26Z",
+  "n_rows": 1000,
+  "model": {
+    "family": "random_forest",
+    "model_run_id": "phase13-final-live2-bench/random_forest",
+    "model_sha256": "2ca42e70b9add32332bbb49c432ab5bd1125618f5b33dba81a7167fbe77ff24d",
+    "preprocessing_run_id": "phase13-final-live2-prep",
+    "benchmark_run_id": "phase13-final-live2-bench",
+    "positive_label": "Yes"
+  },
+  "classification_threshold": 0.45,
+  "risk_thresholds": {
+    "boundaries": [
+      0.3,
+      0.5,
+      0.7
+    ],
+    "labels": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "semantics": "lower-inclusive, upper-exclusive; final tier is upper-inclusive"
+  },
+  "population": {
+    "split": "val",
+    "received": 1000,
+    "scored": 1000,
+    "rejected": 0
+  },
+  "tier_counts": {
+    "low": {
+      "count": 858,
+      "pct": 0.858
+    },
+    "medium": {
+      "count": 31,
+      "pct": 0.031
+    },
+    "high": {
+      "count": 40,
+      "pct": 0.04
+    },
+    "critical": {
+      "count": 71,
+      "pct": 0.071
+    }
+  },
+  "probability": {
+    "min": 0.0,
+    "max": 0.9765296086625521,
+    "mean": 0.15230807411137032,
+    "median": 0.054130139406291564
+  },
+  "predicted_class_counts": {
+    "churn": 121,
+    "retained": 879
+  },
+  "explanations": {
+    "available": 10,
+    "unavailable": 990
+  },
+  "value_at_risk": {
+    "available": false,
+    "column": null,
+    "horizon_months": null,
+    "rows_with_value": 0
+  },
+  "provenance": {
+    "model_run_id": "phase13-final-live2-bench/random_forest",
+    "model_sha256": "2ca42e70b9add32332bbb49c432ab5bd1125618f5b33dba81a7167fbe77ff24d",
+    "model_path": ".phase13_final2\\artifacts\\evaluation\\phase13-final-live2-bench\\models\\random_forest\\model.joblib",
+    "framework": "scikit-learn",
+    "preprocessing_run_id": "phase13-final-live2-prep",
+    "benchmark_run_id": "phase13-final-live2-bench",
+    "config": {
+      "n_estimators": 300,
+      "max_depth": null,
+      "min_samples_split": 2,
+      "min_samples_leaf": 2,
+      "max_features": "sqrt",
+      "bootstrap": true,
+      "class_weight": "balanced_subsample",
+      "n_jobs": 1,
+      "random_state": 42
+    },
+    "selected_metric": "f1",
+    "selected_value": 0.7984790874524714,
+    "dataset_id": "openml:46915",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "split_fingerprint": "4b0c45db677fa9619de99b6a8b786a3da2c4da93824c46db65412a85829594dd",
+    "preprocessor_hash": "3c31f13c266c21084050bb021e60a41d4145a2055b983eb03e2267fab9f52174",
+    "feature_count": 27,
+    "positive_label": "Yes"
+  },
+  "warnings": [],
+  "limitations": [
+    "Probabilities are model estimates, not guaranteed outcomes.",
+    "SHAP drivers describe model behaviour, not causal effects.",
+    "Risk tiers are configurable business categories, not calibrated decisions.",
+    "No revenue proxy was supplied; value-at-risk ordering is unavailable and no monetary value was invented."
+  ],
+  "privacy": "scored rows use opaque references; raw identifiers and unconfigured customer fields are not exported",
+  "observed_outcome": {
+    "available": true,
+    "note": "observed labels are for audit only; they are not model predictions",
+    "positive": 142,
+    "negative": 858
+  },
+  "paths": {
+    "root": ".phase13_final2\\artifacts\\predictions\\phase13-final-live2-risk",
+    "churn_scores": ".phase13_final2\\artifacts\\predictions\\phase13-final-live2-risk\\churn_scores.parquet",
+    "risk_summary": ".phase13_final2\\artifacts\\predictions\\phase13-final-live2-risk\\risk_summary.json",
+    "tiers": ".phase13_final2\\artifacts\\predictions\\phase13-final-live2-risk\\tiers.csv",
+    "run_manifest": ".phase13_final2\\artifacts\\predictions\\phase13-final-live2-risk\\run_manifest.json",
+    "drivers": ".phase13_final2\\artifacts\\predictions\\phase13-final-live2-risk\\drivers.json"
+  }
+}

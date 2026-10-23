@@ -1,0 +1,503 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "openml:46915",
+  "manifest_sha256": "8fcfef26dbf8836320aac762fcd7d8d0b786ff0af7848f49d7ce97f38b4810fb",
+  "artifact_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+  "artifact_path": ".phase13_final2/data/raw/openml/46915/2025-04-30/22125226.arff",
+  "generated_at": "2026-10-23T01:33:19Z",
+  "validator_version": "0.10.0",
+  "status": "pass_with_warnings",
+  "checks": [
+    {
+      "id": "V1",
+      "name": "file_integrity_and_readability",
+      "severity": "fatal",
+      "passed": true,
+      "detail": "artifact exists, is readable and matches its recorded digest",
+      "issues": [],
+      "evidence": {
+        "integrity_ok": true,
+        "source_path": ".phase13_final2/data/raw/openml/46915/2025-04-30/22125226.arff",
+        "format": "arff"
+      }
+    },
+    {
+      "id": "V2",
+      "name": "structural_integrity",
+      "severity": "fatal",
+      "passed": true,
+      "detail": "5000 rows x 20 columns",
+      "issues": [],
+      "evidence": {
+        "n_rows": 5000,
+        "n_cols": 20
+      }
+    },
+    {
+      "id": "V3",
+      "name": "target_identified",
+      "severity": "fatal",
+      "passed": true,
+      "detail": "selected target 'CustomerChurned'",
+      "issues": [],
+      "evidence": {
+        "column": "CustomerChurned",
+        "ambiguous": false,
+        "candidates": [
+          {
+            "column": "CustomerChurned",
+            "score": 1.6,
+            "name_score": 0.8,
+            "unique_count": 2,
+            "missing_pct": 0.0,
+            "labels": [
+              "No",
+              "Yes"
+            ],
+            "has_known_labels": true
+          },
+          {
+            "column": "international_plan",
+            "score": 0.65,
+            "name_score": 0.0,
+            "unique_count": 2,
+            "missing_pct": 0.0,
+            "labels": [
+              "0",
+              "1"
+            ],
+            "has_known_labels": true
+          },
+          {
+            "column": "voice_mail_plan",
+            "score": 0.65,
+            "name_score": 0.0,
+            "unique_count": 2,
+            "missing_pct": 0.0,
+            "labels": [
+              "0",
+              "1"
+            ],
+            "has_known_labels": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "V4",
+      "name": "target_binary",
+      "severity": "fatal",
+      "passed": true,
+      "detail": "target has two classes: ['No', 'Yes']",
+      "issues": [],
+      "evidence": {
+        "classes": [
+          "No",
+          "Yes"
+        ],
+        "counts": {
+          "No": 4293,
+          "Yes": 707
+        }
+      }
+    },
+    {
+      "id": "V5",
+      "name": "target_interpretation",
+      "severity": "fatal",
+      "passed": true,
+      "detail": "1 = churn maps from 'Yes'; confidence high",
+      "issues": [],
+      "evidence": {
+        "column": "CustomerChurned",
+        "mapping": {
+          "No": 0,
+          "Yes": 1
+        },
+        "positive_label": "Yes",
+        "negative_label": "No",
+        "confidence": "high",
+        "method": "churn-style target name: conventional positive label is churn"
+      }
+    },
+    {
+      "id": "V6",
+      "name": "target_balance",
+      "severity": "warning",
+      "passed": true,
+      "detail": "positive rate 14.140%",
+      "issues": [],
+      "evidence": {
+        "positive_rate": 0.1414,
+        "positive_count": 707,
+        "observed_count": 5000,
+        "minimum": 0.02,
+        "maximum": 0.5
+      }
+    },
+    {
+      "id": "V7",
+      "name": "duplicate_columns",
+      "severity": "warning",
+      "passed": true,
+      "detail": "no duplicate headers or columns",
+      "issues": [],
+      "evidence": {
+        "duplicate_headers": [],
+        "duplicate_columns": []
+      }
+    },
+    {
+      "id": "V8",
+      "name": "duplicate_rows",
+      "severity": "warning",
+      "passed": true,
+      "detail": "no duplicate rows",
+      "issues": [],
+      "evidence": {
+        "duplicate_rows": 0,
+        "duplicate_row_pct": 0.0
+      }
+    },
+    {
+      "id": "V9",
+      "name": "missingness",
+      "severity": "warning",
+      "passed": true,
+      "detail": "no missing or non-finite values",
+      "issues": [],
+      "evidence": {
+        "missing_cells": 0,
+        "missing_cell_pct": 0.0,
+        "target_missing_count": 0,
+        "target_missing_pct": 0.0,
+        "non_finite_columns": []
+      }
+    },
+    {
+      "id": "V10",
+      "name": "low_information_features",
+      "severity": "warning",
+      "passed": true,
+      "detail": "no constant or near-constant columns",
+      "issues": [],
+      "evidence": {
+        "columns": []
+      }
+    },
+    {
+      "id": "V11",
+      "name": "identifier_and_cardinality",
+      "severity": "warning",
+      "passed": false,
+      "detail": "1 identifier/cardinality warning(s); 15 numeric and 3 categorical usable features",
+      "issues": [
+        {
+          "code": "V11.high_cardinality",
+          "message": "column 'state' has 51 levels (limit 30)",
+          "severity": "warning",
+          "columns": [
+            "state"
+          ],
+          "evidence": {
+            "unique_count": 51,
+            "limit": 30
+          }
+        }
+      ],
+      "evidence": {
+        "id": null,
+        "numeric": [
+          "account_length",
+          "number_vmail_messages",
+          "total_day_minutes",
+          "total_day_calls",
+          "total_day_charge",
+          "total_eve_minutes",
+          "total_eve_calls",
+          "total_eve_charge",
+          "total_night_minutes",
+          "total_night_calls",
+          "total_night_charge",
+          "total_intl_minutes",
+          "total_intl_calls",
+          "total_intl_charge",
+          "number_customer_service_calls"
+        ],
+        "categorical": [
+          "area_code",
+          "international_plan",
+          "voice_mail_plan"
+        ],
+        "dropped": [
+          {
+            "column": "state",
+            "reason": "51 categories (limit 30)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "V12",
+      "name": "target_leakage",
+      "severity": "warning",
+      "passed": true,
+      "detail": "no suspected target leakage",
+      "issues": [],
+      "evidence": {
+        "columns": []
+      }
+    }
+  ],
+  "summary": {
+    "n_rows": 5000,
+    "n_cols": 20,
+    "missing_cells": 0,
+    "missing_cell_pct": 0.0,
+    "duplicate_rows": 0,
+    "duplicate_row_pct": 0.0,
+    "target_rate": 0.1414,
+    "target_classes": [
+      "No",
+      "Yes"
+    ],
+    "constant_columns": [],
+    "near_constant_columns": [],
+    "id_like_columns": [],
+    "high_cardinality_columns": [
+      "state"
+    ],
+    "duplicate_columns": [],
+    "leakage_risks": [],
+    "usable_features": [
+      "account_length",
+      "number_vmail_messages",
+      "total_day_minutes",
+      "total_day_calls",
+      "total_day_charge",
+      "total_eve_minutes",
+      "total_eve_calls",
+      "total_eve_charge",
+      "total_night_minutes",
+      "total_night_calls",
+      "total_night_charge",
+      "total_intl_minutes",
+      "total_intl_calls",
+      "total_intl_charge",
+      "number_customer_service_calls",
+      "area_code",
+      "international_plan",
+      "voice_mail_plan"
+    ],
+    "usable_numeric": [
+      "account_length",
+      "number_vmail_messages",
+      "total_day_minutes",
+      "total_day_calls",
+      "total_day_charge",
+      "total_eve_minutes",
+      "total_eve_calls",
+      "total_eve_charge",
+      "total_night_minutes",
+      "total_night_calls",
+      "total_night_charge",
+      "total_intl_minutes",
+      "total_intl_calls",
+      "total_intl_charge",
+      "number_customer_service_calls"
+    ],
+    "usable_categorical": [
+      "area_code",
+      "international_plan",
+      "voice_mail_plan"
+    ],
+    "id_column": null,
+    "revenue_proxy": null
+  },
+  "target": {
+    "column": "CustomerChurned",
+    "classes": [
+      "No",
+      "Yes"
+    ],
+    "counts": {
+      "No": 4293,
+      "Yes": 707
+    },
+    "mapping": {
+      "No": 0,
+      "Yes": 1
+    },
+    "positive_label": "Yes",
+    "negative_label": "No",
+    "positive_count": 707,
+    "positive_rate": 0.1414,
+    "confidence": "high",
+    "method": "churn-style target name: conventional positive label is churn",
+    "reason": null,
+    "ambiguous": false,
+    "candidates": [
+      {
+        "column": "CustomerChurned",
+        "score": 1.6,
+        "name_score": 0.8,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "No",
+          "Yes"
+        ],
+        "has_known_labels": true
+      },
+      {
+        "column": "international_plan",
+        "score": 0.65,
+        "name_score": 0.0,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "0",
+          "1"
+        ],
+        "has_known_labels": true
+      },
+      {
+        "column": "voice_mail_plan",
+        "score": 0.65,
+        "name_score": 0.0,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "0",
+          "1"
+        ],
+        "has_known_labels": true
+      }
+    ],
+    "missing_count": 0,
+    "missing_pct": 0.0
+  },
+  "roles": {
+    "target": "CustomerChurned",
+    "id": null,
+    "numeric": [
+      "account_length",
+      "number_vmail_messages",
+      "total_day_minutes",
+      "total_day_calls",
+      "total_day_charge",
+      "total_eve_minutes",
+      "total_eve_calls",
+      "total_eve_charge",
+      "total_night_minutes",
+      "total_night_calls",
+      "total_night_charge",
+      "total_intl_minutes",
+      "total_intl_calls",
+      "total_intl_charge",
+      "number_customer_service_calls"
+    ],
+    "categorical": [
+      "area_code",
+      "international_plan",
+      "voice_mail_plan"
+    ],
+    "dropped": [
+      {
+        "column": "state",
+        "reason": "51 categories (limit 30)"
+      }
+    ],
+    "revenue_proxy": null,
+    "capabilities": {
+      "has_tenure": false,
+      "has_monthly_charge": false,
+      "has_total_charges": false,
+      "has_contract": false,
+      "has_payment_method": false,
+      "has_internet_service": false,
+      "has_support_calls": true,
+      "has_usage_minutes": true,
+      "has_plan": true,
+      "has_senior_citizen": false,
+      "has_gender": false,
+      "has_revenue_proxy": false
+    },
+    "capability_sources": {
+      "has_tenure": null,
+      "has_monthly_charge": null,
+      "has_total_charges": null,
+      "has_contract": null,
+      "has_payment_method": null,
+      "has_internet_service": null,
+      "has_support_calls": "number_customer_service_calls",
+      "has_usage_minutes": "total_day_minutes",
+      "has_plan": "international_plan",
+      "has_senior_citizen": null,
+      "has_gender": null,
+      "has_revenue_proxy": null
+    }
+  },
+  "capabilities": {
+    "has_tenure": false,
+    "has_monthly_charge": false,
+    "has_total_charges": false,
+    "has_contract": false,
+    "has_payment_method": false,
+    "has_internet_service": false,
+    "has_support_calls": true,
+    "has_usage_minutes": true,
+    "has_plan": true,
+    "has_senior_citizen": false,
+    "has_gender": false,
+    "has_revenue_proxy": false
+  },
+  "gate": {
+    "status": "pass_with_warnings",
+    "passed": true,
+    "can_preprocess": true,
+    "blocking": [],
+    "warnings": [
+      "V11"
+    ],
+    "reasons": [
+      "V11 identifier_and_cardinality: 1 identifier/cardinality warning(s); 15 numeric and 3 categorical usable features"
+    ]
+  },
+  "provenance": {
+    "dataset_id": "openml:46915",
+    "title": "churn",
+    "source_id": "openml",
+    "provider": "OpenML",
+    "source_dataset_id": "46915",
+    "download_url": "https://www.openml.org/data/v1/download/22125226",
+    "landing_url": "https://www.openml.org/d/46915",
+    "license": "MIT License (verified)",
+    "retrieved_at": "2026-10-23T01:33:18Z",
+    "run_id": "20261023T013318Z-2a020c98",
+    "manifest_path": ".phase13_final2/data/manifests/openml_46915.json",
+    "acquisition_attempt": 1,
+    "candidate_rank": 1,
+    "fallback_of": null,
+    "cached": false,
+    "artifact_path": ".phase13_final2/data/raw/openml/46915/2025-04-30/22125226.arff",
+    "artifact_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6"
+  },
+  "warnings": [],
+  "notes": [
+    "Validation is descriptive only; no imputation, scaling, encoding, split or model fitting was performed.",
+    "Missing target rows are excluded only in the in-memory normalized frame; the acquired artifact is untouched.",
+    "Identifier columns are retained for output and excluded from predictive features."
+  ],
+  "eda_profile_path": ".phase13_final2/reports/eda/openml_46915.json",
+  "eda_plots": [
+    ".phase13_final2/reports/eda/openml_46915.png",
+    ".phase13_final2/reports/eda/openml_46915_numeric.png",
+    ".phase13_final2/reports/eda/openml_46915_correlation.png",
+    ".phase13_final2/reports/eda/openml_46915_conditional.png",
+    ".phase13_final2/reports/eda/openml_46915_categorical.png"
+  ],
+  "report_json_path": ".phase13_final2/reports/validation/openml_46915.json",
+  "report_md_path": ".phase13_final2/reports/validation/openml_46915.md"
+}

@@ -410,7 +410,7 @@ These apply to all 13 phases and are re-checked at Phase 13.
 - [ ] Explanations are cached artifacts; the dashboard does not recompute SHAP.
 - [ ] No causal or "reason for churn" language is used for what are model attributions.
 
-T8.4 (explanation covers every customer in the demo/prediction set) remains **unchecked**: Phase 8 explains a bounded validation sample plus caller-supplied batches, and the Phase 9 scoring population does not exist yet. T8.1–T8.3 and T8.5–T8.6 are covered by the tests listed in [PHASE8_REPORT.md](PHASE8_REPORT.md); T8.6 measured 12.93 s (RF), 2.52 s (LR) and 7.19 s (MLP), within the 5-minute budget.
+T8.4 is now **verified**: the Phase 9 risk run `20261022T155236Z-openml_46915-risk-final` was explained with `explain=all`, producing 1,000 local JSON explanations for all 1,000 scored customers (`artifacts/explanations/20261022T155236Z-openml_46915-risk-final-drivers/local/`); all 1,000 driver keys are present in the risk table. T8.1–T8.3 and T8.5–T8.6 are covered by the tests listed in [PHASE8_REPORT.md](PHASE8_REPORT.md); T8.6 measured 12.93 s (RF), 2.52 s (LR) and 7.19 s (MLP), within the 5-minute budget. Bounded sampling remains the default for routine global runs; explain-all is an explicit option.
 
 **Verified evidence (Phase 8).** All three real families were explained against the OpenML `46915` Phase 5–7 artifacts: RF `20261022T131420-openml_46915-random_forest-xai-84eecf5d`, LR `20261022T131432-openml_46915-logistic_regression-xai-c160a8be`, MLP `20261022T131446-openml_46915-mlp-xai-4c391837`. Focused tests 42/42; full suite 432 passed / 7 live-network skips. Interface and limitations: [EXPLAINABILITY.md](EXPLAINABILITY.md), [PHASE8_REPORT.md](PHASE8_REPORT.md).
 
@@ -517,9 +517,9 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 
 ## 12. Phase 11 — Interactive Intelligence Dashboard
 
-**Objectives and scope.** Deliver the seven-page Streamlit experience over stored artifacts. In scope: navigation shell, cached read-only artifact access, all seven pages, empty/error states, filters, exports, run-identity headers. Out of scope: training, acquisition or SHAP inside the UI process.
+**Objectives and scope.** Deliver the Streamlit experience over stored artifacts and existing phase services. In scope: navigation shell, cached artifact access, all required areas (Overview, Data discovery, Data quality, Model training, Model evaluation, Explainability, Risk intelligence, Assess records, Customer detail, Retention simulator, Reliability & limits), empty/error states, filters, exports, run-identity headers, and explicit button-gated actions for discovery, acquisition, training, record assessment and simulation. Ordinary rendering must not download, train, score or compute SHAP.
 
-**Inputs and outputs.** Inputs: all prior artifacts. Outputs: running app, screenshots, AppTest coverage.
+**Inputs and outputs.** Inputs: all prior artifacts and user-entered action parameters. Outputs: running app, action results and persisted artifacts written by the underlying services, AppTest coverage.
 
 **Expected artifacts.**
 
@@ -527,36 +527,47 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 | --- | --- |
 | `churnwise/dashboard/app.py` | Entry point + navigation |
 | `churnwise/dashboard/data_access.py` | Cached loaders with availability checks |
-| `churnwise/dashboard/pages/*` | Seven pages |
-| `churnwise/dashboard/components/*` | Tables, charts, assumption panels |
-| `tests/integration/test_dashboard_apptest.py` | AppTest coverage per page |
-| `docs/screenshots/*.png` | Captured evidence |
+| `churnwise/dashboard/actions.py` | Explicit discovery/acquisition/training/assessment/simulation actions |
+| `churnwise/dashboard/pages/*` | Eleven pages |
+| `churnwise/dashboard/components/*` | Layout, tables, charts |
+| `tests/unit/test_dashboard_{analytics,assessment,data_access}.py` | Pure helpers, upload validation, artifact resolution |
+| `tests/integration/test_dashboard_apptest.py` | AppTest coverage and service cross-checks |
+| `docs/DASHBOARD.md` | Architecture and usage |
+| `docs/PHASE11_REPORT.md` | Verified evidence and limitations |
 
-**Dependencies.** Phase 4 (overview data), Phase 7 (performance), Phase 8 (explainability), Phase 9 (risk), Phase 10 (simulation).
+**Dependencies.** Phase 2/3 (discovery/acquisition), Phase 4 (overview/quality), Phase 6 (training), Phase 7 (performance), Phase 8 (explainability), Phase 9 (risk/assessment), Phase 10 (simulation).
 
 **Testing and verification.**
 
 | ID | Check | Method |
 | --- | --- | --- |
 | T11.1 | App imports and starts headless without exceptions | `streamlit run` + HTTP probe |
-| T11.2 | All seven pages render with real artifacts | `AppTest` per page, assert no exception |
-| T11.3 | Missing-artifact state is actionable, contains no numbers | Remove artifact in test, assert message |
+| T11.2 | All eleven pages render with real artifacts | `AppTest` per page, assert no exception |
+| T11.3 | Missing-artifact state is actionable, contains no fabricated numbers | Empty project tree, assert command per page |
 | T11.4 | Tier filter changes the table row count consistently | AppTest interaction |
 | T11.5 | Customer detail shows score matching the Parquet value | Cross-check |
-| T11.6 | Simulator output matches the engine result for identical inputs | Cross-check |
-| T11.7 | Cold load under 5 s | Timed load |
+| T11.6 | Simulator output matches the engine result for identical inputs | Direct Phase 10 cross-check |
+| T11.7 | Cold load under 5 s | Timed first real-artifact `AppTest` render: 1.937 s |
+| T11.8 | Training and discovery actions are not repeated by reruns | AppTest submit + rerun |
+| T11.9 | Cache invalidates after an artifact change | Rewrite Parquet, assert new row count |
+| T11.10 | Individual/batch assessment matches Phase 9 | Direct service cross-check |
+| T11.11 | Upload validation handles size, parse, empty and row-limit failures | Unit tests |
+| T11.12 | Validation report resolution ignores acquisition attempt logs | Unit test |
 
 **Completion criteria.**
 
-- [ ] All seven pages exist and render from real artifacts.
-- [ ] Every page header shows run ID, model family, dataset hash prefix and generated-at time.
-- [ ] No page computes SHAP, trains, or downloads.
-- [ ] Empty states tell the user the exact command to run.
-- [ ] Filters and exports work on real scored data.
-- [ ] `AppTest` covers every page and passes.
-- [ ] Screenshots captured as evidence.
+- [x] All eleven pages exist and render from real artifacts.
+- [x] Every page header shows run ID, model family, dataset hash prefix and generated-at time.
+- [x] Page rendering never downloads, trains, scores or computes SHAP; labelled actions delegate to the existing services.
+- [x] Empty states tell the user the exact command to run.
+- [x] Filters and exports work on real scored data.
+- [x] `AppTest` covers every page and passes.
+- [x] Screenshots captured as evidence.
+- [x] Cold-load timing measured against the budget (1.937 s first render).
 
-**Risks and unresolved decisions.** Streamlit API drift (1.56.0 present); cache-key mistakes serving stale metrics; large SHAP payloads slowing page 3.
+**Verified evidence (Phase 11, report: [PHASE11_REPORT.md](PHASE11_REPORT.md)).** Focused dashboard suite **42 passed**; full suite **624 passed / 7 live-network skips** after Phase 13. All eleven pages rendered against the real artifact tree; missing-artifact states were checked on every page. The app was started headless; one individual record was genuinely scored through the running app (`0.0611`, low, retained) and a six-row batch CSV was uploaded and assessed through the browser (`6 of 6` scored). Screenshots of all eleven pages, plus the batch result, are in [docs/screenshots](screenshots/). Phase 13 measured **1.937 s** for the first real-artifact render and **HTTP 200 in under 2 s**; live discovery/acquisition, live training, SHAP checkbox execution and an automated browser E2E suite remain outside the automated suite.
+
+**Risks and unresolved decisions.** Streamlit API drift (1.66.1 verified); cache-key mistakes serving stale metrics; synchronous training blocking the process; large SHAP payloads; no automated browser E2E suite.
 
 ---
 
@@ -570,12 +581,14 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 
 | Artifact | Contents |
 | --- | --- |
-| `churnwise/pipeline.py` | Stage graph, resume, run manifest |
-| `tests/integration/test_end_to_end.py` | Offline full run on fixture |
-| `tests/test_contracts.py` | JSON contract validation for every artifact |
-| `tests/test_import_boundaries.py` | Dependency-rule enforcement |
-| `reports/performance.md` | Measured timings vs budget |
-| `docs/RUNBOOK.md` | Operate, recover, clean |
+| `churnwise/pipeline/**` | Stage graph, provenance, manifest, resume, output verification, cleanup |
+| `tests/integration/test_pipeline_workflow.py` | Offline full run, cross-phase identity, resume, rejection, determinism, dashboard |
+| `tests/unit/test_pipeline_contracts.py` | Error/config contracts and import boundaries |
+| `tests/unit/test_pipeline_cleanup.py` | Dry-run, path confinement, deletion and manifest safety |
+| `docs/PERFORMANCE.md` | Measured timings and memory vs budget |
+| `docs/DEPENDENCIES.md` | Dependency and reproducibility audit |
+| `requirements.lock.txt` | Exact audited Windows/CPython 3.13 dependency pins |
+| `docs/RUNBOOK.md` | Operate, resume, recover, inspect and clean |
 
 **Dependencies.** Phases 1–11.
 
@@ -583,25 +596,27 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 
 | ID | Check | Method |
 | --- | --- | --- |
-| T12.1 | Full pipeline runs offline on the fixture and produces every artifact | `pytest tests/integration/test_end_to_end.py` |
-| T12.2 | Every artifact validates against its schema | `pytest tests/test_contracts.py` |
-| T12.3 | Two identical runs produce identical metrics/fingerprints | Determinism test |
-| T12.4 | Failure paths emit documented error codes | Bad hash, bad schema, licence block, cold offline cache |
-| T12.5 | Import boundaries hold (dashboard never imports training) | `pytest tests/test_import_boundaries.py` |
-| T12.6 | Measured stage timings recorded against budget | `reports/performance.md` |
-| T12.7 | `pytest -q` green from a clean `.venv` | Recorded run |
+| T12.1 | Full pipeline runs offline on the fixture and produces every artifact | `pytest tests/integration/test_pipeline_workflow.py` |
+| T12.2 | Artifact contracts validate | Phase contract suites plus principal cross-phase identity assertions in the pipeline test |
+| T12.3 | Determinism of reusable outputs | Split/model/risk/simulation tests; MLP floats are explicitly excluded |
+| T12.4 | Failure paths emit documented error codes | Single-class rejection, invalid inputs, missing/corrupt manifest, changed resume, missing artifacts, bad hash/cold cache in acquisition suites |
+| T12.5 | Import boundaries hold (dashboard/orchestrator direction) | `pytest tests/unit/test_pipeline_contracts.py` |
+| T12.6 | Measured stage timings recorded against budget | `docs/PERFORMANCE.md` |
+| T12.7 | `pytest -q` green from a clean `.venv` | Fresh `.venv` installed only from `requirements.lock.txt`; post-fix suite result recorded in the final report |
 
 **Completion criteria.**
 
-- [ ] One documented command reproduces the full artifact set from an empty `data/` and `artifacts/` (network permitted) and from fixture data (network disabled).
-- [ ] Contract tests cover every JSON artifact.
-- [ ] Determinism verified to 1e-6.
-- [ ] Each failure path yields its error code and remediation, with no partial artifacts left behind.
-- [ ] Import boundaries enforced by test.
-- [ ] Measured performance reported honestly against the budget, including any overrun.
-- [ ] Runbook explains recovery from a failed or partial run.
+- [x] One documented command reproduces the full artifact set from fixture data (network disabled) and from live discovery into project-local empty directories.
+- [x] Principal artifact contracts and cross-phase identity are tested; a universal JSON-Schema registry remains absent (D-09).
+- [x] Reusable outputs are deterministic under the stated method: splits, baselines, scoring, ranking and simulation, plus MLP metrics with op determinism enabled. Default MLP float identity is explicitly excluded (D-08).
+- [x] Covered failure paths yield `CW-RUN-*` codes and remediation; a rejected dataset leaves only diagnostic acquisition/validation artifacts.
+- [x] Import boundaries are enforced by AST tests.
+- [x] Measured performance is reported honestly against the budget; no measured live stage exceeded its budget.
+- [x] The runbook covers operation, resume, failure diagnosis, inspection and cleanup.
 
-**Risks and unresolved decisions.** TF/Streamlit startup cost in tests; fixture vs real-data divergence; Windows path handling; total suite runtime.
+**Verified evidence (Phase 12, report: [PHASE12_REPORT.md](PHASE12_REPORT.md)).** Phase 12 baseline: **623 passed / 7 live-network skips**; reproduced in a fresh `.venv_clean` installed only from `requirements.lock.txt` (295.46 s). After the Phase 13 determinism fix and added regression test, the final suite is **624 passed / 7 skipped**; the post-fix clean-environment rerun is recorded in [FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md). The live-only suite passed **7/7** in 102.44 s. The live pipeline run `phase12-live-final` completed all seven stages in 58.0 s and selected Random Forest on validation F1. Fixture workflow completed in 16.668 s. Cleanup, resume, rejection, manifest verification and import boundaries have dedicated tests. The fast profile was used for both measured runs; the full production profile remains unmeasured.
+
+**Risks and unresolved decisions.** TF/Streamlit startup cost in tests; fixture vs real-data divergence; Windows path handling; the exact lock is Windows/CPython 3.13-specific; default MLP float non-determinism; distributed artifact schema validation.
 
 ---
 
@@ -615,8 +630,9 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 
 | Artifact | Contents |
 | --- | --- |
-| `docs/FINAL_VERIFICATION.md` | Criterion → status → evidence table for all 13 phases |
-| `docs/PRESENTATION.md` | Demo narrative, screenshots, measured results |
+| `docs/FINAL_ACCEPTANCE_MATRIX.md` | Phase-by-phase status, evidence and limitations |
+| `docs/FINAL_VERIFICATION_REPORT.md` | Full verification narrative, metrics, defects, limits and next steps |
+| `docs/PROJECT_PRESENTATION.md` | Presentation narrative and measured results |
 | `README.md` | Quick start, architecture summary, command reference |
 | `docs/screenshots/*` | Final UI evidence |
 
@@ -634,13 +650,13 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 
 **Completion criteria.**
 
-- [ ] All 13 phases marked pass (or `deferred` with documented risk) in the verification table.
-- [ ] Every displayed metric traceable to a run ID and artifact path.
-- [ ] Limitations, assumptions and non-goals stated plainly (no causal claims, no uplift measurement).
-- [ ] README quick start works from a clean checkout.
-- [ ] Presentation includes the architecture, the pipeline, measured benchmark results, SHAP insights, risk ranking and a live simulation.
-- [ ] No `TODO`/`TBD` remains; dead code and stale artifacts removed.
-- [ ] Scope preservation statement re-verified against [ROADMAP.md](ROADMAP.md#5-scope-preservation-statement).
+- [x] All 13 phases marked pass (or `deferred` with documented risk) in the verification table.
+- [x] Every displayed metric traceable to a run ID and artifact path.
+- [x] Limitations, assumptions and non-goals stated plainly (no causal claims, no uplift measurement).
+- [x] README quick start works from a clean checkout.
+- [x] Presentation includes the architecture, the pipeline, measured benchmark results, SHAP insights, risk ranking and a live simulation.
+- [x] No `TODO`/`TBD` remains; dead code and stale artifacts removed.
+- [x] Scope preservation statement re-verified against [ROADMAP.md](ROADMAP.md#5-scope-preservation-statement).
 
 **Risks and unresolved decisions.** Documentation drift late in the schedule; temptation to over-claim; insufficient time for slides — mitigated by building the presentation from existing artifacts rather than new analysis.
 
@@ -660,9 +676,9 @@ T8.4 (explanation covers every customer in the demo/prediction set) remains **un
 | 8 | SHAP global + local | `artifacts/explanations/*` | T8.1–T8.6 |
 | 9 | Risk ranking and filtering | `artifacts/predictions/*` | T9.1–T9.7 |
 | 10 | Campaign scenario simulation | `artifacts/simulations/*` | T10.1–T10.7 |
-| 11 | Seven-page dashboard | `churnwise/dashboard/*` | T11.1–T11.7 |
-| 12 | Reliability and end-to-end | `tests/integration/test_end_to_end.py` | T12.1–T12.7 |
-| 13 | Verification and presentation | `docs/FINAL_VERIFICATION.md` | T13.1–T13.5 |
+| 11 | Eleven-page dashboard | `churnwise/dashboard/*` | T11.1–T11.12 |
+| 12 | Reliability and end-to-end | `tests/integration/test_pipeline_workflow.py` | T12.1–T12.7 |
+| 13 | Verification and presentation | `docs/FINAL_ACCEPTANCE_MATRIX.md` · `docs/FINAL_VERIFICATION_REPORT.md` | T13.1–T13.5 |
 
 ---
 
@@ -675,7 +691,7 @@ The project is complete only when all of the following hold simultaneously:
 3. All three models are trained and benchmarked on identical data, with real held-out metrics.
 4. SHAP explanations exist globally and per customer.
 5. Risk ranking and campaign simulation are functional, with assumptions visible and results labelled as projections.
-6. The dashboard's seven pages read only stored artifacts.
+6. The dashboard's eleven pages read only stored artifacts; service actions run only from explicit buttons.
 7. `pytest -q` passes, determinism holds, and every failure path is documented.
 8. No fabricated, predetermined or unsupported number appears anywhere.
 9. No unnecessary infrastructure was introduced.

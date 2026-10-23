@@ -38,7 +38,7 @@ Audited with `python --version`, `pip list`, `importlib.util.find_spec`, direct 
 | Virtual environment | **None present** |
 | Git repository | **None** (`fatal: not a git repository`) |
 | Free disk | 158 GB of 464 GB |
-| Working directory | `C:\Users\NARASIMHA\OneDrive\Desktop\Ai Ml Project` (OneDrive-synced) |
+| Working directory | project root on a OneDrive-synced Windows 11 machine (absolute path omitted) |
 
 ### 2.1 Package inventory
 
@@ -83,7 +83,7 @@ cp313 Windows wheels exist for both, so the mission-mandated TensorFlow/Keras ML
 
 ```text
 $ pwd
-/c/Users/NARASIMHA/OneDrive/Desktop/Ai Ml Project
+<project-root>
 
 $ ls -la
 drwxr-xr-x  .freebuff/

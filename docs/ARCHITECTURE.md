@@ -67,11 +67,11 @@ Full evidence is in [PHASE1_REPORT.md](PHASE1_REPORT.md#2-environment-findings).
 | TensorFlow | Not installed; `tensorflow` 2.20.0 / 2.21.0 wheels available for cp313 | MLP is feasible; install is a Phase 2 prerequisite, in an isolated venv |
 | Keras | Standalone Keras 3 installed but **unimportable** (no TF backend) | Must not rely on global site-packages; venv required |
 | SHAP | Not installed at Phase 1; `shap` 0.54.1 available (installed in `.venv` by Phase 8) | Explainability feasible; watch explainer runtime on CPU |
-| Present | numpy 2.1.2, pandas 2.2.3, scikit-learn 1.5.2, streamlit 1.56.0, matplotlib, seaborn, plotly, joblib, requests, pytest, scipy, pyarrow, openpyxl | Baseline stack exists; versions must be pinned to avoid drift |
+| Present | numpy 2.1.2, pandas 2.2.3, scikit-learn 1.5.2, streamlit 1.56.0, matplotlib, plotly, joblib, requests, pytest, scipy, pyarrow, openpyxl | Baseline stack exists; versions must be pinned to avoid drift |
 | Git | Working directory is **not** a Git repository | Code version is recorded as `unversioned` until the repository is initialized |
 | Disk | 158 GB free | Content-addressed cache and multi-run artifacts are affordable |
 
-**Decision:** all subsequent phases run inside a project-local virtual environment (`.venv`) built from a pinned `requirements.txt`. Global site-packages are never modified.
+**Decision:** all subsequent phases run inside a project-local virtual environment (`.venv`) built from the range manifest `requirements.txt`; the audited environment is reproduced exactly from `requirements.lock.txt` (Windows/CPython 3.13). Global site-packages are never modified. The dependency evidence is in [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ---
 
@@ -82,7 +82,10 @@ churnwise/
 ├── __init__.py
 ├── config.py                  # typed settings, paths, seeds, env overrides
 ├── contracts.py               # dataclasses + schema versions for every artifact
-├── pipeline.py                # stage graph, resume, run manifest
+├── pipeline/
+│   ├── runner.py              # stage graph, provenance, resume, run manifest, output verification
+│   ├── errors.py              # stable CW-RUN-* failures
+│   └── cleanup.py             # dry-run artifact cleanup with path confinement
 ├── cli.py                     # argparse entry points (acquire|validate|prepare|train|evaluate|explain|score|simulate|run)
 ├── discovery/
 │   ├── registry.py            # static source registry (OpenML, UCI, IBM GitHub mirror)
@@ -152,8 +155,9 @@ churnwise/
 ├── dashboard/
 │   ├── app.py                 # Streamlit entry (navigation + artifact availability checks)
 │   ├── data_access.py         # cached, read-only artifact loaders
-│   ├── pages/                 # 7 pages (see §10)
-│   └── components/            # tables, charts, badges, assumption panels
+│   ├── actions.py              # explicit, button-gated calls to phase services
+│   ├── pages/                  # 11 pages (see §10)
+│   └── components/             # layout, tables, charts, badges, assumption panels
 └── logging_utils.py           # structured JSONL logging, no PII
 ```
 
@@ -163,9 +167,9 @@ Enforced by a Phase 12 import-linter style test:
 
 1. `contracts.py` and `config.py` depend on nothing internal.
 2. Stages depend **forward only**: `discovery → acquisition → validation → eda → preprocessing → models → evaluation → explain → intelligence → simulation`.
-3. `dashboard/` may import `contracts`, `config` and the read-only `intelligence` contracts/service **only**; it must never import training, acquisition or explainer code directly.
+3. `dashboard/` page rendering is read-only; `actions.py` may lazily import discovery, acquisition, training, risk and simulation services only from explicit user actions. Data loaders never train or download.
 4. `evaluation/` must not mutate models, preprocessors or data.
-5. `cli.py`/`pipeline.py` orchestrate; they contain no business logic.
+5. `cli.py` and `pipeline/runner.py` orchestrate; they contain no business logic. Phase modules and the dashboard must not import the orchestrator.
 6. No module writes outside its declared artifact directory (§9).
 
 ### 4.2 Why these boundaries
@@ -284,7 +288,7 @@ Source datasets do not share column names, so the platform maps each dataset to 
 }
 ```
 
-Rules: `retrieved_at` is UTC and never back-dated; `sha256` is computed locally from stored bytes; a manifest with `integrity.verified = false` may not be consumed by later stages; `license` values are `verified:<id>`, `unverified`, or `restricted`.
+Rules: `retrieved_at` is UTC and never back-dated; `sha256` is computed locally from stored bytes; a manifest with `integrity.verified = false` may not be consumed by later stages; `license` values are `verified`, `project_owned`, `unverified`, `restricted`, or `unknown`.
 
 ### 6.3 ValidationReport
 
@@ -518,7 +522,7 @@ is not read during fitting or model selection; held-out metrics remain Phase 7 w
 | Model | Configuration |
 | --- | --- |
 | Logistic Regression | `max_iter=2000`, `solver="lbfgs"`, `class_weight="balanced"`, same transformed matrix |
-| Random Forest | `n_estimators=300`, `min_samples_leaf=2`, `max_features="sqrt"`, `class_weight="balanced_subsample"`, `n_jobs=-1`, `random_state=seed` |
+| Random Forest | `n_estimators=300`, `min_samples_leaf=2`, `max_features="sqrt"`, `class_weight="balanced_subsample"`, `n_jobs=1`, `random_state=seed` |
 
 **Fairness conditions:** identical rows, identical split fingerprint, identical transformed feature space, identical class weighting, identical evaluation code and threshold. Hyperparameters are fixed a priori (documented above) and never tuned on the test set. If any family is tuned, all families get an equal tuning budget under the same CV protocol.
 
@@ -616,32 +620,41 @@ targeting_lift         = expected_prevented / random_contact          (undefined
 - **Honesty rules:** results are labelled *projected* in JSON, Markdown report and CLI, and CSV export columns use `expected_*` names under the same scenario id; no causal claim; no uplift model is fitted. Charts are drawn only from computed points.
 - **Missing revenue proxy:** the reference dataset has none, so saved-value, net-benefit, ROI and break-even remain unavailable unless the caller supplies `monthly_value`; nothing is invented.
 
-Server-side entry point: `churnwise.simulation.SimulationService` (`load_table`, `run_scenario`, `run_comparison`, `sensitivity`, `load_result`), persisting to `artifacts/simulations/<scenario_id>/`. Phase 11 must render these artifacts read-only and keep the projection labels. Full methodology and schemas: [SIMULATION.md](SIMULATION.md); verified evidence: [PHASE10_REPORT.md](PHASE10_REPORT.md).
+Server-side entry point: `churnwise.simulation.SimulationService` (`load_table`, `run_scenario`, `run_comparison`, `sensitivity`, `load_result`), persisting to `artifacts/simulations/<scenario_id>/`. Phase 11 renders persisted artifacts read-only and may compute a new in-memory projection through the same service with `persist=False`; every result keeps the projection labels. Full methodology and schemas: [SIMULATION.md](SIMULATION.md); verified evidence: [PHASE10_REPORT.md](PHASE10_REPORT.md).
 
 ---
 
 ## 10. Dashboard architecture
 
-Single Streamlit app, seven pages, read-only over artifacts.
+Single Streamlit app, eleven pages, with explicit actions delegated to existing
+phase services. Implementation and usage: [DASHBOARD.md](DASHBOARD.md);
+verified evidence: [PHASE11_REPORT.md](PHASE11_REPORT.md).
 
 | # | Page | Content | Data source |
 | --- | --- | --- | --- |
-| 1 | Overview | Dataset provenance, validation gate summary, capability matrix, run identity | manifests, validation reports |
-| 2 | Model performance | Benchmark table (all families), ROC/PR curves, confusion matrices, CV mean±std, threshold | `artifacts/evaluation` |
-| 3 | Explainability | Global SHAP bar/beeswarm, driver glossary, per-feature drill-down | `artifacts/explanations/global.json` |
-| 4 | Risk explorer | Ranked table, tier filters, value-at-risk toggle, CSV export | `artifacts/predictions` |
-| 5 | Customer detail | Score, tier, top drivers, contact recommendation, contributing raw values | predictions + local SHAP |
-| 6 | Campaign simulator | Segment builder, assumption sliders, projected outcomes, sensitivity heatmap, break-even | simulation engine |
-| 7 | Reliability & limits | Artifact freshness, hashes, failed checks, model limitations, methodology notes | all metadata |
+| 1 | Overview | Dataset provenance, validation gate, selected model, latest risk population, latest projection, evidence inventory | validation/benchmark/risk/simulation artifacts |
+| 2 | Data discovery | Ranked candidates, gates, licence status, discovery and acquisition actions, attempt log | Phase 2/3 services and reports |
+| 3 | Data quality | Validation decision, dimensions, missingness, target balance, checks, roles, leakage, column profile | validation + EDA reports |
+| 4 | Model training | Prepared summary, persisted MLP metadata/history, validated configuration, explicit training action | prepared/model artifacts + Phase 6 trainer |
+| 5 | Model evaluation | All-family validation/test table, ROC/PR, confusion matrices, CV, limitations | `artifacts/evaluation` |
+| 6 | Explainability | Global grouped importance, stored beeswarm/dependence figures, selected local explanation | `artifacts/explanations` |
+| 7 | Risk intelligence | Ranked table, configurable display tiers, probability/reference filters, sorting, exports | `artifacts/predictions` |
+| 8 | Assess records | Individual schema-driven scoring and batch CSV scoring, rejections and exports | Phase 9 `RiskService` |
+| 9 | Customer detail | Stored score, tier, drivers, probability-matched local SHAP | predictions + drivers + local SHAP |
+| 10 | Retention simulator | Budget, cost, effectiveness, horizon, targeting, tiers, contact caps, comparison, sensitivity | Phase 10 service |
+| 11 | Reliability & limits | Artifact inventory, digest checks, failed validation checks, warnings, limitations, privacy rules | all metadata |
 
 **Implementation rules**
 
-1. `data_access.py` wraps every load in `st.cache_data` keyed by `(path, mtime, size)`; no fitting, training or network calls inside the UI process.
-2. Missing artifacts render an actionable empty state ("Run `python -m churnwise.cli run`") — never sample numbers, never random data.
-3. All charts are Plotly/Matplotlib from stored JSON/Parquet; no SQL, no external API.
+1. `data_access.py` wraps every load in `st.cache_data` keyed by `(path, mtime_ns, size)`; validation report resolution excludes acquisition attempt logs that share the folder.
+2. Missing artifacts render an actionable amber empty state with the exact CLI command — never sample numbers, never random data.
+3. Charts are Plotly from stored JSON/Parquet. No SQL, external API or UI-side model fitting.
 4. Every page header shows `run_id`, model family, dataset hash prefix and generated-at timestamp.
-5. Filters are pure pandas operations on the scores table; changing tier thresholds re-derives labels live.
-6. Cold load target < 5 s on the audited machine for a ~7k-row dataset.
+5. Filters and display-tier changes are pure pandas operations over the stored scores; no rescoring and no artifact rewrite.
+6. Side-effecting actions live in `churnwise/dashboard/actions.py`, are button-gated and are never executed by a normal rerun. Training is synchronous and labelled as such; assessment calls Phase 9; new simulations call Phase 10 in memory and are labelled hypothetical.
+7. Session state stores only UI results (training outcome, individual/batch assessment, in-session simulation, notices); persistent project artifacts remain the source of truth.
+8. A batch upload digest changes only on a new file; a different digest clears the previous result. Cache invalidation is explicit through the sidebar button or an action-success clear.
+9. Cold-load target is < 5 s; Phase 13 measured **1.937 s** for the first real-artifact render (AppTest). No browser performance trace is claimed.
 
 ---
 
@@ -695,7 +708,9 @@ Structured JSONL to `reports/logs/run-<run_id>.jsonl` with `stage`, `event`, `du
 | Global + local SHAP (cached) | < 5 min |
 | Dashboard cold load | < 5 s |
 
-These are design budgets to be measured in Phase 12 — not claims.
+These are design budgets. Phase 12 measured the fixture and live fast profiles,
+dashboards and memory; see [PERFORMANCE.md](PERFORMANCE.md). The production
+profile remains unmeasured.
 
 ---
 
@@ -719,9 +734,10 @@ artifacts/
 │                           local/row_<position>.{json,png}}
 ├── predictions/<run_id>/{churn_scores.parquet, risk_summary.json, tiers.csv,
 │                           run_manifest.json, drivers.json, rejections.json, exports/*}
-└── simulations/<scenario_id>/{result.json, selection.csv, sensitivity.json,
-                            sensitivity.csv, comparison.json, comparison.csv,
-                            report.md, run_manifest.json, plots/*.png}
+├── simulations/<scenario_id>/{result.json, selection.csv, sensitivity.json,
+│                            sensitivity.csv, comparison.json, comparison.csv,
+│                            report.md, run_manifest.json, plots/*.png}
+└── pipelines/<pipeline_run_id>/run.json       # stage status, outputs, artifacts, errors
 
 reports/
 ├── acquisition/{candidates.json, attempts.json, rejections.json}
@@ -729,8 +745,7 @@ reports/
 ├── eda/<dataset_id>.{json,png}
 ├── preprocessing/<run_id>.{json,md}
 ├── models/<model_run_id>.{json,md}
-├── logs/run-<run_id>.jsonl
-└── runs/<run_id>/run_manifest.json
+└── logs/run-<run_id>.jsonl
 ```
 
 Directories are Git-ignored except `.gitkeep` files. Committed fixtures live only in `tests/fixtures/`.

@@ -1,0 +1,2170 @@
+{
+  "schema_version": "1.0",
+  "phase": 7,
+  "benchmark_run_id": "phase13-final-live-bench",
+  "generated_at": "2026-10-23T00:46:53Z",
+  "code_version": "0.10.0",
+  "seed": 42,
+  "preprocessing": {
+    "run_id": "phase13-final-live-prep",
+    "dataset_id": "openml:46915",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "split_fingerprint": "4b0c45db677fa9619de99b6a8b786a3da2c4da93824c46db65412a85829594dd",
+    "split_sizes": {
+      "train": 3000,
+      "val": 1000,
+      "test": 1000
+    },
+    "split_strategy": "stratified",
+    "split_seed": 42,
+    "preprocessor_hash": "3c31f13c266c21084050bb021e60a41d4145a2055b983eb03e2267fab9f52174",
+    "preprocessor_path": ".phase13_final\\artifacts\\preprocessors\\phase13-final-live-prep\\pipeline.joblib",
+    "pipeline_version": "1.0",
+    "config_fingerprint": "989d8802b962726b058a2f3300ae30941c859dbe563e851137dd8b1d678cef18",
+    "target": {
+      "column": "CustomerChurned",
+      "positive_label": "Yes",
+      "negative_label": "No",
+      "mapping": {
+        "No": 0,
+        "Yes": 1
+      },
+      "positive_rate": 0.1414
+    },
+    "feature_names": [
+      "numeric__account_length",
+      "numeric__number_vmail_messages",
+      "numeric__total_day_minutes",
+      "numeric__total_day_calls",
+      "numeric__total_day_charge",
+      "numeric__total_eve_minutes",
+      "numeric__total_eve_calls",
+      "numeric__total_eve_charge",
+      "numeric__total_night_minutes",
+      "numeric__total_night_calls",
+      "numeric__total_night_charge",
+      "numeric__total_intl_minutes",
+      "numeric__total_intl_calls",
+      "numeric__total_intl_charge",
+      "numeric__number_customer_service_calls",
+      "numeric__support_calls_per_usage_hour",
+      "categorical__area_code_408.0",
+      "categorical__area_code_415.0",
+      "categorical__area_code_510.0",
+      "categorical__international_plan_0",
+      "categorical__international_plan_1",
+      "categorical__voice_mail_plan_0",
+      "categorical__voice_mail_plan_1",
+      "categorical__usage_band_0-100",
+      "categorical__usage_band_100-200",
+      "categorical__usage_band_200-300",
+      "categorical__usage_band_300+"
+    ],
+    "feature_count": 27,
+    "provenance": {
+      "dataset_id": "openml:46915",
+      "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+      "manifest_sha256": "addbf2e8985a30bdef27d7366fc0aabce16d617167aa4eb1d68362fa80fef5e4",
+      "validation_report": ".phase13_final/reports/validation/openml_46915.json",
+      "source": {
+        "dataset_id": "openml:46915",
+        "title": "churn",
+        "source_id": "openml",
+        "provider": "OpenML",
+        "source_dataset_id": "46915",
+        "download_url": "https://www.openml.org/data/v1/download/22125226",
+        "landing_url": "https://www.openml.org/d/46915",
+        "license": "MIT License (verified)",
+        "retrieved_at": "2026-10-23T00:46:40Z",
+        "run_id": "20261023T004640Z-a1548255",
+        "manifest_path": ".phase13_final/data/manifests/openml_46915.json",
+        "acquisition_attempt": 1,
+        "candidate_rank": 1,
+        "fallback_of": null,
+        "cached": false,
+        "artifact_path": ".phase13_final/data/raw/openml/46915/2025-04-30/22125226.arff",
+        "artifact_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+        "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6"
+      },
+      "generated_at": "2026-10-23T00:46:44Z",
+      "code_version": "0.10.0"
+    }
+  },
+  "dataset": {
+    "dataset_id": "openml:46915",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "split_fingerprint": "4b0c45db677fa9619de99b6a8b786a3da2c4da93824c46db65412a85829594dd",
+    "feature_count": 27,
+    "feature_names": [
+      "numeric__account_length",
+      "numeric__number_vmail_messages",
+      "numeric__total_day_minutes",
+      "numeric__total_day_calls",
+      "numeric__total_day_charge",
+      "numeric__total_eve_minutes",
+      "numeric__total_eve_calls",
+      "numeric__total_eve_charge",
+      "numeric__total_night_minutes",
+      "numeric__total_night_calls",
+      "numeric__total_night_charge",
+      "numeric__total_intl_minutes",
+      "numeric__total_intl_calls",
+      "numeric__total_intl_charge",
+      "numeric__number_customer_service_calls",
+      "numeric__support_calls_per_usage_hour",
+      "categorical__area_code_408.0",
+      "categorical__area_code_415.0",
+      "categorical__area_code_510.0",
+      "categorical__international_plan_0",
+      "categorical__international_plan_1",
+      "categorical__voice_mail_plan_0",
+      "categorical__voice_mail_plan_1",
+      "categorical__usage_band_0-100",
+      "categorical__usage_band_100-200",
+      "categorical__usage_band_200-300",
+      "categorical__usage_band_300+"
+    ],
+    "n_train": 3000,
+    "n_val": 1000,
+    "n_test": 1000,
+    "test_positive_count": 141,
+    "test_negative_count": 859,
+    "test_positive_rate": 0.141,
+    "validation_positive_rate": 0.142,
+    "train_positive_rate": 0.14133333333333334,
+    "class_weights": {
+      "0": 0.5822981366459627,
+      "1": 3.5377358490566038
+    },
+    "target": {
+      "column": "CustomerChurned",
+      "positive_label": "Yes",
+      "negative_label": "No",
+      "mapping": {
+        "No": 0,
+        "Yes": 1
+      },
+      "positive_rate": 0.1414
+    },
+    "test_rows_used": 1000,
+    "matrix_sha256": {
+      "train": "dd012e143225a7068dede8f5eed30681be4ef9ea7cf296a1fbe035834b1733ec",
+      "val": "56601abb706119e1545a35adb19d0977544cb7d9cda67873743bc8fcd898e41e",
+      "test": "f87cb7d706d6022c8bb0296aa00d9873ffce3c95fa3df15b868ecf39677f61c7"
+    }
+  },
+  "evaluation_config": {
+    "seed": 42,
+    "threshold_strategy": "max_f1",
+    "fixed_threshold": 0.5,
+    "recall_floor": null,
+    "selection_metric": "f1",
+    "selection_min_recall": null,
+    "cv_folds": 3,
+    "version": "1.0",
+    "fingerprint": "b98194f0af6f12e79f9bb587f449d2965cbc9755469b3fe85be17cf87c5e69aa"
+  },
+  "threshold_policy": {
+    "primary": {
+      "strategy": "max_f1",
+      "selected_on": "validation",
+      "frozen_before_test": true,
+      "fixed_threshold": 0.5,
+      "recall_floor": null
+    },
+    "default_threshold": 0.5,
+    "default_threshold_reporting": "Every family also reports metrics at the 0.5 default; those numbers never influenced threshold or model selection."
+  },
+  "families": {
+    "mlp": {
+      "family": "mlp",
+      "label": "MLP Neural Network",
+      "status": "completed",
+      "source": "phase6_artifact",
+      "notes": [
+        "Loaded from the existing Phase 6 artifact; it was not retrained or reselected on the test split.",
+        "Test metrics were computed once, after the threshold was frozen."
+      ],
+      "error": null,
+      "model": {
+        "model_run_id": "phase13-final-live-mlp",
+        "model_sha256": "f4f9120c76dd2b0e909796a9549fc2bd0876852d22ea7ba41a43e0d2aa87eec4",
+        "artifact_path": ".phase13_final\\artifacts\\models\\phase13-final-live-mlp\\mlp\\model.keras",
+        "framework": "tensorflow.keras",
+        "config": {
+          "seed": 42,
+          "hidden_units": [
+            32,
+            16
+          ],
+          "dropout": [
+            0.2,
+            0.1
+          ],
+          "l2": 0.0001,
+          "learning_rate": 0.001,
+          "batch_size": 64,
+          "epochs": 24,
+          "early_stopping_patience": 5,
+          "reduce_lr_patience": 3,
+          "reduce_lr_factor": 0.5,
+          "min_learning_rate": 1e-05,
+          "threshold": 0.5,
+          "deterministic": false,
+          "shuffle": true,
+          "verbose": 0,
+          "fingerprint": "9f6bdd8b8da8b1f8e249f73c008f732cc324cb03f4befc6151eebf91e9124632"
+        },
+        "parameter_count": 1441,
+        "train_rows": 3000,
+        "fit_seconds": 7.549498400003358,
+        "trained_at": "2026-10-23T00:46:45Z"
+      },
+      "class_weight": {
+        "0": 0.5822981366459627,
+        "1": 3.5377358490566038
+      },
+      "threshold": {
+        "selected": 0.8,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.8,
+          "n": 1000,
+          "n_positive": 142,
+          "n_negative": 858,
+          "positive_rate": 0.142,
+          "predicted_positive": 109,
+          "predicted_positive_rate": 0.109,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                832,
+                26
+              ],
+              [
+                59,
+                83
+              ]
+            ],
+            "tn": 832,
+            "fp": 26,
+            "fn": 59,
+            "tp": 83,
+            "n": 1000
+          },
+          "accuracy": 0.915,
+          "precision": 0.7614678899082569,
+          "recall": 0.5845070422535211,
+          "f1": 0.6613545816733067,
+          "specificity": 0.9696969696969697,
+          "balanced_accuracy": 0.7771020059752454,
+          "macro_precision": 0.8476250785119286,
+          "macro_recall": 0.7771020059752454,
+          "macro_f1": 0.8063776910653555,
+          "roc_auc": 0.8913457434584194,
+          "pr_auc": 0.7194463394784848,
+          "brier": 0.11794712383822259,
+          "log_loss": 0.39496347892621214,
+          "class_metrics": {
+            "0": {
+              "precision": 0.9337822671156004,
+              "recall": 0.9696969696969697,
+              "f1": 0.9514008004574043,
+              "support": 858
+            },
+            "1": {
+              "precision": 0.7614678899082569,
+              "recall": 0.5845070422535211,
+              "f1": 0.6613545816733067,
+              "support": 142
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.8,
+        "n": 1000,
+        "n_positive": 142,
+        "n_negative": 858,
+        "positive_rate": 0.142,
+        "predicted_positive": 109,
+        "predicted_positive_rate": 0.109,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              832,
+              26
+            ],
+            [
+              59,
+              83
+            ]
+          ],
+          "tn": 832,
+          "fp": 26,
+          "fn": 59,
+          "tp": 83,
+          "n": 1000
+        },
+        "accuracy": 0.915,
+        "precision": 0.7614678899082569,
+        "recall": 0.5845070422535211,
+        "f1": 0.6613545816733067,
+        "specificity": 0.9696969696969697,
+        "balanced_accuracy": 0.7771020059752454,
+        "macro_precision": 0.8476250785119286,
+        "macro_recall": 0.7771020059752454,
+        "macro_f1": 0.8063776910653555,
+        "roc_auc": 0.8913457434584194,
+        "pr_auc": 0.7194463394784848,
+        "brier": 0.11794712383822259,
+        "log_loss": 0.39496347892621214,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9337822671156004,
+            "recall": 0.9696969696969697,
+            "f1": 0.9514008004574043,
+            "support": 858
+          },
+          "1": {
+            "precision": 0.7614678899082569,
+            "recall": 0.5845070422535211,
+            "f1": 0.6613545816733067,
+            "support": 142
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "validation_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1000,
+        "n_positive": 142,
+        "n_negative": 858,
+        "positive_rate": 0.142,
+        "predicted_positive": 227,
+        "predicted_positive_rate": 0.227,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              742,
+              116
+            ],
+            [
+              31,
+              111
+            ]
+          ],
+          "tn": 742,
+          "fp": 116,
+          "fn": 31,
+          "tp": 111,
+          "n": 1000
+        },
+        "accuracy": 0.853,
+        "precision": 0.4889867841409692,
+        "recall": 0.7816901408450704,
+        "f1": 0.6016260162601625,
+        "specificity": 0.8648018648018648,
+        "balanced_accuracy": 0.8232460028234676,
+        "macro_precision": 0.7244416456280525,
+        "macro_recall": 0.8232460028234676,
+        "macro_f1": 0.7557486304476778,
+        "roc_auc": 0.8913457434584194,
+        "pr_auc": 0.7194463394784848,
+        "brier": 0.11794712383822259,
+        "log_loss": 0.39496347892621214,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9598965071151359,
+            "recall": 0.8648018648018648,
+            "f1": 0.9098712446351931,
+            "support": 858
+          },
+          "1": {
+            "precision": 0.4889867841409692,
+            "recall": 0.7816901408450704,
+            "f1": 0.6016260162601625,
+            "support": 142
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.8,
+        "n": 1000,
+        "n_positive": 141,
+        "n_negative": 859,
+        "positive_rate": 0.141,
+        "predicted_positive": 125,
+        "predicted_positive_rate": 0.125,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              828,
+              31
+            ],
+            [
+              47,
+              94
+            ]
+          ],
+          "tn": 828,
+          "fp": 31,
+          "fn": 47,
+          "tp": 94,
+          "n": 1000
+        },
+        "accuracy": 0.922,
+        "precision": 0.752,
+        "recall": 0.6666666666666666,
+        "f1": 0.706766917293233,
+        "specificity": 0.9639115250291036,
+        "balanced_accuracy": 0.8152890958478851,
+        "macro_precision": 0.8491428571428572,
+        "macro_recall": 0.8152890958478851,
+        "macro_f1": 0.8308921091656477,
+        "roc_auc": 0.9221426861186106,
+        "pr_auc": 0.7637318232299745,
+        "brier": 0.10911872435592804,
+        "log_loss": 0.37218435789047877,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9462857142857143,
+            "recall": 0.9639115250291036,
+            "f1": 0.9550173010380624,
+            "support": 859
+          },
+          "1": {
+            "precision": 0.752,
+            "recall": 0.6666666666666666,
+            "f1": 0.706766917293233,
+            "support": 141
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1000,
+        "n_positive": 141,
+        "n_negative": 859,
+        "positive_rate": 0.141,
+        "predicted_positive": 245,
+        "predicted_positive_rate": 0.245,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              740,
+              119
+            ],
+            [
+              15,
+              126
+            ]
+          ],
+          "tn": 740,
+          "fp": 119,
+          "fn": 15,
+          "tp": 126,
+          "n": 1000
+        },
+        "accuracy": 0.866,
+        "precision": 0.5142857142857142,
+        "recall": 0.8936170212765957,
+        "f1": 0.6528497409326425,
+        "specificity": 0.8614668218859138,
+        "balanced_accuracy": 0.8775419215812548,
+        "macro_precision": 0.7472090823084201,
+        "macro_recall": 0.8775419215812548,
+        "macro_f1": 0.7849130984712779,
+        "roc_auc": 0.9221426861186106,
+        "pr_auc": 0.7637318232299745,
+        "brier": 0.10911872435592804,
+        "log_loss": 0.37218435789047877,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9801324503311258,
+            "recall": 0.8614668218859138,
+            "f1": 0.9169764560099133,
+            "support": 859
+          },
+          "1": {
+            "precision": 0.5142857142857142,
+            "recall": 0.8936170212765957,
+            "f1": 0.6528497409326425,
+            "support": 141
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "train_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.8,
+        "n": 3000,
+        "n_positive": 424,
+        "n_negative": 2576,
+        "positive_rate": 0.14133333333333334,
+        "predicted_positive": 347,
+        "predicted_positive_rate": 0.11566666666666667,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              2510,
+              66
+            ],
+            [
+              143,
+              281
+            ]
+          ],
+          "tn": 2510,
+          "fp": 66,
+          "fn": 143,
+          "tp": 281,
+          "n": 3000
+        },
+        "accuracy": 0.9303333333333333,
+        "precision": 0.8097982708933718,
+        "recall": 0.6627358490566038,
+        "f1": 0.728923476005188,
+        "specificity": 0.9743788819875776,
+        "balanced_accuracy": 0.8185573655220907,
+        "macro_precision": 0.8779485135092566,
+        "macro_recall": 0.8185573655220907,
+        "macro_f1": 0.8444770372950017,
+        "roc_auc": 0.9288360263096215,
+        "pr_auc": 0.8025624962372578,
+        "brier": 0.09913258583981865,
+        "log_loss": 0.34631307424332197,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9460987561251414,
+            "recall": 0.9743788819875776,
+            "f1": 0.9600305985848154,
+            "support": 2576
+          },
+          "1": {
+            "precision": 0.8097982708933718,
+            "recall": 0.6627358490566038,
+            "f1": 0.728923476005188,
+            "support": 424
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "curves": {
+        "roc": {
+          "auc": 0.9221426861186106,
+          "points": 132
+        },
+        "pr": {
+          "pr_auc": 0.7637318232299745,
+          "points": 1001
+        },
+        "file": "curves.json"
+      },
+      "generalisation": {
+        "train_f1_minus_validation_f1": 0.06756889433188129,
+        "train_roc_auc_minus_validation_roc_auc": 0.03749028285120204,
+        "test_f1_minus_validation_f1": 0.0454123356199263,
+        "note": "Train metrics are in-sample; they are reported only as an overfitting signal, never as performance evidence."
+      },
+      "cv": {
+        "status": "completed",
+        "folds_requested": 3,
+        "folds_completed": 3,
+        "threshold": 0.5,
+        "metrics": {
+          "accuracy": {
+            "mean": 0.8480017305675744,
+            "std": 0.00960294252332606,
+            "n": 3,
+            "values": [
+              0.841079460269865,
+              0.8589647411852963,
+              0.8439609902475619
+            ]
+          },
+          "precision": {
+            "mean": 0.4788815338963707,
+            "std": 0.01845209131735137,
+            "n": 3,
+            "values": [
+              0.4658753709198813,
+              0.5,
+              0.4707692307692308
+            ]
+          },
+          "recall": {
+            "mean": 0.8073755112762205,
+            "std": 0.024457335027527626,
+            "n": 3,
+            "values": [
+              0.8306878306878307,
+              0.7819148936170213,
+              0.8095238095238095
+            ]
+          },
+          "f1": {
+            "mean": 0.6007491401428734,
+            "std": 0.008016947946409898,
+            "n": 3,
+            "values": [
+              0.596958174904943,
+              0.6099585062240663,
+              0.5953307392996109
+            ]
+          },
+          "roc_auc": {
+            "mean": 0.8849989245363831,
+            "std": 0.010718938756912242,
+            "n": 3,
+            "values": [
+              0.8941152006654189,
+              0.8731905602527177,
+              0.8876910126910127
+            ]
+          },
+          "pr_auc": {
+            "mean": 0.7109622130504766,
+            "std": 0.0188515319048781,
+            "n": 3,
+            "values": [
+              0.6993246551620291,
+              0.7008497117587805,
+              0.7327122722306203
+            ]
+          },
+          "brier": {
+            "mean": 0.11738725889234092,
+            "std": 0.0051902505136691025,
+            "n": 3,
+            "values": [
+              0.12084299035310211,
+              0.11141885776557801,
+              0.11989992855834267
+            ]
+          }
+        },
+        "fold_details": [
+          {
+            "fold": 1,
+            "status": "completed",
+            "n_train": 2666,
+            "n_validation": 1334,
+            "feature_count": 27,
+            "positive_rate": 0.14167916041979012,
+            "duration_seconds": 5.369330400004401,
+            "accuracy": 0.841079460269865,
+            "precision": 0.4658753709198813,
+            "recall": 0.8306878306878307,
+            "f1": 0.596958174904943,
+            "roc_auc": 0.8941152006654189,
+            "pr_auc": 0.6993246551620291,
+            "brier": 0.12084299035310211
+          },
+          {
+            "fold": 2,
+            "status": "completed",
+            "n_train": 2667,
+            "n_validation": 1333,
+            "feature_count": 27,
+            "positive_rate": 0.14103525881470366,
+            "duration_seconds": 6.659885100001702,
+            "accuracy": 0.8589647411852963,
+            "precision": 0.5,
+            "recall": 0.7819148936170213,
+            "f1": 0.6099585062240663,
+            "roc_auc": 0.8731905602527177,
+            "pr_auc": 0.7008497117587805,
+            "brier": 0.11141885776557801
+          },
+          {
+            "fold": 3,
+            "status": "completed",
+            "n_train": 2667,
+            "n_validation": 1333,
+            "feature_count": 27,
+            "positive_rate": 0.1417854463615904,
+            "duration_seconds": 5.437900400000217,
+            "accuracy": 0.8439609902475619,
+            "precision": 0.4707692307692308,
+            "recall": 0.8095238095238095,
+            "f1": 0.5953307392996109,
+            "roc_auc": 0.8876910126910127,
+            "pr_auc": 0.7327122722306203,
+            "brier": 0.11989992855834267
+          }
+        ],
+        "notes": [
+          "Folds are drawn from train+validation rows only; the test partition is not used.",
+          "Each fold refits the Phase 5 column plan, imputers, scaler and encoder on its own training rows; validation rows are transform-only.",
+          "Fold metrics use the 0.5 reference threshold, not the validation-selected operating threshold.",
+          "Class weights are the Phase 5 training weights in every fold, matching the weights used for the final family fits.",
+          "The MLP is refitted from scratch in every fold with an internal training-only hold-out for early stopping."
+        ],
+        "duration_seconds": 17.468272799997067,
+        "preprocessing": {
+          "refitted_per_fold": true,
+          "verified_against_phase5": true,
+          "source": {
+            "artifact_path": ".phase13_final\\data\\raw\\openml\\46915\\2025-04-30\\22125226.arff",
+            "profile_path": ".phase13_final\\data\\manifests\\openml_46915.profile.json",
+            "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+            "row_count": 5000
+          }
+        }
+      }
+    },
+    "logistic_regression": {
+      "family": "logistic_regression",
+      "label": "Logistic Regression",
+      "status": "completed",
+      "source": "fitted_in_phase7",
+      "notes": [
+        "Fitted in Phase 7 on the Phase 5 training partition with the documented fixed hyperparameters; no test row was used.",
+        "Test metrics were computed once, after the threshold was frozen."
+      ],
+      "error": null,
+      "model": {
+        "framework": "scikit-learn",
+        "config": {
+          "penalty": "l2",
+          "C": 1.0,
+          "solver": "lbfgs",
+          "max_iter": 2000,
+          "tol": 0.0001,
+          "class_weight": "balanced",
+          "random_state": 42
+        },
+        "seed": 42,
+        "train_rows": 3000,
+        "fit_seconds": 0.01710610000009183,
+        "feature_count": 27,
+        "artifact_path": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\models\\logistic_regression\\model.joblib",
+        "model_sha256": "4aa4395c23efaf12fc4abfeff0ca37ebe347f05f49ed94af80afd2bfa4e86fc1"
+      },
+      "class_weight": {
+        "0": 0.5822981366459627,
+        "1": 3.5377358490566038
+      },
+      "threshold": {
+        "selected": 0.64,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.64,
+          "n": 1000,
+          "n_positive": 142,
+          "n_negative": 858,
+          "positive_rate": 0.142,
+          "predicted_positive": 173,
+          "predicted_positive_rate": 0.173,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                778,
+                80
+              ],
+              [
+                49,
+                93
+              ]
+            ],
+            "tn": 778,
+            "fp": 80,
+            "fn": 49,
+            "tp": 93,
+            "n": 1000
+          },
+          "accuracy": 0.871,
+          "precision": 0.5375722543352601,
+          "recall": 0.6549295774647887,
+          "f1": 0.5904761904761905,
+          "specificity": 0.9067599067599068,
+          "balanced_accuracy": 0.7808447421123478,
+          "macro_precision": 0.7391609760188997,
+          "macro_recall": 0.7808447421123478,
+          "macro_f1": 0.7569591634873535,
+          "roc_auc": 0.869915295971634,
+          "pr_auc": 0.5924294530966903,
+          "brier": 0.145418990034113,
+          "log_loss": 0.4594504114793972,
+          "class_metrics": {
+            "0": {
+              "precision": 0.9407496977025392,
+              "recall": 0.9067599067599068,
+              "f1": 0.9234421364985165,
+              "support": 858
+            },
+            "1": {
+              "precision": 0.5375722543352601,
+              "recall": 0.6549295774647887,
+              "f1": 0.5904761904761905,
+              "support": 142
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.64,
+        "n": 1000,
+        "n_positive": 142,
+        "n_negative": 858,
+        "positive_rate": 0.142,
+        "predicted_positive": 173,
+        "predicted_positive_rate": 0.173,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              778,
+              80
+            ],
+            [
+              49,
+              93
+            ]
+          ],
+          "tn": 778,
+          "fp": 80,
+          "fn": 49,
+          "tp": 93,
+          "n": 1000
+        },
+        "accuracy": 0.871,
+        "precision": 0.5375722543352601,
+        "recall": 0.6549295774647887,
+        "f1": 0.5904761904761905,
+        "specificity": 0.9067599067599068,
+        "balanced_accuracy": 0.7808447421123478,
+        "macro_precision": 0.7391609760188997,
+        "macro_recall": 0.7808447421123478,
+        "macro_f1": 0.7569591634873535,
+        "roc_auc": 0.869915295971634,
+        "pr_auc": 0.5924294530966903,
+        "brier": 0.145418990034113,
+        "log_loss": 0.4594504114793972,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9407496977025392,
+            "recall": 0.9067599067599068,
+            "f1": 0.9234421364985165,
+            "support": 858
+          },
+          "1": {
+            "precision": 0.5375722543352601,
+            "recall": 0.6549295774647887,
+            "f1": 0.5904761904761905,
+            "support": 142
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "validation_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1000,
+        "n_positive": 142,
+        "n_negative": 858,
+        "positive_rate": 0.142,
+        "predicted_positive": 279,
+        "predicted_positive_rate": 0.279,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              689,
+              169
+            ],
+            [
+              32,
+              110
+            ]
+          ],
+          "tn": 689,
+          "fp": 169,
+          "fn": 32,
+          "tp": 110,
+          "n": 1000
+        },
+        "accuracy": 0.799,
+        "precision": 0.3942652329749104,
+        "recall": 0.7746478873239436,
+        "f1": 0.5225653206650831,
+        "specificity": 0.803030303030303,
+        "balanced_accuracy": 0.7888390951771234,
+        "macro_precision": 0.6749412156552776,
+        "macro_recall": 0.7888390951771234,
+        "macro_f1": 0.6976347819284884,
+        "roc_auc": 0.869915295971634,
+        "pr_auc": 0.5924294530966903,
+        "brier": 0.145418990034113,
+        "log_loss": 0.4594504114793972,
+        "class_metrics": {
+          "0": {
+            "precision": 0.955617198335645,
+            "recall": 0.803030303030303,
+            "f1": 0.8727042431918937,
+            "support": 858
+          },
+          "1": {
+            "precision": 0.3942652329749104,
+            "recall": 0.7746478873239436,
+            "f1": 0.5225653206650831,
+            "support": 142
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.64,
+        "n": 1000,
+        "n_positive": 141,
+        "n_negative": 859,
+        "positive_rate": 0.141,
+        "predicted_positive": 196,
+        "predicted_positive_rate": 0.196,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              770,
+              89
+            ],
+            [
+              34,
+              107
+            ]
+          ],
+          "tn": 770,
+          "fp": 89,
+          "fn": 34,
+          "tp": 107,
+          "n": 1000
+        },
+        "accuracy": 0.877,
+        "precision": 0.5459183673469388,
+        "recall": 0.7588652482269503,
+        "f1": 0.6350148367952522,
+        "specificity": 0.8963911525029103,
+        "balanced_accuracy": 0.8276282003649303,
+        "macro_precision": 0.7518149050665042,
+        "macro_recall": 0.8276282003649303,
+        "macro_f1": 0.7805260594078486,
+        "roc_auc": 0.8741072829201034,
+        "pr_auc": 0.57170547873407,
+        "brier": 0.14596066068067706,
+        "log_loss": 0.4703026497505115,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9577114427860697,
+            "recall": 0.8963911525029103,
+            "f1": 0.926037282020445,
+            "support": 859
+          },
+          "1": {
+            "precision": 0.5459183673469388,
+            "recall": 0.7588652482269503,
+            "f1": 0.6350148367952522,
+            "support": 141
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1000,
+        "n_positive": 141,
+        "n_negative": 859,
+        "positive_rate": 0.141,
+        "predicted_positive": 284,
+        "predicted_positive_rate": 0.284,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              692,
+              167
+            ],
+            [
+              24,
+              117
+            ]
+          ],
+          "tn": 692,
+          "fp": 167,
+          "fn": 24,
+          "tp": 117,
+          "n": 1000
+        },
+        "accuracy": 0.809,
+        "precision": 0.4119718309859155,
+        "recall": 0.8297872340425532,
+        "f1": 0.5505882352941176,
+        "specificity": 0.8055878928987195,
+        "balanced_accuracy": 0.8176875634706363,
+        "macro_precision": 0.689226138956645,
+        "macro_recall": 0.8176875634706363,
+        "macro_f1": 0.7146591970121381,
+        "roc_auc": 0.8741072829201034,
+        "pr_auc": 0.57170547873407,
+        "brier": 0.14596066068067706,
+        "log_loss": 0.4703026497505115,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9664804469273743,
+            "recall": 0.8055878928987195,
+            "f1": 0.8787301587301587,
+            "support": 859
+          },
+          "1": {
+            "precision": 0.4119718309859155,
+            "recall": 0.8297872340425532,
+            "f1": 0.5505882352941176,
+            "support": 141
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "train_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.64,
+        "n": 3000,
+        "n_positive": 424,
+        "n_negative": 2576,
+        "positive_rate": 0.14133333333333334,
+        "predicted_positive": 520,
+        "predicted_positive_rate": 0.17333333333333334,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              2349,
+              227
+            ],
+            [
+              131,
+              293
+            ]
+          ],
+          "tn": 2349,
+          "fp": 227,
+          "fn": 131,
+          "tp": 293,
+          "n": 3000
+        },
+        "accuracy": 0.8806666666666667,
+        "precision": 0.5634615384615385,
+        "recall": 0.6910377358490566,
+        "f1": 0.6207627118644067,
+        "specificity": 0.9118788819875776,
+        "balanced_accuracy": 0.8014583089183172,
+        "macro_precision": 0.7553194789081885,
+        "macro_recall": 0.8014583089183172,
+        "macro_f1": 0.7749778749195451,
+        "roc_auc": 0.8737868788819877,
+        "pr_auc": 0.6022724503205565,
+        "brier": 0.13836145774597453,
+        "log_loss": 0.4453782976472888,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9471774193548387,
+            "recall": 0.9118788819875776,
+            "f1": 0.9291930379746836,
+            "support": 2576
+          },
+          "1": {
+            "precision": 0.5634615384615385,
+            "recall": 0.6910377358490566,
+            "f1": 0.6207627118644067,
+            "support": 424
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "curves": {
+        "roc": {
+          "auc": 0.8741072829201034,
+          "points": 150
+        },
+        "pr": {
+          "pr_auc": 0.57170547873407,
+          "points": 1001
+        },
+        "file": "curves.json"
+      },
+      "generalisation": {
+        "train_f1_minus_validation_f1": 0.030286521388216192,
+        "train_roc_auc_minus_validation_roc_auc": 0.0038715829103537214,
+        "test_f1_minus_validation_f1": 0.04453864631906168,
+        "note": "Train metrics are in-sample; they are reported only as an overfitting signal, never as performance evidence."
+      },
+      "cv": {
+        "status": "completed",
+        "folds_requested": 3,
+        "folds_completed": 3,
+        "threshold": 0.5,
+        "metrics": {
+          "accuracy": {
+            "mean": 0.812751351256105,
+            "std": 0.013585084779726763,
+            "n": 3,
+            "values": [
+              0.8073463268365817,
+              0.8027006751687922,
+              0.8282070517629407
+            ]
+          },
+          "precision": {
+            "mean": 0.4172846971001727,
+            "std": 0.02190177978726207,
+            "n": 3,
+            "values": [
+              0.40860215053763443,
+              0.40105540897097625,
+              0.4421965317919075
+            ]
+          },
+          "recall": {
+            "mean": 0.8074224173514954,
+            "std": 0.0028083541209152738,
+            "n": 3,
+            "values": [
+              0.8042328042328042,
+              0.8085106382978723,
+              0.8095238095238095
+            ]
+          },
+          "f1": {
+            "mean": 0.550002434236751,
+            "std": 0.019232984866543446,
+            "n": 3,
+            "values": [
+              0.5418894830659536,
+              0.5361552028218695,
+              0.5719626168224299
+            ]
+          },
+          "roc_auc": {
+            "mean": 0.8685209652203055,
+            "std": 0.013254942017536341,
+            "n": 3,
+            "values": [
+              0.8748827430050137,
+              0.8532844002601506,
+              0.8773957523957523
+            ]
+          },
+          "pr_auc": {
+            "mean": 0.6002917250985703,
+            "std": 0.03739406300406821,
+            "n": 3,
+            "values": [
+              0.6321105697434583,
+              0.559104114707149,
+              0.6096604908451038
+            ]
+          },
+          "brier": {
+            "mean": 0.14039826333446973,
+            "std": 0.008161288431126063,
+            "n": 3,
+            "values": [
+              0.14180633647743202,
+              0.1477639000137518,
+              0.13162455351222538
+            ]
+          }
+        },
+        "fold_details": [
+          {
+            "fold": 1,
+            "status": "completed",
+            "n_train": 2666,
+            "n_validation": 1334,
+            "feature_count": 27,
+            "positive_rate": 0.14167916041979012,
+            "duration_seconds": 0.13243189999775495,
+            "accuracy": 0.8073463268365817,
+            "precision": 0.40860215053763443,
+            "recall": 0.8042328042328042,
+            "f1": 0.5418894830659536,
+            "roc_auc": 0.8748827430050137,
+            "pr_auc": 0.6321105697434583,
+            "brier": 0.14180633647743202
+          },
+          {
+            "fold": 2,
+            "status": "completed",
+            "n_train": 2667,
+            "n_validation": 1333,
+            "feature_count": 27,
+            "positive_rate": 0.14103525881470366,
+            "duration_seconds": 0.1312002000049688,
+            "accuracy": 0.8027006751687922,
+            "precision": 0.40105540897097625,
+            "recall": 0.8085106382978723,
+            "f1": 0.5361552028218695,
+            "roc_auc": 0.8532844002601506,
+            "pr_auc": 0.559104114707149,
+            "brier": 0.1477639000137518
+          },
+          {
+            "fold": 3,
+            "status": "completed",
+            "n_train": 2667,
+            "n_validation": 1333,
+            "feature_count": 27,
+            "positive_rate": 0.1417854463615904,
+            "duration_seconds": 0.1143104000002495,
+            "accuracy": 0.8282070517629407,
+            "precision": 0.4421965317919075,
+            "recall": 0.8095238095238095,
+            "f1": 0.5719626168224299,
+            "roc_auc": 0.8773957523957523,
+            "pr_auc": 0.6096604908451038,
+            "brier": 0.13162455351222538
+          }
+        ],
+        "notes": [
+          "Folds are drawn from train+validation rows only; the test partition is not used.",
+          "Each fold refits the Phase 5 column plan, imputers, scaler and encoder on its own training rows; validation rows are transform-only.",
+          "Fold metrics use the 0.5 reference threshold, not the validation-selected operating threshold.",
+          "Class weights are the Phase 5 training weights in every fold, matching the weights used for the final family fits."
+        ],
+        "duration_seconds": 0.37924600000405917,
+        "preprocessing": {
+          "refitted_per_fold": true,
+          "verified_against_phase5": true,
+          "source": {
+            "artifact_path": ".phase13_final\\data\\raw\\openml\\46915\\2025-04-30\\22125226.arff",
+            "profile_path": ".phase13_final\\data\\manifests\\openml_46915.profile.json",
+            "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+            "row_count": 5000
+          }
+        }
+      }
+    },
+    "random_forest": {
+      "family": "random_forest",
+      "label": "Random Forest",
+      "status": "completed",
+      "source": "fitted_in_phase7",
+      "notes": [
+        "Fitted in Phase 7 on the Phase 5 training partition with the documented fixed hyperparameters; no test row was used.",
+        "Test metrics were computed once, after the threshold was frozen."
+      ],
+      "error": null,
+      "model": {
+        "framework": "scikit-learn",
+        "config": {
+          "n_estimators": 300,
+          "max_depth": null,
+          "min_samples_split": 2,
+          "min_samples_leaf": 2,
+          "max_features": "sqrt",
+          "bootstrap": true,
+          "class_weight": "balanced_subsample",
+          "n_jobs": -1,
+          "random_state": 42
+        },
+        "seed": 42,
+        "train_rows": 3000,
+        "fit_seconds": 0.9304529000000912,
+        "feature_count": 27,
+        "artifact_path": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\models\\random_forest\\model.joblib",
+        "model_sha256": "b5c8af5d65fb1ae4f751236a934c71854cb00e84edd269b6d81fcd1561879a1c"
+      },
+      "class_weight": {
+        "0": 0.5822981366459627,
+        "1": 3.5377358490566038
+      },
+      "threshold": {
+        "selected": 0.45,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.45,
+          "n": 1000,
+          "n_positive": 142,
+          "n_negative": 858,
+          "positive_rate": 0.142,
+          "predicted_positive": 121,
+          "predicted_positive_rate": 0.121,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                842,
+                16
+              ],
+              [
+                37,
+                105
+              ]
+            ],
+            "tn": 842,
+            "fp": 16,
+            "fn": 37,
+            "tp": 105,
+            "n": 1000
+          },
+          "accuracy": 0.947,
+          "precision": 0.8677685950413223,
+          "recall": 0.7394366197183099,
+          "f1": 0.7984790874524714,
+          "specificity": 0.9813519813519813,
+          "balanced_accuracy": 0.8603943005351455,
+          "macro_precision": 0.912837653607123,
+          "macro_recall": 0.8603943005351455,
+          "macro_f1": 0.8839833548949174,
+          "roc_auc": 0.882555238189041,
+          "pr_auc": 0.8199572141195611,
+          "brier": 0.05163607426557431,
+          "log_loss": 0.2744279647288952,
+          "class_metrics": {
+            "0": {
+              "precision": 0.9579067121729238,
+              "recall": 0.9813519813519813,
+              "f1": 0.9694876223373633,
+              "support": 858
+            },
+            "1": {
+              "precision": 0.8677685950413223,
+              "recall": 0.7394366197183099,
+              "f1": 0.7984790874524714,
+              "support": 142
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.45,
+        "n": 1000,
+        "n_positive": 142,
+        "n_negative": 858,
+        "positive_rate": 0.142,
+        "predicted_positive": 121,
+        "predicted_positive_rate": 0.121,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              842,
+              16
+            ],
+            [
+              37,
+              105
+            ]
+          ],
+          "tn": 842,
+          "fp": 16,
+          "fn": 37,
+          "tp": 105,
+          "n": 1000
+        },
+        "accuracy": 0.947,
+        "precision": 0.8677685950413223,
+        "recall": 0.7394366197183099,
+        "f1": 0.7984790874524714,
+        "specificity": 0.9813519813519813,
+        "balanced_accuracy": 0.8603943005351455,
+        "macro_precision": 0.912837653607123,
+        "macro_recall": 0.8603943005351455,
+        "macro_f1": 0.8839833548949174,
+        "roc_auc": 0.882555238189041,
+        "pr_auc": 0.8199572141195611,
+        "brier": 0.05163607426557431,
+        "log_loss": 0.2744279647288952,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9579067121729238,
+            "recall": 0.9813519813519813,
+            "f1": 0.9694876223373633,
+            "support": 858
+          },
+          "1": {
+            "precision": 0.8677685950413223,
+            "recall": 0.7394366197183099,
+            "f1": 0.7984790874524714,
+            "support": 142
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "validation_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1000,
+        "n_positive": 142,
+        "n_negative": 858,
+        "positive_rate": 0.142,
+        "predicted_positive": 111,
+        "predicted_positive_rate": 0.111,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              847,
+              11
+            ],
+            [
+              42,
+              100
+            ]
+          ],
+          "tn": 847,
+          "fp": 11,
+          "fn": 42,
+          "tp": 100,
+          "n": 1000
+        },
+        "accuracy": 0.947,
+        "precision": 0.9009009009009009,
+        "recall": 0.704225352112676,
+        "f1": 0.7905138339920947,
+        "specificity": 0.9871794871794872,
+        "balanced_accuracy": 0.8457024196460816,
+        "macro_precision": 0.926828403206356,
+        "macro_recall": 0.8457024196460816,
+        "macro_f1": 0.8800880560916398,
+        "roc_auc": 0.882555238189041,
+        "pr_auc": 0.8199572141195611,
+        "brier": 0.05163607426557431,
+        "log_loss": 0.2744279647288952,
+        "class_metrics": {
+          "0": {
+            "precision": 0.952755905511811,
+            "recall": 0.9871794871794872,
+            "f1": 0.9696622781911849,
+            "support": 858
+          },
+          "1": {
+            "precision": 0.9009009009009009,
+            "recall": 0.704225352112676,
+            "f1": 0.7905138339920947,
+            "support": 142
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.45,
+        "n": 1000,
+        "n_positive": 141,
+        "n_negative": 859,
+        "positive_rate": 0.141,
+        "predicted_positive": 132,
+        "predicted_positive_rate": 0.132,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              846,
+              13
+            ],
+            [
+              22,
+              119
+            ]
+          ],
+          "tn": 846,
+          "fp": 13,
+          "fn": 22,
+          "tp": 119,
+          "n": 1000
+        },
+        "accuracy": 0.965,
+        "precision": 0.9015151515151515,
+        "recall": 0.8439716312056738,
+        "f1": 0.8717948717948718,
+        "specificity": 0.9848661233993015,
+        "balanced_accuracy": 0.9144188773024876,
+        "macro_precision": 0.938084764697668,
+        "macro_recall": 0.9144188773024876,
+        "macro_f1": 0.9257642569744481,
+        "roc_auc": 0.9383416309579835,
+        "pr_auc": 0.8973210549326094,
+        "brier": 0.03901493419386898,
+        "log_loss": 0.16835701293839836,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9746543778801844,
+            "recall": 0.9848661233993015,
+            "f1": 0.9797336421540244,
+            "support": 859
+          },
+          "1": {
+            "precision": 0.9015151515151515,
+            "recall": 0.8439716312056738,
+            "f1": 0.8717948717948718,
+            "support": 141
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1000,
+        "n_positive": 141,
+        "n_negative": 859,
+        "positive_rate": 0.141,
+        "predicted_positive": 126,
+        "predicted_positive_rate": 0.126,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              851,
+              8
+            ],
+            [
+              23,
+              118
+            ]
+          ],
+          "tn": 851,
+          "fp": 8,
+          "fn": 23,
+          "tp": 118,
+          "n": 1000
+        },
+        "accuracy": 0.969,
+        "precision": 0.9365079365079365,
+        "recall": 0.8368794326241135,
+        "f1": 0.8838951310861424,
+        "specificity": 0.9906868451688009,
+        "balanced_accuracy": 0.9137831388964572,
+        "macro_precision": 0.9550960735171261,
+        "macro_recall": 0.9137831388964572,
+        "macro_f1": 0.933003537845437,
+        "roc_auc": 0.9383416309579835,
+        "pr_auc": 0.8973210549326094,
+        "brier": 0.03901493419386898,
+        "log_loss": 0.16835701293839836,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9736842105263158,
+            "recall": 0.9906868451688009,
+            "f1": 0.9821119446047316,
+            "support": 859
+          },
+          "1": {
+            "precision": 0.9365079365079365,
+            "recall": 0.8368794326241135,
+            "f1": 0.8838951310861424,
+            "support": 141
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "train_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.45,
+        "n": 3000,
+        "n_positive": 424,
+        "n_negative": 2576,
+        "positive_rate": 0.14133333333333334,
+        "predicted_positive": 431,
+        "predicted_positive_rate": 0.14366666666666666,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              2569,
+              7
+            ],
+            [
+              0,
+              424
+            ]
+          ],
+          "tn": 2569,
+          "fp": 7,
+          "fn": 0,
+          "tp": 424,
+          "n": 3000
+        },
+        "accuracy": 0.9976666666666667,
+        "precision": 0.9837587006960556,
+        "recall": 1.0,
+        "f1": 0.9918128654970759,
+        "specificity": 0.9972826086956522,
+        "balanced_accuracy": 0.9986413043478262,
+        "macro_precision": 0.9918793503480279,
+        "macro_recall": 0.9986413043478262,
+        "macro_f1": 0.9952261606396944,
+        "roc_auc": 0.9999670397281145,
+        "pr_auc": 0.9997971465120055,
+        "brier": 0.01088160611137926,
+        "log_loss": 0.0697919951858186,
+        "class_metrics": {
+          "0": {
+            "precision": 1.0,
+            "recall": 0.9972826086956522,
+            "f1": 0.998639455782313,
+            "support": 2576
+          },
+          "1": {
+            "precision": 0.9837587006960556,
+            "recall": 1.0,
+            "f1": 0.9918128654970759,
+            "support": 424
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "curves": {
+        "roc": {
+          "auc": 0.9383416309579835,
+          "points": 69
+        },
+        "pr": {
+          "pr_auc": 0.8973210549326094,
+          "points": 982
+        },
+        "file": "curves.json"
+      },
+      "generalisation": {
+        "train_f1_minus_validation_f1": 0.1933337780446045,
+        "train_roc_auc_minus_validation_roc_auc": 0.11741180153907349,
+        "test_f1_minus_validation_f1": 0.07331578434240038,
+        "note": "Train metrics are in-sample; they are reported only as an overfitting signal, never as performance evidence."
+      },
+      "cv": {
+        "status": "completed",
+        "folds_requested": 3,
+        "folds_completed": 3,
+        "threshold": 0.5,
+        "metrics": {
+          "accuracy": {
+            "mean": 0.9530004315171747,
+            "std": 0.0015411619652228347,
+            "n": 3,
+            "values": [
+              0.9512743628185907,
+              0.9534883720930233,
+              0.95423855963991
+            ]
+          },
+          "precision": {
+            "mean": 0.8978430191709325,
+            "std": 0.024972253103750668,
+            "n": 3,
+            "values": [
+              0.8827160493827161,
+              0.8841463414634146,
+              0.9266666666666666
+            ]
+          },
+          "recall": {
+            "mean": 0.7544466959360577,
+            "std": 0.018011471167953104,
+            "n": 3,
+            "values": [
+              0.7566137566137566,
+              0.7712765957446809,
+              0.7354497354497355
+            ]
+          },
+          "f1": {
+            "mean": 0.8195791494095328,
+            "std": 0.0045434549820876444,
+            "n": 3,
+            "values": [
+              0.8148148148148148,
+              0.8238636363636364,
+              0.8200589970501475
+            ]
+          },
+          "roc_auc": {
+            "mean": 0.9121353738827956,
+            "std": 0.01033972614844753,
+            "n": 3,
+            "values": [
+              0.9136618839675609,
+              0.9011172535538419,
+              0.9216269841269842
+            ]
+          },
+          "pr_auc": {
+            "mean": 0.8551586310000392,
+            "std": 0.01868980834048213,
+            "n": 3,
+            "values": [
+              0.8636488174201061,
+              0.8337307997451441,
+              0.8680962758348676
+            ]
+          },
+          "brier": {
+            "mean": 0.04684944121328427,
+            "std": 0.0021218088864973957,
+            "n": 3,
+            "values": [
+              0.046949611191727345,
+              0.0489193909955661,
+              0.04467932145255936
+            ]
+          }
+        },
+        "fold_details": [
+          {
+            "fold": 1,
+            "status": "completed",
+            "n_train": 2666,
+            "n_validation": 1334,
+            "feature_count": 27,
+            "positive_rate": 0.14167916041979012,
+            "duration_seconds": 0.7477737000008347,
+            "accuracy": 0.9512743628185907,
+            "precision": 0.8827160493827161,
+            "recall": 0.7566137566137566,
+            "f1": 0.8148148148148148,
+            "roc_auc": 0.9136618839675609,
+            "pr_auc": 0.8636488174201061,
+            "brier": 0.046949611191727345
+          },
+          {
+            "fold": 2,
+            "status": "completed",
+            "n_train": 2667,
+            "n_validation": 1333,
+            "feature_count": 27,
+            "positive_rate": 0.14103525881470366,
+            "duration_seconds": 0.7870017000022926,
+            "accuracy": 0.9534883720930233,
+            "precision": 0.8841463414634146,
+            "recall": 0.7712765957446809,
+            "f1": 0.8238636363636364,
+            "roc_auc": 0.9011172535538419,
+            "pr_auc": 0.8337307997451441,
+            "brier": 0.0489193909955661
+          },
+          {
+            "fold": 3,
+            "status": "completed",
+            "n_train": 2667,
+            "n_validation": 1333,
+            "feature_count": 27,
+            "positive_rate": 0.1417854463615904,
+            "duration_seconds": 0.7841210999977193,
+            "accuracy": 0.95423855963991,
+            "precision": 0.9266666666666666,
+            "recall": 0.7354497354497355,
+            "f1": 0.8200589970501475,
+            "roc_auc": 0.9216269841269842,
+            "pr_auc": 0.8680962758348676,
+            "brier": 0.04467932145255936
+          }
+        ],
+        "notes": [
+          "Folds are drawn from train+validation rows only; the test partition is not used.",
+          "Each fold refits the Phase 5 column plan, imputers, scaler and encoder on its own training rows; validation rows are transform-only.",
+          "Fold metrics use the 0.5 reference threshold, not the validation-selected operating threshold.",
+          "Class weights are the Phase 5 training weights in every fold, matching the weights used for the final family fits."
+        ],
+        "duration_seconds": 2.3201183999990462,
+        "preprocessing": {
+          "refitted_per_fold": true,
+          "verified_against_phase5": true,
+          "source": {
+            "artifact_path": ".phase13_final\\data\\raw\\openml\\46915\\2025-04-30\\22125226.arff",
+            "profile_path": ".phase13_final\\data\\manifests\\openml_46915.profile.json",
+            "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+            "row_count": 5000
+          }
+        }
+      }
+    }
+  },
+  "comparison_table": [
+    {
+      "family": "logistic_regression",
+      "label": "Logistic Regression",
+      "threshold": 0.64,
+      "accuracy": 0.877,
+      "precision": 0.5459183673469388,
+      "recall": 0.7588652482269503,
+      "f1": 0.6350148367952522,
+      "roc_auc": 0.8741072829201034,
+      "pr_auc": 0.57170547873407,
+      "brier": 0.14596066068067706,
+      "tn": 770,
+      "fp": 89,
+      "fn": 34,
+      "tp": 107,
+      "n": 1000
+    },
+    {
+      "family": "random_forest",
+      "label": "Random Forest",
+      "threshold": 0.45,
+      "accuracy": 0.965,
+      "precision": 0.9015151515151515,
+      "recall": 0.8439716312056738,
+      "f1": 0.8717948717948718,
+      "roc_auc": 0.9383416309579835,
+      "pr_auc": 0.8973210549326094,
+      "brier": 0.03901493419386898,
+      "tn": 846,
+      "fp": 13,
+      "fn": 22,
+      "tp": 119,
+      "n": 1000
+    },
+    {
+      "family": "mlp",
+      "label": "MLP Neural Network",
+      "threshold": 0.8,
+      "accuracy": 0.922,
+      "precision": 0.752,
+      "recall": 0.6666666666666666,
+      "f1": 0.706766917293233,
+      "roc_auc": 0.9221426861186106,
+      "pr_auc": 0.7637318232299745,
+      "brier": 0.10911872435592804,
+      "tn": 828,
+      "fp": 31,
+      "fn": 47,
+      "tp": 94,
+      "n": 1000
+    }
+  ],
+  "selection": {
+    "selection_metric": "f1",
+    "selected_family": "random_forest",
+    "selected_label": "Random Forest",
+    "selected_validation_value": 0.7984790874524714,
+    "threshold": 0.45,
+    "selected_on": "validation",
+    "test_used_for_selection": false,
+    "recall_floor": null,
+    "ranking": [
+      {
+        "family": "random_forest",
+        "label": "Random Forest",
+        "metric": "f1",
+        "validation_value": 0.7984790874524714,
+        "validation_recall": 0.7394366197183099,
+        "validation_f1": 0.7984790874524714,
+        "validation_roc_auc": 0.882555238189041,
+        "test_value": 0.8717948717948718,
+        "rank": 1
+      },
+      {
+        "family": "mlp",
+        "label": "MLP Neural Network",
+        "metric": "f1",
+        "validation_value": 0.6613545816733067,
+        "validation_recall": 0.5845070422535211,
+        "validation_f1": 0.6613545816733067,
+        "validation_roc_auc": 0.8913457434584194,
+        "test_value": 0.706766917293233,
+        "rank": 2
+      },
+      {
+        "family": "logistic_regression",
+        "label": "Logistic Regression",
+        "metric": "f1",
+        "validation_value": 0.5904761904761905,
+        "validation_recall": 0.6549295774647887,
+        "validation_f1": 0.5904761904761905,
+        "validation_roc_auc": 0.869915295971634,
+        "test_value": 0.6350148367952522,
+        "rank": 3
+      }
+    ],
+    "rationale": "Selected Random Forest because it had the highest validation f1 (0.7985) at its validation-selected operating threshold. MLP Neural Network followed with 0.6614. The MLP was not the best model on the validation criterion; the benchmark does not assume it must win. The test partition was not used to choose the model.",
+    "notes": [
+      "Selection uses validation predictions only, after thresholds were frozen.",
+      "Accuracy alone is not the selection criterion; the configured metric is f1."
+    ]
+  },
+  "error_analysis": {
+    "interpretation": "A false positive is a retained customer predicted to churn (wasted retention spend). A false negative is a churner predicted to stay (missed save opportunity). Recall drives missed churners; precision drives outreach cost.",
+    "test_rows": 1000,
+    "test_positive_rows": 141,
+    "families": {
+      "logistic_regression": {
+        "false_positives": 89,
+        "false_negatives": 34,
+        "false_positive_rate_of_negatives": 0.10360884749708964,
+        "false_negative_rate_of_positives": 0.24113475177304963,
+        "mean_probability_false_positives": 0.8091608463814453,
+        "mean_probability_false_negatives": 0.3694340500021583,
+        "note": "Aggregate counts and mean probabilities only; no customer identifiers or raw records are exposed."
+      },
+      "random_forest": {
+        "false_positives": 13,
+        "false_negatives": 22,
+        "false_positive_rate_of_negatives": 0.015133876600698487,
+        "false_negative_rate_of_positives": 0.15602836879432624,
+        "mean_probability_false_positives": 0.5764753811069411,
+        "mean_probability_false_negatives": 0.178926590742809,
+        "note": "Aggregate counts and mean probabilities only; no customer identifiers or raw records are exposed."
+      },
+      "mlp": {
+        "false_positives": 31,
+        "false_negatives": 47,
+        "false_positive_rate_of_negatives": 0.03608847497089639,
+        "false_negative_rate_of_positives": 0.3333333333333333,
+        "mean_probability_false_positives": 0.8870536665762624,
+        "mean_probability_false_negatives": 0.5248936274425781,
+        "note": "Aggregate counts and mean probabilities only; no customer identifiers or raw records are exposed."
+      }
+    }
+  },
+  "cross_validation": {
+    "enabled": true,
+    "folds": 3,
+    "scope": "train+validation rows only",
+    "status": "completed",
+    "preprocessing": {
+      "strategy": "refit per fold from the Phase 5 base frame",
+      "fold_safe": true,
+      "verified_against_phase5": true,
+      "by_family": {
+        "logistic_regression": {
+          "refitted_per_fold": true,
+          "verified_against_phase5": true,
+          "source": {
+            "artifact_path": ".phase13_final\\data\\raw\\openml\\46915\\2025-04-30\\22125226.arff",
+            "profile_path": ".phase13_final\\data\\manifests\\openml_46915.profile.json",
+            "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+            "row_count": 5000
+          }
+        },
+        "random_forest": {
+          "refitted_per_fold": true,
+          "verified_against_phase5": true,
+          "source": {
+            "artifact_path": ".phase13_final\\data\\raw\\openml\\46915\\2025-04-30\\22125226.arff",
+            "profile_path": ".phase13_final\\data\\manifests\\openml_46915.profile.json",
+            "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+            "row_count": 5000
+          }
+        },
+        "mlp": {
+          "refitted_per_fold": true,
+          "verified_against_phase5": true,
+          "source": {
+            "artifact_path": ".phase13_final\\data\\raw\\openml\\46915\\2025-04-30\\22125226.arff",
+            "profile_path": ".phase13_final\\data\\manifests\\openml_46915.profile.json",
+            "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+            "row_count": 5000
+          }
+        }
+      }
+    },
+    "notes": [
+      "CV metrics are a stability estimate at the 0.5 reference threshold; the held-out test result remains the primary evidence.",
+      "Each fold refits the Phase 5 column plan, imputers, scaler and encoder on its own training rows; validation rows are transform-only.",
+      "The base frame is reconstructed from the recorded raw artifact and accepted only if a full-training refit reproduces the Phase 5 matrices exactly; otherwise CV is reported as unavailable."
+    ]
+  },
+  "plots": {
+    "confusion_matrix_logistic_regression": "confusion_matrix_logistic_regression.png",
+    "confusion_matrix_random_forest": "confusion_matrix_random_forest.png",
+    "confusion_matrix_mlp": "confusion_matrix_mlp.png",
+    "roc_curves": "roc_curves.png",
+    "precision_recall_curves": "precision_recall_curves.png",
+    "metric_comparison": "metric_comparison.png",
+    "threshold_analysis": "threshold_analysis.png",
+    "probability_distributions": "probability_distributions.png"
+  },
+  "artifacts": {
+    "root": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench",
+    "metrics": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\metrics.json",
+    "benchmark_markdown": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\benchmark.md",
+    "curves": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\curves.json",
+    "threshold_analysis": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\threshold_analysis.json",
+    "predictions": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\predictions.npz",
+    "run_manifest": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\run_manifest.json",
+    "plots": {
+      "confusion_matrix_logistic_regression": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\confusion_matrix_logistic_regression.png",
+      "confusion_matrix_random_forest": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\confusion_matrix_random_forest.png",
+      "confusion_matrix_mlp": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\confusion_matrix_mlp.png",
+      "roc_curves": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\roc_curves.png",
+      "precision_recall_curves": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\precision_recall_curves.png",
+      "metric_comparison": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\metric_comparison.png",
+      "threshold_analysis": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\threshold_analysis.png",
+      "probability_distributions": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\probability_distributions.png"
+    },
+    "baseline_models": {
+      "logistic_regression": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\models\\logistic_regression\\model.joblib",
+      "random_forest": ".phase13_final\\artifacts\\evaluation\\phase13-final-live-bench\\models\\random_forest\\model.joblib"
+    }
+  },
+  "environment": {
+    "python": "3.13.0",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.4",
+    "code_version": "0.10.0",
+    "pandas": "2.3.3",
+    "scikit_learn": "1.7.2",
+    "tensorflow": "2.21.0",
+    "keras": "3.15.1"
+  },
+  "validity": {
+    "roc_auc_above_chance": true,
+    "test_roc_auc_by_family": {
+      "logistic_regression": 0.8741072829201034,
+      "random_forest": 0.9383416309579835,
+      "mlp": 0.9221426861186106
+    },
+    "test_evaluation_calls": 1,
+    "test_metric_evaluations": 3,
+    "test_evaluated_once": true,
+    "thresholds_frozen_before_test": true,
+    "flags": []
+  },
+  "complete": true,
+  "missing_families": [],
+  "warnings": [],
+  "limitations": [
+    "Metrics describe one held-out split; they are not a guarantee of future churn behaviour or causal retention impact.",
+    "A threshold selected to maximise validation F1 is a statistical choice, not automatically the best business decision; contact costs and capacity are modeled in later phases.",
+    "The benchmark compares model families on one dataset; results do not transfer automatically to other customer bases.",
+    "Test metrics were computed once. Re-running this benchmark on a new split produces a new evaluation, not a re-tuned score for this one.",
+    "Cross-validation refits preprocessing inside every fold, but the fold split is a single seeded 5-fold partition; it does not quantify split-to-split variance.",
+    "Probability calibration is summarised by the Brier score only; no recalibration was fitted."
+  ]
+}

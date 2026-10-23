@@ -430,12 +430,13 @@ and live under `tests/`; they never enter `data/` or project artifacts.
 
 These are stated rather than hidden:
 
-1. **Full-population explanations are not persisted.** Phase 8 explains a bounded
-   validation sample and a handful of local examples. The acceptance criterion
-   "explanation covers every customer present in the demo/prediction set" is a
-   Phase 9 concern because that scoring population is not defined yet. The
-   batch interface can explain up to 500 raw rows per call and is tested; a
-   production export would need deliberate batching.
+1. **Full-population explanations require an explicit explain-all run.** Phase 8
+   defaults to a bounded validation sample because SHAP is expensive. Phase 13
+   verified the full-population path against the Phase 9 reference run: the
+   `explain=all` run `20261022T155236Z-openml_46915-risk-final-drivers` wrote
+   1,000 local JSON explanations for 1,000 scored customers. The batch interface
+   remains capped at 500 raw rows per call; a larger export needs deliberate
+   batching.
 2. **No full signed SHAP matrix artifact.** `global.json` stores the ranking and
    summaries; local JSON files store full grouped contributions for explained
    rows. A later phase needing per-row vectors for all scored customers must

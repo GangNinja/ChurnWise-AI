@@ -643,10 +643,13 @@ were added to reflect the Phase 9 completion criteria.
    16.96 s end to end on this machine; no other hardware was measured.
 8. **No database or external store.** Runs are filesystem artifacts under
    `artifacts/predictions/`, consistent with Phases 1–8.
-9. **Phase 10 was not implemented at the time of this report.** Phase 10
-   campaign simulation has since landed (see [PHASE10_REPORT.md](PHASE10_REPORT.md));
-   the dashboard UI, end-to-end orchestrator and final verification (Phases
-   11–13) still do not exist. All evidence here stops at Phase 9.
+9. **Later phases were not implemented at the time of this report.** Phases 10–13
+   have since landed: campaign simulation, the dashboard, end-to-end
+   orchestration and final verification are documented in
+   [PHASE10_REPORT.md](PHASE10_REPORT.md), [PHASE11_REPORT.md](PHASE11_REPORT.md),
+   [PHASE12_REPORT.md](PHASE12_REPORT.md) and
+   [FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md). All risk evidence
+   in this report still stops at Phase 9.
 10. **Live-network checks remain opt-in.** Seven live tests were skipped in the
     default suite; they are unrelated to Phase 9 and were not used as evidence.
 

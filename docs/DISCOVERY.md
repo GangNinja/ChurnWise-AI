@@ -92,7 +92,7 @@ Every adapter produces the same `DatasetCandidate` (`schema_version` 1.0). Unkno
 | `landing_url`, `resource_url` | Absolute HTTPS URLs; resource may be `null` if the source does not expose one |
 | `format` | Canonical: csv, tsv, arff, parquet, xlsx, zip, json, or unknown |
 | `publisher` | Only when the source declares one |
-| `license` | `{name, url, status}`; status is `verified`, `unverified`, `restricted` or `unknown` |
+| `license` | `{name, url, status}`; status is `verified`, `project_owned`, `unverified`, `restricted` or `unknown` |
 | `published_at`, `updated_at`, `retrieved_at` | ISO-8601; `retrieved_at` is UTC |
 | `size_bytes` | Only when the source reports it (none currently do) |
 | `row_count`, `feature_count` | Source-reported, not inferred from data |
@@ -131,7 +131,7 @@ Rejected candidates are written to `reports/acquisition/rejections.json` with th
 | G3 `binary_target_identified` | Is there a declared 2-class target? | Target column and class count = 2 | yes |
 | G4 `class_balance_in_range` | Is the minority class 2–50%? | Rate within range | **no** — Phase 4 verifies |
 | G5 `sufficient_predictors` | Are there enough usable predictors? | `feature_count − 1 − id_columns ≥ min_predictors`; optional numeric/categorical/customer-feature requirements | yes |
-| G6 `licence_policy` | May we use it? | Verified, or explicit opt-in for unverified | yes |
+| G6 `licence_policy` | May we use it? | Verified or project-owned, or explicit opt-in for unverified | yes |
 | G7 `no_direct_pii` | Any obvious PII column? | No name/email/phone/address-style columns | yes |
 | G8 `download_size_within_cap` | Is it ≤ 200 MB? | Size known and within cap | **no** — Phase 3 enforces |
 | G9 `source_metadata_available` | Did metadata retrieval succeed? | Candidate exists | yes |
@@ -156,7 +156,7 @@ score = 0.40 · target_confidence
 | --- | --- |
 | `target_confidence` | +0.40 target declared, +0.35 binary cardinality known, +0.15 churn-like target name, +0.10 class balance known (capped at 1.0) |
 | `schema_fit` | 0.40 × min(predictors/30, 1) + 0.25 numeric features + 0.15 categorical features + 0.10 column metadata present + 0.10 customer-domain column signal (tenure, contract, subscription, charge, usage, account, plan, payment, balance, customer) |
-| `licence_clarity` | verified 1.00 · unverified 0.25 · unknown 0.10 · restricted 0.00 |
+| `licence_clarity` | verified/project-owned 1.00 · unverified 0.25 · unknown 0.10 · restricted 0.00 |
 | `source_trust` | OpenML 1.00 · UCI 0.95 · GitHub pinned 0.70 |
 | `size_adequacy` | unknown 0.30 · below minimum 0.00 · ≤ 500k rows 1.00 · larger 0.70 |
 

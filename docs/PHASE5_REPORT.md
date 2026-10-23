@@ -70,7 +70,7 @@ Downstream interface (`PreparedDataset`): `train/val/test`, `feature_names`,
 `as_frame`, `resampled_train`, `transform_new`.
 
 `PreprocessingCoordinator.load(run_id)`
-([coordinator.py](churnwise/preprocessing/coordinator.py)) verifies the schema
+([coordinator.py](../churnwise/preprocessing/coordinator.py)) verifies the schema
 version and pipeline digest before deserialising, and rejects unsafe run ids or
 paths outside `artifact_dir`.
 
