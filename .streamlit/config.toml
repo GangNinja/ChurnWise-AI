@@ -1,0 +1,16 @@
+# The dashboard uses one explicit navigation widget. Streamlit would otherwise
+# auto-discover churnwise/dashboard/pages/*.py and render a second, duplicate
+# "App pages" navigation in the sidebar.
+[client]
+showSidebarNavigation = false
+
+# The page CSS builds a light canvas with dark text. Pin the native theme so
+# Streamlit's own headings and widgets do not inherit a dark OS theme and
+# become unreadable against those surfaces.
+[theme]
+base = "light"
+primaryColor = "#0f766e"
+backgroundColor = "#f6f8fa"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#12263a"
+font = "sans serif"
