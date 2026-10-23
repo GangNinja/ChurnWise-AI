@@ -80,6 +80,7 @@ class SourceStatus(str, Enum):
 
 class LicenseStatus(str, Enum):
     VERIFIED = "verified"
+    PROJECT_OWNED = "project_owned"
     UNVERIFIED = "unverified"
     RESTRICTED = "restricted"
     UNKNOWN = "unknown"

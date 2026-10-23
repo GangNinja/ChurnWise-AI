@@ -227,9 +227,9 @@ def render_report(
             "",
             "| Metric | Value | Basis |",
             "| --- | --- | --- |",
-            f"| Aggregate churn probability of selected set | "
-            f"{_number(projection.aggregate_churn_probability)} | "
-            f"sum of Phase 9 probabilities |",
+            f"| Expected churn count in selected set | "
+            f"{_number(projection.expected_churn_count)} | "
+            f"sum of Phase 9 probabilities (probability mass, not a fraction) |",
             f"| Expected prevented churn | "
             f"{_number(projection.expected_prevented_churn)} | "
             f"sum(p_i x e), a fractional expectation |",

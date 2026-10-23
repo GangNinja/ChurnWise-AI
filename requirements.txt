@@ -6,8 +6,9 @@
 #   python -m pip install -r requirements.txt
 #
 # Rationale for each group is in docs/ARCHITECTURE.md §8 and §11.
-# Ranges are bounded to keep a reproducible environment; exact resolved
-# versions are frozen into requirements.lock.txt at the start of Phase 2.
+# For an exact reproduction of the audited Windows/CPython 3.13 environment,
+# install requirements.lock.txt instead; the manifest and audit are in
+# docs/DEPENDENCIES.md.
 
 # --- Core data stack -------------------------------------------------------
 numpy>=2.1,<3.0
@@ -27,18 +28,12 @@ shap>=0.46,<0.55
 streamlit>=1.40,<2.0
 plotly>=5.24,<7.0
 matplotlib>=3.9,<4.0
-seaborn>=0.13,<1.0
 
 # --- Artifacts and IO ------------------------------------------------------
 joblib>=1.4,<2.0
 pyarrow>=17,<25
 openpyxl>=3.1,<4.0
 requests>=2.32,<3.0
-
-# --- Imbalance handling (reserved for a future fold-internal SMOTE path) ---
-# Phase 5 uses class weights or seeded training-only random oversampling; it
-# does not import imbalanced-learn.
-imbalanced-learn>=0.12,<0.15
 
 # --- Testing ---------------------------------------------------------------
 pytest>=8.3,<10.0

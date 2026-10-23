@@ -142,6 +142,12 @@ def test_licence_policy_requires_opt_in_for_unverified_sources():
         is GateStatus.FAIL
     )
 
+    project_owned = make_candidate(
+        license_status=LicenseStatus.PROJECT_OWNED,
+        license_name="Synthetic project fixture",
+    )
+    assert gate(evaluate_gates(project_owned, QUERY), "G6").status is GateStatus.PASS
+
 
 def test_pii_columns_fail_g7_and_missing_schema_is_blocking_unknown():
     pii = make_candidate(

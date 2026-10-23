@@ -47,6 +47,33 @@ def test_invalid_configuration_returns_three(settings):
     assert code == 3
 
 
+def test_run_requires_an_explicit_run_id_to_resume(settings, capsys):
+    code = main(["run", "--resume"], settings=settings)
+    assert code == 3
+    assert "--resume requires --run-id" in capsys.readouterr().err
+
+
+def test_run_missing_dataset_is_a_configuration_error(settings, tmp_path, capsys):
+    code = main(
+        [
+            "run",
+            "--dataset",
+            str(tmp_path / "missing.csv"),
+            "--run-id",
+            "phase12-missing-dataset",
+        ],
+        settings=settings,
+    )
+    assert code == 3
+    assert "CW-RUN-001" in capsys.readouterr().err
+
+
+def test_run_offline_network_mode_is_rejected(settings, capsys):
+    code = main(["run", "--offline", "--run-id", "phase12-offline"], settings=settings)
+    assert code == 3
+    assert "CW-RUN-001" in capsys.readouterr().err
+
+
 def test_offline_mode_returns_two_with_structured_reason(settings, tmp_path, capsys):
     code = main(
         ["discover", "--offline", "--json", "--report-dir", str(tmp_path / "reports")],

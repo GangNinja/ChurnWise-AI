@@ -210,7 +210,7 @@ def evaluate_gates(candidate: DatasetCandidate, query: SearchQuery) -> list[Gate
 
     # G6 — licence
     status = candidate.license_status
-    if status is LicenseStatus.VERIFIED:
+    if status in {LicenseStatus.VERIFIED, LicenseStatus.PROJECT_OWNED}:
         gates.append(
             _gate("G6", GateStatus.PASS, f"licence recorded as {candidate.license_name!r}")
         )
@@ -324,6 +324,7 @@ def _schema_fit(candidate: DatasetCandidate) -> tuple[float, str]:
 def _licence_clarity(candidate: DatasetCandidate) -> tuple[float, str]:
     mapping = {
         LicenseStatus.VERIFIED: (1.0, "licence explicitly recorded"),
+        LicenseStatus.PROJECT_OWNED: (1.0, "project-owned data"),
         LicenseStatus.UNVERIFIED: (0.25, "licence unverified"),
         LicenseStatus.UNKNOWN: (0.10, "licence unknown"),
         LicenseStatus.RESTRICTED: (0.0, "licence restricted"),

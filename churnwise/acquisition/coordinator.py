@@ -488,7 +488,8 @@ class AcquisitionCoordinator:
                 category=CATEGORY_PERMISSION,
             )
         if (
-            candidate.license_status is not LicenseStatus.VERIFIED
+            candidate.license_status
+            not in {LicenseStatus.VERIFIED, LicenseStatus.PROJECT_OWNED}
             and not self.settings.allow_unverified_license
         ):
             raise failure(

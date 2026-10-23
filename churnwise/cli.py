@@ -34,6 +34,16 @@ from churnwise.discovery import build_adapters, discover
 from churnwise.discovery.coordinator import CODE_INVALID_CONFIG
 from churnwise.discovery.reporting import render_summary, write_reports
 from churnwise.logging_utils import configure_logging
+from churnwise.pipeline import (
+    CODE_INCOMPATIBLE_RESUME as PIPELINE_CODE_INCOMPATIBLE_RESUME,
+)
+from churnwise.pipeline import CODE_INVALID_CONFIG as PIPELINE_CODE_INVALID_CONFIG
+from churnwise.pipeline import (
+    PipelineError,
+    PipelineResult,
+    build_pipeline_config,
+    run_pipeline,
+)
 from churnwise.preprocessing import (
     PreprocessConfig,
     PreprocessingCoordinator,
@@ -45,6 +55,8 @@ from churnwise.simulation.contracts import (
     DEFAULT_COST_PER_CONTACT as DEFAULT_SIM_COST,
     DEFAULT_EFFECTIVENESS as DEFAULT_SIM_EFFECTIVENESS,
     DEFAULT_HORIZON_MONTHS as DEFAULT_SIM_HORIZON,
+    CampaignAssumptions,
+    CampaignScenario,
 )
 from churnwise.validation import ValidationCoordinator, ValidationResult, ValidationStatus
 from churnwise.validation.reporting import render_summary as render_validation_summary
@@ -689,7 +701,189 @@ def build_parser() -> argparse.ArgumentParser:
     simulate_parser.add_argument("--json", action="store_true", dest="as_json")
     simulate_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
     simulate_parser.add_argument("--log-file", metavar="PATH")
+
+    run_parser = subparsers.add_parser(
+        "run",
+        help="run discovery through retention simulation in one resumable workflow (Phase 12)",
+        description=(
+            "Compose dataset discovery, acquisition, validation, preprocessing, "
+            "MLP training, benchmark evaluation, SHAP explanations, risk scoring "
+            "and retention simulation. Every stage is recorded under "
+            "artifacts/pipelines/<run-id>/run.json. A --dataset copies a committed "
+            "fixture into the managed store for the offline workflow; otherwise "
+            "real network discovery is used. Simulation outcomes remain hypothetical."
+        ),
+    )
+    run_parser.add_argument(
+        "--dataset",
+        metavar="PATH",
+        help="local CSV/TSV/ARFF/Parquet/JSON/XLSX fixture (offline workflow)",
+    )
+    run_parser.add_argument(
+        "--run-id",
+        metavar="ID",
+        help="stable lowercase run id (required with --resume)",
+    )
+    run_parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="continue a failed or interrupted run with the same configuration",
+    )
+    run_parser.add_argument(
+        "--fast",
+        action="store_true",
+        help=(
+            "smaller MLP/explanation profile for a laptop demonstration; "
+            "its metrics are not production evidence"
+        ),
+    )
+    run_parser.add_argument("--seed", type=int, default=None)
+    run_parser.add_argument(
+        "--term", action="append", dest="terms", metavar="TERM",
+        help="discovery term; repeatable (default: churn, customer churn, attrition)",
+    )
+    run_parser.add_argument("--min-rows", type=int, default=DEFAULTS.min_rows)
+    run_parser.add_argument("--max-candidates", type=int, default=3)
+    run_parser.add_argument(
+        "--allow-unverified-license",
+        action="store_true",
+        help="allow acquisition from candidates whose licence is unverified",
+    )
+    run_parser.add_argument(
+        "--name", default="Baseline retention campaign", help="simulation scenario name"
+    )
+    run_parser.add_argument(
+        "--budget", type=float, default=DEFAULT_SIM_BUDGET,
+        help=f"hypothetical campaign budget (default: {DEFAULT_SIM_BUDGET:g})",
+    )
+    run_parser.add_argument(
+        "--cost-per-contact", type=float, default=DEFAULT_SIM_COST,
+        help=f"assumed cost per contacted customer (default: {DEFAULT_SIM_COST:g})",
+    )
+    run_parser.add_argument(
+        "--effectiveness", type=float, default=DEFAULT_SIM_EFFECTIVENESS,
+        help=f"assumed intervention effectiveness (default: {DEFAULT_SIM_EFFECTIVENESS:g})",
+    )
+    run_parser.add_argument("--monthly-value", type=float, default=None)
+    run_parser.add_argument("--horizon-months", type=float, default=DEFAULT_SIM_HORIZON)
+    run_parser.add_argument("--value-unit", default="value_units")
+    run_parser.add_argument("--data-dir", metavar="DIR")
+    run_parser.add_argument("--artifact-dir", metavar="DIR")
+    run_parser.add_argument("--report-dir", metavar="DIR")
+    run_parser.add_argument("--offline", action="store_true")
+    run_parser.add_argument("--json", action="store_true", dest="as_json")
+    run_parser.add_argument("--verbose", action="store_true", help="debug-level logs")
+    run_parser.add_argument("--log-file", metavar="PATH")
     return parser
+
+
+def _print_pipeline_summary(result: PipelineResult) -> None:
+    print(f"ChurnWise pipeline {result.status}: {result.run_id}")
+    print(f"  manifest: {result.manifest_path}")
+    for stage in result.stages:
+        duration = stage.get("duration_ms")
+        timing = f"{duration} ms" if duration is not None else "n/a"
+        print(f"  {stage['name']:<10} {stage['status']:<10} {timing:>9}")
+        outputs = stage.get("outputs") or {}
+        if outputs.get("selected_family"):
+            print(f"    selected model: {outputs['selected_family']}")
+        if stage["name"] == "score":
+            summary = stage.get("summary") or {}
+            print(
+                f"    scored: {summary.get('n_scored')} | "
+                f"tiers: {summary.get('tier_counts')} | "
+                f"records with drivers: {summary.get('drivers_available')}"
+            )
+        if stage["name"] == "simulate":
+            summary = stage.get("summary") or {}
+            print(
+                f"    hypothetical contacts: {summary.get('contacted')} | "
+                f"expected prevented churn: {summary.get('expected_prevented_churn')}"
+            )
+    print("Key artifacts:")
+    wanted = (".metrics", ".model", ".global_json", ".result", ".report", ".run_manifest")
+    shown = 0
+    for key, path in result.artifacts.items():
+        if key.endswith(wanted):
+            print(f"  {key}: {path}")
+            shown += 1
+    if not shown:
+        print("  (inspect the run manifest)")
+    if result.warnings:
+        print(f"Warnings: {len(result.warnings)} recorded in the run manifest")
+
+
+def _run_pipeline(args: argparse.Namespace, settings: Settings) -> int:
+    settings = _apply_common_overrides(args, settings)
+    if args.seed is not None:
+        if args.seed < 0:
+            print("error: --seed must be non-negative", file=sys.stderr)
+            return 3
+        settings = settings.with_overrides(seed=args.seed)
+    problems = settings.validate()
+    if problems:
+        print("error: invalid settings: " + "; ".join(problems), file=sys.stderr)
+        return 3
+    if args.resume and not args.run_id:
+        print("error: --resume requires --run-id", file=sys.stderr)
+        return 3
+
+    query = SearchQuery(
+        terms=tuple(args.terms) if args.terms else DEFAULTS.terms,
+        min_rows=args.min_rows,
+        allow_unverified_license=bool(
+            args.allow_unverified_license or settings.allow_unverified_license
+        ),
+    )
+    scenario = CampaignScenario(
+        name=args.name,
+        budget=args.budget,
+        assumptions=CampaignAssumptions(
+            cost_per_contact=args.cost_per_contact,
+            effectiveness=args.effectiveness,
+            monthly_value=args.monthly_value,
+            horizon_months=args.horizon_months,
+            value_unit=args.value_unit,
+        ),
+    )
+    config = build_pipeline_config(
+        settings,
+        dataset_path=Path(args.dataset) if args.dataset else None,
+        fast=args.fast,
+        seed=args.seed,
+        query=query,
+        offline=True if args.offline else None,
+        max_candidates=args.max_candidates,
+        run_id=args.run_id,
+        resume=args.resume,
+        scenario=scenario,
+    )
+    progress = (
+        (lambda message: print(message, file=sys.stderr))
+        if args.as_json
+        else (lambda message: print(message))
+    )
+    try:
+        result = run_pipeline(settings, config, progress=progress)
+    except PipelineError as exc:
+        print(f"error: {exc.code}: {exc.message}", file=sys.stderr)
+        if exc.remediation:
+            print(f"  next: {exc.remediation}", file=sys.stderr)
+        details = exc.to_dict().get("details") or {}
+        if details:
+            print(f"  details: {json.dumps(details, ensure_ascii=False)}", file=sys.stderr)
+        return (
+            3
+            if exc.code
+            in (PIPELINE_CODE_INVALID_CONFIG, PIPELINE_CODE_INCOMPATIBLE_RESUME)
+            else 2
+        )
+
+    if args.as_json:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        _print_pipeline_summary(result)
+    return 0 if result.succeeded else 2
 
 
 def main(
@@ -776,6 +970,13 @@ def main(
             log_file=Path(args.log_file) if args.log_file else None,
         )
         return _run_simulate(args, resolved)
+
+    if args.command == "run":
+        configure_logging(
+            verbose=args.verbose,
+            log_file=Path(args.log_file) if args.log_file else None,
+        )
+        return _run_pipeline(args, resolved)
 
     overrides: dict[str, object] = {}
     if args.report_dir:

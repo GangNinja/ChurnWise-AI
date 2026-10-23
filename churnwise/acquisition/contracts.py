@@ -437,6 +437,7 @@ class DatasetManifest:
             problems.append("source.dataset_id must not be empty")
         if self.source.license_status not in {
             "verified",
+            "project_owned",
             "unverified",
             "restricted",
             "unknown",

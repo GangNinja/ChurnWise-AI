@@ -661,9 +661,21 @@ class OutcomeProjection:
     financial_metrics_available: bool
     undefined_metrics: dict[str, str] = field(default_factory=dict)
 
+    @property
+    def expected_churn_count(self) -> float:
+        """Expected number of churners in the selected set (a fractional count).
+
+        The legacy JSON field ``aggregate_churn_probability`` stores this same
+        sum of individual probabilities. It is a probability mass, not a
+        fraction between zero and one; this alias makes the meaning explicit.
+        """
+        return float(self.aggregate_churn_probability)
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "aggregate_churn_probability": float(self.aggregate_churn_probability),
+            "aggregate_churn_probability_is_probability_mass": True,
+            "expected_churn_count": self.expected_churn_count,
             "expected_prevented_churn": float(self.expected_prevented_churn),
             "expected_prevented_churn_is_fractional": True,
             "assumed_effectiveness": float(self.effectiveness),
