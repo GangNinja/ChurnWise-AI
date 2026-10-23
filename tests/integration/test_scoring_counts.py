@@ -63,6 +63,11 @@ def path_exists(path: str) -> bool:
     return Path(path).is_file()
 
 
+def _run_path(settings, value: str) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else settings.project_root / path
+
+
 def test_individual_and_batch_use_the_same_probability_path(tmp_path) -> None:
     settings, _, _ = build_risk_fixture(tmp_path)
     service = _service(settings)
@@ -378,7 +383,9 @@ def test_stale_model_artifact_is_rejected_on_reload(tmp_path) -> None:
     settings, _, _ = build_risk_fixture(tmp_path)
     service = _service(settings)
     run = service.score_population(split="val", explain="none", run_id="20261022T000000Z-risk-stale")
-    model_path = run.manifest["model_path"]
+    assert not Path(run.manifest["model_path"]).is_absolute()
+    assert not Path(run.manifest["preprocessor_path"]).is_absolute()
+    model_path = _run_path(settings, run.manifest["model_path"])
     with open(model_path, "ab") as handle:
         handle.write(b"stale")
     with pytest.raises(RiskError) as raised:
@@ -546,7 +553,7 @@ def test_changed_preprocessor_artifact_is_rejected_on_reload(tmp_path) -> None:
     run = service.score_population(
         split="val", explain="none", run_id="20261022T000000Z-risk-stale-preprocessor"
     )
-    preprocessor = Path(run.manifest["preprocessor_path"])
+    preprocessor = _run_path(settings, run.manifest["preprocessor_path"])
     with preprocessor.open("ab") as handle:
         handle.write(b"stale")
     with pytest.raises(RiskError) as raised:

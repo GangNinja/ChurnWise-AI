@@ -81,6 +81,12 @@ class RandomForestConfig:
 
     ``n_estimators=300`` and ``min_samples_leaf=2`` keep the forest small enough
     for a CPU-only student laptop while remaining a genuine ensemble.
+
+    ``n_jobs=1`` is the default because parallel tree averaging can change the
+    last floating-point bit of a probability between calls. Serial execution
+    keeps fitted forests and their predictions bitwise stable on this project's
+    reference environment; ``n_jobs=-1`` remains available as an explicit speed
+    trade-off.
     """
 
     n_estimators: int = 300
@@ -90,7 +96,7 @@ class RandomForestConfig:
     max_features: str = "sqrt"
     bootstrap: bool = True
     class_weight: Any = "balanced_subsample"
-    n_jobs: int = -1
+    n_jobs: int = 1
     random_state: int = 42
 
     def validate(self) -> list[str]:

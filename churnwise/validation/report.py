@@ -246,10 +246,12 @@ def write_outputs(
     paths: dict[str, str] = {}
 
     if profile is not None:
+        profile_payload = profile.to_dict()
+        profile_payload["generated_at"] = report.generated_at
         profile_path = eda_dir / f"{stem}.json"
-        _atomic_write_json(profile_path, profile.to_dict())
+        _atomic_write_json(profile_path, profile_payload)
         archive_profile = Path(data_dir) / "manifests" / f"{stem}.profile.json"
-        _atomic_write_json(archive_profile, profile.to_dict())
+        _atomic_write_json(archive_profile, profile_payload)
         report.eda_profile_path = _display_path(profile_path)
         paths["profile"] = report.eda_profile_path
         paths["archived_profile"] = _display_path(archive_profile)

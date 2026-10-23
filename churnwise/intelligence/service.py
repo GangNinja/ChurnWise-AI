@@ -167,10 +167,36 @@ def _missing_reference(value: Any) -> bool:
         return False
 
 
-def _hash_file_still_matches(path: str | None, expected: str | None) -> tuple[bool, str]:
+def _resolve_artifact_path(path: str | None, root: str | Path | None = None) -> Path | None:
+    """Resolve a recorded path without assuming the caller's working directory."""
+    if not path:
+        return None
+    target = Path(str(path))
+    if not target.is_absolute() and root is not None:
+        target = Path(root) / target
+    return target
+
+
+def _portable_artifact_path(path: str | None, root: str | Path) -> str | None:
+    """Prefer a project-relative path so a run tree can be moved intact."""
+    target = _resolve_artifact_path(path, root)
+    if target is None:
+        return None
+    try:
+        return target.resolve().relative_to(Path(root).resolve()).as_posix()
+    except (OSError, ValueError):
+        return str(target.resolve())
+
+
+def _hash_file_still_matches(
+    path: str | None,
+    expected: str | None,
+    root: str | Path | None = None,
+) -> tuple[bool, str]:
     if not path:
         return True, ""
-    target = Path(path)
+    target = _resolve_artifact_path(path, root)
+    assert target is not None
     if not target.is_file():
         return True, f"artifact {target.name} is unavailable for a freshness check"
     if not expected:
@@ -915,7 +941,9 @@ class RiskService:
                 (manifest.get("model_path"), manifest.get("model_sha256")),
                 (manifest.get("preprocessor_path"), manifest.get("preprocessor_hash")),
             ):
-                ok, message = _hash_file_still_matches(path, expected)
+                ok, message = _hash_file_still_matches(
+                    path, expected, root=self.settings.project_root
+                )
                 if not ok:
                     raise RiskError(
                         CODE_ARTIFACT_FAILED,
@@ -1732,10 +1760,13 @@ class RiskService:
             "model_family": table.model_family,
             "model_run_id": table.model_run_id,
             "model_sha256": table.model_sha256,
-            "model_path": table.provenance.get("model_path"),
-            "preprocessor_path": (
+            "model_path": _portable_artifact_path(
+                table.provenance.get("model_path"), self.settings.project_root
+            ),
+            "preprocessor_path": _portable_artifact_path(
                 (self.model.dataset.paths or {}).get("preprocessor")
-                or (self.model.dataset.schema or {}).get("preprocessor_path")
+                or (self.model.dataset.schema or {}).get("preprocessor_path"),
+                self.settings.project_root,
             ),
             "preprocessing_run_id": table.preprocessing_run_id,
             "config": self.config.to_dict(),

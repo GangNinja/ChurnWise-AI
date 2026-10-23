@@ -66,6 +66,20 @@ def test_random_forest_is_reproducible_with_a_fixed_seed():
     assert first.config["n_estimators"] == 40
 
 
+def test_random_forest_default_is_serial_for_bitwise_stable_predictions():
+    """Parallel forest averaging can differ by one ULP; the default is serial."""
+    X, y, names = fixture_matrix()
+    config = RandomForestConfig(n_estimators=30, random_state=17)
+    assert config.n_jobs == 1
+    fitted = fit_baseline(
+        "random_forest", X, y, config=config, class_weight=WEIGHTS, feature_names=names
+    )
+    first = fitted.predict_proba(X[:40])
+    second = fitted.predict_proba(X[:40])
+    assert np.array_equal(first, second)
+    assert fitted.estimator.n_jobs == 1
+
+
 @pytest.mark.parametrize(
     "bad_config",
     [

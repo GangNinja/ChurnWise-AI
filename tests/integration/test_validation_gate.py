@@ -72,6 +72,9 @@ def test_validation_writes_report_profile_and_plots(tmp_path):
     plots = sorted((tmp_path / "reports" / "eda").glob("openml_fixture*.png"))
     assert len(plots) >= 3
 
+    profile_payload = json.loads(profile_json.read_text(encoding="utf-8"))
+    assert profile_payload["generated_at"] == result.report.generated_at
+
     payload = json.loads(report_json.read_text(encoding="utf-8"))
     assert payload["schema_version"] == "1.0"
     assert payload["status"] == "pass_with_warnings"
