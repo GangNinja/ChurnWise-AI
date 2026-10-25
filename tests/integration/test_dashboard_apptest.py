@@ -23,17 +23,11 @@ from tests.dashboard_helpers import (
 )
 
 LABELS = [
-    "Overview",
-    "Data discovery",
-    "Data quality",
-    "Model training",
-    "Model evaluation",
-    "Explainability",
-    "Risk intelligence",
-    "Assess records",
-    "Customer detail",
-    "Retention simulator",
-    "Reliability & limits",
+    "Executive Dashboard",
+    "Customer Risk Explorer",
+    "Model Laboratory",
+    "Retention Workbench",
+    "Campaign Simulator",
 ]
 
 
@@ -96,16 +90,16 @@ def test_missing_artifacts_are_actionable_on_every_page(empty_dashboard):
 
 
 def test_risk_tier_filter_changes_the_stored_table(dashboard):
-    at = _go(_app(), "Risk intelligence")
+    at = _go(_app(), "Retention Workbench")
     assert len(at.dataframe[0].value) == 6
     at.multiselect[0].set_value(["critical"]).run()
     assert not at.exception
     assert len(at.dataframe[0].value) == 2
-    assert set(at.dataframe[0].value["risk_tier"]) == {"critical"}
+    assert set(at.dataframe[0].value["Risk tier"]) == {"Critical"}
 
 
 def test_risk_table_cache_invalidates_when_parquet_changes(dashboard):
-    at = _go(_app(), "Risk intelligence")
+    at = _go(_app(), "Retention Workbench")
     assert len(at.dataframe[0].value) == 6
     path = dashboard["risk_frame"]
     frame = pd.read_parquet(path).head(5).copy()
@@ -117,27 +111,27 @@ def test_risk_table_cache_invalidates_when_parquet_changes(dashboard):
 
 
 def test_customer_detail_matches_the_stored_probability(dashboard):
-    at = _go(_app(), "Customer detail")
+    at = _go(_app(), "Customer Risk Explorer")
     reference = at.selectbox[1]
     assert reference.label == "Customer reference"
     reference.set_value("fixture_ref_000").run()
     assert not at.exception
-    metric_values = {item.label: item.value for item in at.metric}
-    assert metric_values["Churn probability"] == "0.9000"
-    assert metric_values["Risk tier"] == "Critical"
+    body = "\n".join(str(item.value) for item in at.markdown)
+    assert "0.9000" in body
+    assert "Critical" in body
+    assert "fixture_ref_000" in body
     assert any("Fixture local explanation summary" in str(item.value) for item in at.markdown)
 
 
-def test_explainability_selects_a_stored_local_example(dashboard):
-    at = _go(_app(), "Explainability")
+def test_laboratory_renders_the_stored_global_explanation(dashboard):
+    at = _go(_app(), "Model Laboratory")
     assert not at.exception
-    local = at.selectbox[1]
-    assert local.label == "Local example"
-    local.set_value(local.options[0]).run()
-    assert not at.exception
-    body = "\n".join(str(item.value) for item in at.markdown)
-    assert "Fixture local explanation summary" in body
-    assert any("support_calls" in str(frame.value) for frame in at.dataframe)
+    explain_run = next(item for item in at.selectbox if item.label == "Explanation run")
+    assert explain_run.options == ["20260101T010000Z-fixture-xai"]
+    captions = "\n".join(str(item.value) for item in at.caption)
+    assert "aggregated into 4 feature groups" in captions
+    bodies = [frame.value for frame in at.dataframe if "feature" in getattr(frame.value, "columns", [])]
+    assert bodies and set(bodies[0]["feature"]) == {"support_calls", "tenure_months"}
 
 
 def test_training_success_runs_the_service_once(dashboard, monkeypatch):
@@ -160,7 +154,7 @@ def test_training_success_runs_the_service_once(dashboard, monkeypatch):
         }
 
     monkeypatch.setattr(actions, "train_mlp", fake_train)
-    at = _go(_app(), "Model training")
+    at = _go(_app(), "Model Laboratory")
     button = next(item for item in at.button if item.label == "Train MLP")
     button.click().run()
     assert not at.exception
@@ -175,7 +169,7 @@ def test_training_failure_is_structured_and_privacy_safe(dashboard, monkeypatch)
         raise DashboardActionError("invalid MLP configuration: epochs must be positive", code="CW-UI-007")
 
     monkeypatch.setattr(actions, "train_mlp", fail_train)
-    at = _go(_app(), "Model training")
+    at = _go(_app(), "Model Laboratory")
     next(item for item in at.button if item.label == "Train MLP").click().run()
     assert not at.exception
     errors = "\n".join(str(item.value) for item in at.error)
@@ -191,7 +185,7 @@ def test_discovery_success_is_not_repeated_by_a_rerun(dashboard, monkeypatch):
         return {"selected": {"candidate_id": "fixture:churn"}}
 
     monkeypatch.setattr(actions, "discover_datasets", fake_discovery)
-    at = _go(_app(), "Data discovery")
+    at = _go(_app(), "Model Laboratory")
     next(item for item in at.button if item.label == "Start discovery").click().run()
     assert not at.exception
     assert len(calls) == 1
@@ -222,7 +216,7 @@ def test_acquisition_refreshes_the_attempt_log_and_keeps_the_notice(dashboard, m
         return {"status": "success", "cached": False}
 
     monkeypatch.setattr(actions, "acquire_candidate", fake_acquire)
-    at = _go(_app(), "Data discovery")
+    at = _go(_app(), "Model Laboratory")
     next(item for item in at.button if item.label == "Acquire selected candidate").click().run()
     assert not at.exception
     assert len(calls) == 1
@@ -246,7 +240,7 @@ def test_simulator_defaults_to_the_persisted_source_risk_run(dashboard):
     summary["run_id"] = newer.name
     summary_path.write_text(json.dumps(summary), encoding="utf-8")
 
-    at = _go(_app(), "Retention simulator")
+    at = _go(_app(), "Campaign Simulator")
     assert not at.exception
     risk_run = next(item for item in at.selectbox if item.label == "Risk run")
     assert risk_run.value == source
@@ -257,7 +251,7 @@ def test_discovery_failure_is_shown_without_a_traceback(dashboard, monkeypatch):
         raise DashboardActionError("source request failed", code="CW-UI-004", remediation="Retry later.")
 
     monkeypatch.setattr(actions, "discover_datasets", fail_discovery)
-    at = _go(_app(), "Data discovery")
+    at = _go(_app(), "Model Laboratory")
     next(item for item in at.button if item.label == "Start discovery").click().run()
     assert not at.exception
     errors = "\n".join(str(item.value) for item in at.error)
@@ -267,23 +261,63 @@ def test_discovery_failure_is_shown_without_a_traceback(dashboard, monkeypatch):
 
 
 def test_page_headers_show_all_identity_fields(dashboard):
-    at = _go(_app(), "Overview")
+    at = _go(_app(), "Executive Dashboard")
     markdown = "\n".join(str(item.value) for item in at.markdown)
     for label in ("Run id", "Model family", "Dataset hash", "Generated at"):
         assert label in markdown
 
 
-def test_evaluation_page_shows_stored_test_metrics(dashboard):
-    at = _go(_app(), "Model evaluation")
+def test_laboratory_shows_stored_test_metrics(dashboard):
+    at = _go(_app(), "Model Laboratory")
+    assert not at.exception
+    captions = "\n".join(str(item.value) for item in at.caption)
+    assert "Test F1 0.8800" in captions
+    assert "Test ROC-AUC 0.9400" in captions
+    assert "Selection used validation F1 only" in captions
+
+
+def test_laboratory_reports_fold_safe_metadata_from_stored_cv(dashboard):
+    at = _go(_app(), "Model Laboratory")
+    frames = [
+        frame.value
+        for frame in at.dataframe
+        if "Refit per fold" in getattr(frame.value, "columns", [])
+    ]
+    assert frames, "cross-validation metadata table was not rendered"
+    assert set(frames[0]["Refit per fold"]) == {"yes"}
+    assert set(frames[0]["Verified against Phase 5"]) == {"yes"}
+
+
+def test_laboratory_presents_warning_checks_as_non_blocking(dashboard):
+    at = _go(_app(), "Model Laboratory")
     body = "\n".join(str(item.value) for item in at.markdown)
+    captions = "\n".join(str(item.value) for item in at.caption)
+    warnings = "\n".join(str(item.value) for item in at.warning)
+    assert "cw-pill warn" in body
+    assert "1 passed, 1 warning-level not passed, 0 fatal not passed" in captions
+    assert "warning-level check(s) did not pass" in warnings
+    assert not at.error
+
+
+def test_executive_derives_high_risk_counts_from_stored_scores(dashboard):
+    path = dashboard["risk_summary"]
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload.pop("tier_counts", None)
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    at = _go(_app(), "Executive Dashboard")
+    assert not at.exception
     metrics = {metric.label: metric.value for metric in at.metric}
-    assert metrics["Test F1"] == "0.8800"
-    assert metrics["Test ROC-AUC"] == "0.9400"
-    assert "Validation vs test" in body
+    assert metrics["Customers Scored"] == "6"
+    assert metrics["Predicted Churn"].startswith("3 ")
+    assert metrics["High-Risk Customers"].startswith("3 ")
+    captions = "\n".join(str(item.value) for item in at.caption)
+    assert "different populations" in captions
+    assert "stored classification threshold" in captions
 
 
-def test_assessment_page_shows_schema_driven_inputs(dashboard):
-    at = _go(_app(), "Assess records")
+def test_assessment_section_shows_schema_driven_inputs(dashboard):
+    at = _go(_app(), "Customer Risk Explorer")
     assert not at.exception
     labels = {item.label for item in at.text_input}
     assert {"tenure_months", "monthly_charges", "support_calls"} <= labels
@@ -379,3 +413,21 @@ def test_simulation_computed_by_action_matches_direct_engine(tmp_path):
     assert page_result["projection"]["expected_prevented_churn"] == pytest.approx(
         direct_result["projection"]["expected_prevented_churn"]
     )
+
+
+def test_executive_filters_restrict_the_customer_preview(dashboard):
+    at = _go(_app(), "Executive Dashboard")
+    assert not at.exception
+    tier = next(item for item in at.pills if item.label == "Risk tier")
+    tier.set_value("Critical").run()
+    assert not at.exception
+    assert len(at.dataframe[0].value) == 2
+    assert set(at.dataframe[0].value["Risk tier"]) == {"Critical"}
+    body = "\n".join(str(item.value) for item in at.markdown)
+    assert "tier: Critical" in body
+
+    probability = next(item for item in at.selectbox if item.label == "Probability range")
+    probability.set_value("0.00–0.20").run()
+    assert not at.exception
+    assert at.info
+    assert "No customers match" in str(at.info[0].value)

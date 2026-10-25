@@ -24,6 +24,19 @@ RISK_COLUMNS = [
     "explanation_status",
 ]
 
+CUSTOMER_EXTRA_COLUMNS = {
+    "account_length": "Account length",
+    "area_code": "Area code",
+    "number_customer_service_calls": "Service calls",
+    "total_day_minutes": "Day minutes",
+    "total_day_charge": "Day charge",
+    "total_eve_minutes": "Evening minutes",
+    "total_night_minutes": "Night minutes",
+    "total_intl_minutes": "International minutes",
+    "international_plan": "International plan",
+    "voice_mail_plan": "Voice mail plan",
+}
+
 
 def risk_view(frame: pd.DataFrame, *, limit: int = 200) -> pd.DataFrame:
     columns = [column for column in RISK_COLUMNS if column in frame.columns]
@@ -34,7 +47,141 @@ def risk_view(frame: pd.DataFrame, *, limit: int = 200) -> pd.DataFrame:
         view["value_at_risk"] = pd.to_numeric(view["value_at_risk"], errors="coerce").round(2)
     if "rank" in view:
         view["rank"] = pd.to_numeric(view["rank"], errors="coerce").astype("Int64")
+    view = view.rename(
+        columns={
+            "record_reference": "Customer",
+            "churn_probability": "Churn probability",
+            "risk_tier": "Risk tier",
+            "rank": "Rank",
+            "predicted_label": "Predicted churn",
+            "value_at_risk": "Value at risk",
+            "explanation_status": "Explanation",
+        }
+    )
+    for column in ("Value at risk", "Explanation"):
+        if column in view:
+            view[column] = view[column].where(view[column].notna(), "—")
     return view
+
+
+def customer_view(
+    frame: pd.DataFrame,
+    *,
+    limit: int = 25,
+    extra_columns: Sequence[str] = (),
+) -> pd.DataFrame:
+    """Compact customer table for exploration, not the full export schema."""
+
+    base = ["record_reference", "churn_probability", "risk_tier", "predicted_label"]
+    columns = base + [column for column in extra_columns if column in frame.columns]
+    view = frame[[column for column in columns if column in frame.columns]].head(limit).copy()
+    if "churn_probability" in view:
+        view["churn_probability"] = pd.to_numeric(view["churn_probability"], errors="coerce").round(4)
+    for column in ("account_length", "area_code", "number_customer_service_calls"):
+        if column in view:
+            view[column] = pd.to_numeric(view[column], errors="coerce")
+    for column in ("international_plan", "voice_mail_plan"):
+        if column in view:
+            view[column] = view[column].map(lambda value: "—" if pd.isna(value) else ("Yes" if float(value) == 1 else "No"))
+    if "risk_tier" in view:
+        view["risk_tier"] = view["risk_tier"].astype(str).str.title()
+    if "predicted_label" in view:
+        view["predicted_label"] = view["predicted_label"].map(
+            lambda value: "Churn" if str(value).lower() in {"yes", "1", "true", "churn"} else "Retained"
+        )
+    labels = {
+        "record_reference": "Customer",
+        "churn_probability": "Churn probability",
+        "risk_tier": "Risk tier",
+        "predicted_label": "Predicted class",
+        **CUSTOMER_EXTRA_COLUMNS,
+    }
+    return view.rename(columns={key: value for key, value in labels.items() if key in view.columns})
+
+
+def risk_column_config() -> dict[str, Any]:
+    """Column presentation shared by customer tables."""
+
+    return {
+        "Churn probability": st.column_config.ProgressColumn(
+            "Churn probability",
+            help="Stored model estimate; click or sort like any table column.",
+            format="%.2f",
+            min_value=0.0,
+            max_value=1.0,
+        ),
+        "Customer": st.column_config.TextColumn("Customer", width="medium"),
+        "Risk tier": st.column_config.TextColumn("Risk tier", width="small"),
+        "Predicted class": st.column_config.TextColumn("Predicted class", width="medium"),
+    }
+
+
+def profile_items(frame: pd.DataFrame, raw_columns: Sequence[str]) -> list[tuple[str, str]]:
+    """Pick business-readable source attributes for the customer profile."""
+
+    if frame is None or frame.empty:
+        return []
+    row = frame.iloc[0]
+    priority = [
+        ("account_length", "Account length"),
+        ("area_code", "Area code"),
+        ("international_plan", "International plan"),
+        ("voice_mail_plan", "Voice mail plan"),
+        ("number_customer_service_calls", "Service calls"),
+        ("total_day_minutes", "Day minutes"),
+        ("total_day_charge", "Day charge"),
+        ("total_eve_minutes", "Evening minutes"),
+        ("total_night_minutes", "Night minutes"),
+        ("total_intl_minutes", "International minutes"),
+        ("total_intl_calls", "International calls"),
+    ]
+    present = set(raw_columns)
+    items: list[tuple[str, str]] = []
+    for column, label in priority:
+        if column not in present:
+            continue
+        value = row.get(column)
+        if pd.isna(value):
+            text = "—"
+        elif column in {"international_plan", "voice_mail_plan"}:
+            try:
+                text = "Yes" if float(value) == 1 else "No"
+            except (TypeError, ValueError):
+                text = str(value)
+        elif column == "area_code":
+            try:
+                text = f"{int(float(value))}"
+            except (TypeError, ValueError):
+                text = str(value)
+        elif isinstance(value, (int, float)):
+            text = f"{float(value):,.1f}" if abs(float(value)) < 10000 else f"{float(value):,.2f}"
+            if float(value).is_integer() and column in {"account_length", "number_customer_service_calls", "total_intl_calls"}:
+                text = f"{int(float(value)):,}"
+        else:
+            text = str(value)
+        items.append((label, text))
+    return items[:8]
+
+
+def full_record_frame(frame: pd.DataFrame, raw_columns: Sequence[str]) -> pd.DataFrame:
+    if frame is None or frame.empty:
+        return pd.DataFrame(columns=["Field", "Value"])
+    row = frame.iloc[0]
+    labels = {**CUSTOMER_EXTRA_COLUMNS}
+    rows = []
+    for column in raw_columns:
+        value = row.get(column)
+        if pd.isna(value):
+            display = "—"
+        elif column in {"international_plan", "voice_mail_plan"}:
+            try:
+                display = "Yes" if float(value) == 1 else "No"
+            except (TypeError, ValueError):
+                display = str(value)
+        else:
+            display = str(value)
+        rows.append({"Field": labels.get(column, column.replace("_", " ").title()), "Value": display})
+    return pd.DataFrame(rows)
 
 
 def download_pair(
@@ -43,13 +190,15 @@ def download_pair(
     prefix: str,
     key: str,
     json_payload: Mapping[str, Any] | None = None,
+    csv_label: str = "Download CSV",
+    json_label: str = "Download JSON",
 ) -> None:
     """Two download buttons with formula-safe CSV and JSON bytes."""
 
     cols = st.columns(2)
     with cols[0]:
         st.download_button(
-            "Download CSV",
+            csv_label,
             data=frame_to_csv_bytes(frame),
             file_name=f"{prefix}.csv",
             mime="text/csv",
@@ -63,7 +212,7 @@ def download_pair(
         else:
             data = dict_to_json_bytes(json_payload)
         st.download_button(
-            "Download JSON",
+            json_label,
             data=data,
             file_name=f"{prefix}.json",
             mime="application/json",
@@ -153,10 +302,15 @@ def selected_customers_frame(rows: Sequence[Mapping[str, Any]], limit: int = 100
 
 __all__ = [
     "RISK_COLUMNS",
+    "CUSTOMER_EXTRA_COLUMNS",
     "checks_frame",
+    "customer_view",
     "download_pair",
+    "full_record_frame",
     "local_contributions_frame",
     "metrics_frame",
+    "profile_items",
+    "risk_column_config",
     "risk_view",
     "selected_customers_frame",
     "sensitivity_frame",

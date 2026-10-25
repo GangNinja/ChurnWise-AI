@@ -156,7 +156,7 @@ churnwise/
 │   ├── app.py                 # Streamlit entry (navigation + artifact availability checks)
 │   ├── data_access.py         # cached, read-only artifact loaders
 │   ├── actions.py              # explicit, button-gated calls to phase services
-│   ├── pages/                  # 11 pages (see §10)
+│   ├── pages/                  # 5 product pages (see §10)
 │   └── components/             # layout, tables, charts, badges, assumption panels
 └── logging_utils.py           # structured JSONL logging, no PII
 ```
@@ -626,35 +626,34 @@ Server-side entry point: `churnwise.simulation.SimulationService` (`load_table`,
 
 ## 10. Dashboard architecture
 
-Single Streamlit app, eleven pages, with explicit actions delegated to existing
-phase services. Implementation and usage: [DASHBOARD.md](DASHBOARD.md);
-verified evidence: [PHASE11_REPORT.md](PHASE11_REPORT.md).
+Single Streamlit app with five product pages, organised as one workflow:
+understand churn → investigate a customer → evaluate the model → prioritise
+retention → simulate a campaign. Side-effecting actions are delegated to the
+existing phase services and live only in Model Laboratory → Operations. The
+post-Phase-13 redesign changed presentation and navigation only; the model,
+threshold, preprocessing and stored evidence are unchanged. Implementation and
+usage: [DASHBOARD.md](DASHBOARD.md); original eleven-page phase evidence:
+[PHASE11_REPORT.md](PHASE11_REPORT.md).
 
 | # | Page | Content | Data source |
 | --- | --- | --- | --- |
-| 1 | Overview | Dataset provenance, validation gate, selected model, latest risk population, latest projection, evidence inventory | validation/benchmark/risk/simulation artifacts |
-| 2 | Data discovery | Ranked candidates, gates, licence status, discovery and acquisition actions, attempt log | Phase 2/3 services and reports |
-| 3 | Data quality | Validation decision, dimensions, missingness, target balance, checks, roles, leakage, column profile | validation + EDA reports |
-| 4 | Model training | Prepared summary, persisted MLP metadata/history, validated configuration, explicit training action | prepared/model artifacts + Phase 6 trainer |
-| 5 | Model evaluation | All-family validation/test table, ROC/PR, confusion matrices, CV, limitations | `artifacts/evaluation` |
-| 6 | Explainability | Global grouped importance, stored beeswarm/dependence figures, selected local explanation | `artifacts/explanations` |
-| 7 | Risk intelligence | Ranked table, configurable display tiers, probability/reference filters, sorting, exports | `artifacts/predictions` |
-| 8 | Assess records | Individual schema-driven scoring and batch CSV scoring, rejections and exports | Phase 9 `RiskService` |
-| 9 | Customer detail | Stored score, tier, drivers, probability-matched local SHAP | predictions + drivers + local SHAP |
-| 10 | Retention simulator | Budget, cost, effectiveness, horizon, targeting, tiers, contact caps, comparison, sensitivity | Phase 10 service |
-| 11 | Reliability & limits | Artifact inventory, digest checks, failed validation checks, warnings, limitations, privacy rules | all metadata |
+| 1 | Executive Dashboard | Four business KPIs, risk-tier distribution, dataset/model fact tables, ten priority customers, latest projection | validation/benchmark/risk/simulation artifacts |
+| 2 | Customer Risk Explorer | Stored assessment with drivers and probability-matched local SHAP; explicit single and batch scoring | population risk table, `drivers.json`, local SHAP, fitted schema |
+| 3 | Model Laboratory | Held-out performance, CV stability, global SHAP, data quality and provenance, discovery/acquisition/training operations, artifact inventory | benchmark, explanations, validation/EDA, discovery/attempts, prepared/model artifacts |
+| 4 | Retention Workbench | Tier/probability/reference filters, rank or value sorting, budget-constrained contact selection, CSV/JSON exports | stored Phase 9 scores + summary |
+| 5 | Campaign Simulator | Explicit assumptions, budget allocation, projected prevented churn, comparison, sensitivity, exports | persisted Phase 10 results; live engine for in-session projections |
 
 **Implementation rules**
 
 1. `data_access.py` wraps every load in `st.cache_data` keyed by `(path, mtime_ns, size)`; validation report resolution excludes acquisition attempt logs that share the folder.
 2. Missing artifacts render an actionable amber empty state with the exact CLI command — never sample numbers, never random data.
 3. Charts are Plotly from stored JSON/Parquet. No SQL, external API or UI-side model fitting.
-4. Every page header shows `run_id`, model family, dataset hash prefix and generated-at timestamp.
-5. Filters and display-tier changes are pure pandas operations over the stored scores; no rescoring and no artifact rewrite.
-6. Side-effecting actions live in `churnwise/dashboard/actions.py`, are button-gated and are never executed by a normal rerun. Training is synchronous and labelled as such; assessment calls Phase 9; new simulations call Phase 10 in memory and are labelled hypothetical.
+4. Every page header shows four identity fields: run id, model family, dataset hash prefix and generated-at timestamp.
+5. Filters, display-tier changes and budget-fit selection are pure pandas operations over the stored scores; no rescoring and no artifact rewrite.
+6. Side-effecting actions live in `churnwise/dashboard/actions.py`, are button-gated in Model Laboratory and are never executed by a normal rerun. Training is synchronous and labelled as such; assessment calls Phase 9; new simulations call Phase 10 in memory and are labelled hypothetical.
 7. Session state stores only UI results (training outcome, individual/batch assessment, in-session simulation, notices); persistent project artifacts remain the source of truth.
 8. A batch upload digest changes only on a new file; a different digest clears the previous result. Cache invalidation is explicit through the sidebar button or an action-success clear.
-9. Cold-load target is < 5 s; Phase 13 measured **1.937 s** for the first real-artifact render (AppTest). No browser performance trace is claimed.
+9. Cold-load target is < 5 s; Phase 13 measured **1.937 s** for the first real-artifact render of the original eleven-page shell (AppTest), and the five-page redesign measured **0.917 s** on 2026-10-24 (AppTest, project artifacts). No browser performance trace is claimed.
 
 ---
 

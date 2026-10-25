@@ -2,7 +2,7 @@
 
 **Audience:** technical reviewers, hiring managers, project stakeholders  
 **Format:** 12-slide talk plus live demo; every number below is traceable to a saved artifact.  
-**Status:** Phase 13 final verification complete, 2026-10-23.
+**Status:** Phase 13 complete; post-Phase-13 validation completed 2026-10-24.
 
 ---
 
@@ -36,9 +36,9 @@ discovery → acquisition → validation/EDA → preprocessing
 Plus:
 
 - a single-command orchestrator with a durable run manifest and safe resume;
-- a 11-page Streamlit dashboard over persisted artifacts;
-- 624 passing tests, 7 opt-in live-network tests and a clean-environment
-  dependency lock.
+- a five-page Streamlit retention product over persisted artifacts;
+- 634 passing default tests, plus 7 opt-in live-network tests and 10 opt-in
+  browser tests, with a clean-environment dependency lock.
 
 **Reference dataset:** OpenML `46915` — 5,000 rows, 20 raw columns, 14.14%
 churn, MIT licence, SHA-256 `87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6`.
@@ -119,6 +119,9 @@ on validation, then frozen before the single test evaluation.
 - Two Phase 13 fast live runs reproduced RF test F1 **0.8718** / ROC-AUC
   **0.9383** and LR **0.6350** / **0.8741** exactly; the MLP test F1 was
   **0.7068** on both. The deterministic RF fix did not change the results.
+- The later full-profile run `post13-full-20261024c` completed all seven stages
+  in 328.259 s and reproduced the committed RF/LR/MLP test metrics exactly. The
+  full-profile MLP trained 43 epochs; fast-profile MLP metrics are not comparable.
 
 ---
 
@@ -178,50 +181,63 @@ campaign or observe retention.
 
 ## Slide 10 — Dashboard
 
-Eleven pages: Overview, Data discovery, Data quality, Model training, Model
-evaluation, Explainability, Risk intelligence, Assess records, Customer detail,
-Retention simulator, Reliability & limits.
+Five product pages, organised as one workflow: **Executive Dashboard → Customer
+Risk Explorer → Model Laboratory → Retention Workbench → Campaign Simulator**.
 
+- Business pages stay on stored evidence; technical detail lives in Model
+  Laboratory tabs.
 - Reads persisted artifacts; no placeholder metrics.
-- Explicit actions only for discovery, acquisition, training, record assessment
-  and simulation.
+- Explicit actions only in Model Laboratory → Operations (discovery, acquisition,
+  training); record scoring is explicit in Customer Risk Explorer; simulation is
+  explicit in Campaign Simulator.
 - Cache keys include path, modification time and size.
-- Phase 13: all 11 pages rendered without exceptions; first real-artifact render
-  **1.937 s**; HTTP 200 in under 2 s.
+- Phase 13 measured the original eleven-page shell at **1.937 s** first render
+  and HTTP 200 in under 2 s; the five-page redesign measured **0.917 s** in a
+  first `AppTest` render against the project artifacts (no browser trace).
+- Post-Phase-13 Playwright E2E: **10 passed**, covering all five current pages
+  plus risk filtering/download, customer detail, simulator, individual and batch
+  scoring/export, and empty states. One browser engine, one desktop viewport.
 
-![Overview](screenshots/phase13-overview.png)
+![Executive Dashboard](screenshots/redesign-executive.png)
 
 ---
 
 ## Slide 11 — Reliability and reproducibility
 
-- **624 passed, 7 skipped** (the skips are the documented opt-in live tests).
-- **7/7** live-network tests passed when explicitly run.
+- **634 passed, 17 skipped** (7 live-network + 10 browser opt-in tests).
+- **7/7** live-network tests and **10/10** browser tests passed when explicitly
+  run.
 - Fresh environment from `requirements.lock.txt`: dependency install and full
   suite reproduced.
-- One-command live runs completed all seven stages in **66 s** (initial) and
-  **105 s** (post-fix reproducibility run).
-- 114/114 documentation checks passed.
+- Phase 13 fast live runs completed all seven stages in **66 s** and **105 s**;
+  the later full-profile run completed them in **328.259 s** at **613.9 MiB**.
+- Phase 1 documentation checker passed; the full validation evidence is in
+  [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md).
 - Resume, corrupt manifests, changed configuration, missing artifacts and
   rejected datasets have dedicated regression tests.
 
 ---
 
-## Slide 12 — Limitations and responsible use
-
-- The measured live evidence is the **fast profile**, not the full 150-epoch /
-  5-fold production profile.
+## Slide 12 — Limitations and responsible use- The full profile is now validated, but the evidence remains one dataset and
+  one held-out split. The Phase 13 live metrics were fast-profile demonstrations.
+- Calibration was evaluated separately; the production candidate remains the
+  uncalibrated Random Forest at threshold 0.45.
+- The second dataset used newly trained models; it is not transfer evidence.
 - Default MLP float identity is not bitwise reproducible; deterministic mode is
   tested separately. Random Forest now defaults to serial (`n_jobs=1`) execution
   so its predictions are bitwise stable.
 - Artifact validation is distributed by phase, not a universal JSON-Schema
   registry.
 - The dependency lock is Windows/CPython 3.13-specific and has no hash pins.
-- No automated browser E2E suite; dashboard verification uses AppTest, HTTP and
-  targeted browser screenshots.
+- Browser E2E covers one engine and one desktop viewport; live actions, optional
+  SHAP, responsive layouts and accessibility are not covered.
 - No causal claim from SHAP, no measured uplift, no production deployment or
   real customer retention outcome.
 - Live evidence depends on external source availability and network conditions.
 
-**Next steps:** browser E2E coverage, JSON-Schema registry, production-profile
-timing, and a CI job that installs the lock and runs the suite.
+**Next steps:** repeated splits and subgroup metrics, a decision on integrating
+calibrated probabilities, a JSON-Schema/artifact registry, CI with the lock, and
+a second browser engine plus accessibility checks.
+
+Full evidence: [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md) ·
+[PROJECT_CASE_STUDY.md](PROJECT_CASE_STUDY.md).

@@ -40,6 +40,47 @@ def validate_boundaries(boundaries: Sequence[float]) -> str | None:
     return None
 
 
+def validation_status_kind(status: Any) -> str:
+    """Map a Phase 4 gate status to the dashboard's visual tone.
+
+    ``pass_with_warnings`` is deliberately amber rather than green: the gate is
+    open, but at least one warning-level check did not pass.
+    """
+
+    normalized = str(status or "").strip().lower()
+    return {
+        "pass": "ok",
+        "pass_with_warnings": "warn",
+        "reject": "risk",
+    }.get(normalized, "info")
+
+
+def validation_check_counts(checks: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    """Count passed checks and non-passing checks by severity.
+
+    The gate is decided by severity, so the UI must not report a warning-level
+    check as a fatal failure. Counts are derived from the same detailed records
+    shown in the table and always reconcile with ``len(checks)``.
+    """
+
+    passed = 0
+    warnings = 0
+    fatal = 0
+    for check in checks:
+        if check.get("passed"):
+            passed += 1
+        elif str(check.get("severity") or "").lower() == "fatal":
+            fatal += 1
+        else:
+            warnings += 1
+    return {
+        "total": len(checks),
+        "passed": passed,
+        "warnings": warnings,
+        "fatal": fatal,
+    }
+
+
 def tier_for(probability: float, boundaries: Sequence[float]) -> str:
     """Lower-inclusive tier assignment matching the Phase 9 contract."""
 
@@ -202,4 +243,6 @@ __all__ = [
     "tier_for",
     "tier_labels",
     "validate_boundaries",
+    "validation_check_counts",
+    "validation_status_kind",
 ]

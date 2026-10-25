@@ -272,16 +272,30 @@ def assess_batch_records(
     *,
     thresholds: Sequence[float] | None = None,
     reference_column: str | None = None,
+    explain: str = "none",
+    explain_top_n: int = 10,
+    source_label: str | None = None,
 ) -> dict[str, Any]:
     """Score uploaded records through Phase 9, preserving input positions."""
 
     from churnwise.intelligence import RiskError
 
     try:
-        batch = _risk_service(settings, thresholds).assess_batch(
+        service = _risk_service(settings, thresholds)
+        required = list((service.model.dataset.schema or {}).get("required_columns") or [])
+        if any(column not in frame.columns for column in required):
+            # Keep invalid schema attempts out of persisted scoring history.
+            return service.assess_batch(
+                frame,
+                explain="none",
+                reference_column=reference_column,
+            ).to_dict()
+        run = service.score_frame(
             frame,
-            explain="none",
+            explain=explain,
+            explain_top_n=explain_top_n,
             reference_column=reference_column,
+            source_label=source_label,
         )
     except RiskError as exc:
         raise DashboardActionError(
@@ -295,7 +309,17 @@ def assess_batch_records(
             code="CW-UI-011",
             remediation="Check the model and preprocessing artifacts, then retry.",
         ) from exc
-    return batch.to_dict()
+    payload = run.to_dict()
+    payload.update(
+        {
+            "records": [item.to_dict() for item in run.table.records],
+            "rejections": [item.to_dict() for item in run.rejections],
+            "batch_error": "",
+            "classification_threshold": float(run.table.classification_threshold),
+            "risk_thresholds": run.table.thresholds.to_dict(),
+        }
+    )
+    return payload
 
 
 def run_campaign_projection(
@@ -313,6 +337,7 @@ def run_campaign_projection(
     risk_tiers: Sequence[str] = (),
     max_contacts: int | None = None,
     comparison: Mapping[str, Any] | None = None,
+    comparisons: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     """Run the Phase 10 engine in memory (``persist=False``) for the UI."""
 
@@ -361,6 +386,11 @@ def run_campaign_projection(
         merged = dict(primary_values)
         merged.update(comparison)
         extra.append(scenario_from(merged, "Comparison", "Dashboard comparison scenario"))
+    for index, values in enumerate(comparisons, start=1):
+        merged = dict(primary_values)
+        merged.update(values)
+        label = str(merged.get("strategy") or f"Alternative {index}")
+        extra.append(scenario_from(merged, label.replace("_", " ").title(), "Dashboard strategy comparison"))
     try:
         service = SimulationService(settings)
         primary = scenario_from(primary_values, "Dashboard scenario", "Projection computed in the dashboard")

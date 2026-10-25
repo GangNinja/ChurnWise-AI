@@ -67,7 +67,7 @@ Thresholds are chosen from validation predictions only. ROC-AUC ranks across all
 - MLP Neural Network: The threshold was chosen on validation predictions and frozen before the test partition was evaluated.
 - MLP Neural Network: ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC.
 
-Threshold sweeps and the frozen choice are stored in [threshold_analysis.json](threshold_analysis.json) and plotted in `threshold_analysis.png`.
+Threshold sweeps and the frozen choice are stored in `threshold_analysis.json` and plotted in `threshold_analysis.png`.
 
 ## 5. Held-out test results
 
@@ -105,12 +105,12 @@ Each fold refits the Phase 5 column plan, imputers, scaler and encoder on its ow
 
 | Figure | File |
 | --- | --- |
-| Confusion matrix per family | [Logistic Regression](confusion_matrix_logistic_regression.png), [Random Forest](confusion_matrix_random_forest.png), [MLP Neural Network](confusion_matrix_mlp.png) |
-| ROC curves | [roc_curves.png](roc_curves.png) |
-| Precision-recall curves | [precision_recall_curves.png](precision_recall_curves.png) |
-| Metric comparison | [metric_comparison.png](metric_comparison.png) |
-| Threshold analysis | [threshold_analysis.png](threshold_analysis.png) |
-| Probability distributions | [probability_distributions.png](probability_distributions.png) |
+| Confusion matrix per family | Logistic Regression (`confusion_matrix_logistic_regression.png`), Random Forest (`confusion_matrix_random_forest.png`), MLP Neural Network (`confusion_matrix_mlp.png`) |
+| ROC curves | `roc_curves.png` |
+| Precision-recall curves | `precision_recall_curves.png` |
+| Metric comparison | `metric_comparison.png` |
+| Threshold analysis | `threshold_analysis.png` |
+| Probability distributions | `probability_distributions.png` |
 
 ## 7. Model selection
 

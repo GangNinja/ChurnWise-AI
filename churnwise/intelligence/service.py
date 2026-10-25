@@ -596,6 +596,7 @@ class RiskService:
         segment_fields: Sequence[str] | None = None,
         batch_size: int | None = None,
         run_id: str | None = None,
+        source_label: str | None = None,
         persist: bool = True,
         progress: Callable[[str], None] | None = None,
     ) -> RiskRun:
@@ -668,6 +669,8 @@ class RiskService:
             received=batch.total_received,
             rejected=batch.rejected,
         )
+        if source_label and str(source_label).strip():
+            summary["source_label"] = str(source_label).strip()[:160]
         table = RiskTable(
             records=ranked,
             thresholds=self.thresholds,

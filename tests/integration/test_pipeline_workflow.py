@@ -337,10 +337,10 @@ def test_dashboard_renders_the_pipeline_artifacts(completed, monkeypatch) -> Non
             str(ROOT / "churnwise" / "dashboard" / "app.py"), default_timeout=120
         ).run()
         assert not at.exception
-        at.radio[0].set_value("Risk intelligence").run()
+        at.radio[0].set_value("Retention Workbench").run()
         assert not at.exception
         assert len(at.dataframe[0].value) == 32
-        at.radio[0].set_value("Retention simulator").run()
+        at.radio[0].set_value("Campaign Simulator").run()
         assert not at.exception
         risk_run = next(item for item in at.selectbox if item.label == "Risk run")
         assert risk_run.value == completed["manifest"]["artifacts"]["risk_run_id"]

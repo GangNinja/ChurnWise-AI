@@ -369,7 +369,7 @@ def install_dashboard_project(root: Path) -> dict[str, Path]:
                 "status": "completed",
                 "folds_requested": 5,
                 "folds_completed": 5,
-                "preprocessing": {"fold_safe": True},
+                "preprocessing": {"refitted_per_fold": True, "verified_against_phase5": True},
                 "metrics": {"f1": {"mean": f1, "std": 0.02, "n": 5, "values": [f1] * 5}},
             },
         }
@@ -418,7 +418,16 @@ def install_dashboard_project(root: Path) -> dict[str, Path]:
             "test_used_for_selection": False,
             "rationale": "Highest validation F1; the test split was not used.",
         },
-        "cross_validation": {"enabled": True, "folds": 5, "status": "completed"},
+        "cross_validation": {
+            "enabled": True,
+            "folds": 5,
+            "status": "completed",
+            "preprocessing": {
+                "fold_safe": True,
+                "verified_against_phase5": True,
+                "strategy": "refit per fold from the Phase 5 base frame",
+            },
+        },
         "plots": {},
         "warnings": [],
         "limitations": ["Fixture metrics do not describe a real dataset."],

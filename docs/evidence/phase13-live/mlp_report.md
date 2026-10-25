@@ -42,7 +42,7 @@
 
 ## Learning curves
 
-![Learning curves](./.phase13_final\artifacts\models\phase13-final-live-mlp\mlp\learning_curves.png)
+Learning curves (generated artifact: `./.phase13_final\artifacts\models\phase13-final-live-mlp\mlp\learning_curves.png`)
 
 ## Per-epoch history
 

@@ -1,4 +1,9 @@
-"""ChurnWise AI interactive dashboard entry point (Phase 11).
+"""ChurnWise AI interactive dashboard entry point.
+
+Five product pages over persisted artifacts:
+
+    Executive Dashboard -> Customer Risk Explorer -> Model Laboratory
+    -> Retention Workbench -> Campaign Simulator
 
 Run locally::
 
@@ -12,29 +17,26 @@ import importlib
 import streamlit as st
 
 from churnwise.dashboard.components import layout
-from churnwise.dashboard.data_access import ArtifactError, current_settings, risk_ids, simulation_ids
+from churnwise.dashboard.data_access import ArtifactError, current_settings
 
 PAGES: tuple[tuple[str, str], ...] = (
-    ("overview", "Overview"),
-    ("discovery", "Data discovery"),
-    ("quality", "Data quality"),
-    ("training", "Model training"),
-    ("evaluation", "Model evaluation"),
-    ("explainability", "Explainability"),
-    ("risk", "Risk intelligence"),
-    ("assessment", "Assess records"),
-    ("customer", "Customer detail"),
-    ("simulator", "Retention simulator"),
-    ("reliability", "Reliability & limits"),
+    ("executive", "Executive Dashboard"),
+    ("explorer", "Customer Risk Explorer"),
+    ("laboratory", "Model Laboratory"),
+    ("workbench", "Retention Workbench"),
+    ("simulator", "Campaign Simulator"),
 )
 PAGE_KEYS = dict(PAGES)
 PAGE_LABELS = {label: key for key, label in PAGES}
 
 
-def _sidebar(settings) -> str:
+def _sidebar() -> str:
     with st.sidebar:
         layout.brand()
         st.divider()
+        pending = st.session_state.pop("cw_pending_navigation", None)
+        if pending in PAGE_LABELS:
+            st.session_state["cw_navigation"] = pending
         label = st.radio(
             "Navigate",
             options=[item[1] for item in PAGES],
@@ -42,30 +44,26 @@ def _sidebar(settings) -> str:
             label_visibility="collapsed",
         )
         st.divider()
-        st.caption("Persisted runs")
-        st.caption(f"Risk runs: {len(risk_ids(settings))}")
-        st.caption(f"Simulations: {len(simulation_ids(settings))}")
         if st.button("Refresh artifact cache", key="cw_refresh_cache", width="stretch"):
             st.cache_data.clear()
             st.rerun()
-        st.divider()
         st.caption(
-            "Read-only over artifacts. Discovery, acquisition, training and "
-            "simulation run only when an explicit action button is used."
+            "Read-only over persisted artifacts. Pipeline actions run only from the explicit "
+            "controls in Model Laboratory."
         )
     return PAGE_LABELS[label]
 
 
 def main() -> None:
     st.set_page_config(
-        page_title="ChurnWise AI — Intelligence Dashboard",
+        page_title="ChurnWise AI — Retention Intelligence",
         page_icon="◔",
         layout="wide",
         initial_sidebar_state="expanded",
     )
     layout.inject_styles()
     settings = current_settings()
-    page_key = _sidebar(settings)
+    page_key = _sidebar()
     module = importlib.import_module(f"churnwise.dashboard.pages.{page_key}")
     try:
         module.render(settings)

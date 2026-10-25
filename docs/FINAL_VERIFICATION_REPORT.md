@@ -9,6 +9,11 @@ determinism fix (D-12)
 workflow is implemented and exercised end to end; this is not a production
 deployment and no business outcome is claimed.
 
+> **Historical record (Phase 13).** The full-profile pipeline was executed end to
+> end and an opt-in 10-test browser suite was added afterwards. Those results are
+> in [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md); this report remains the
+> date-stamped Phase 13 audit and is not rewritten to include later work.
+
 Companion documents: [FINAL_ACCEPTANCE_MATRIX.md](FINAL_ACCEPTANCE_MATRIX.md),
 [INTEGRATION_DEFECTS.md](INTEGRATION_DEFECTS.md),
 [PROJECT_SHOWCASE.md](PROJECT_SHOWCASE.md),

@@ -1,0 +1,572 @@
+{
+  "schema_version": "1.0",
+  "kind": "curated extract",
+  "source_files": {
+    "reports/post_phase13/workstream3/calibration_summary.json": "5ef091a9bdde93ecbb0791889cc37141d3cd302c1988d40989ce7abeedfef4dc"
+  },
+  "note": "Calibration is an evaluated experiment, not an integrated production change.",
+  "source": {
+    "benchmark_run_id": "post13-full-20261024c-bench",
+    "preprocessing_run_id": "post13-full-20261024c-prep",
+    "selected_family": "random_forest",
+    "production_threshold": 0.45,
+    "model_path": "reports\\post_phase13\\workstream1\\artifacts\\evaluation\\post13-full-20261024c-bench\\models\\random_forest\\model.joblib",
+    "dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "split_fingerprint": "4b0c45db677fa9619de99b6a8b786a3da2c4da93824c46db65412a85829594dd",
+    "validation_rows": 1000,
+    "validation_positive_count": 142,
+    "test_rows": 1000,
+    "test_positive_count": 141,
+    "stored_probability_max_abs_diff": {
+      "validation": 0.0,
+      "test": 0.0
+    }
+  },
+  "protocol": {
+    "calibration_fit_split": "validation only",
+    "method_selection": "lowest out-of-fold Brier within 5-fold stratified validation; log loss tie-break",
+    "threshold_selection": "maximum F1 on validation out-of-fold probabilities; production threshold kept separate",
+    "test_evaluation": "one frozen evaluation after method and threshold were selected",
+    "test_used_for_selection": false,
+    "base_model_refit": false,
+    "production_candidate_replaced": false
+  },
+  "chosen_method": "sigmoid",
+  "chosen_method_rationale": "sigmoid had the lowest out-of-fold validation Brier score (0.046025); the production threshold was not used for method selection.",
+  "calibrated_threshold": 0.46,
+  "validation_methods": {
+    "uncalibrated": {
+      "brier": 0.05163607426557431,
+      "log_loss": 0.2744279647288952,
+      "roc_auc": 0.882555238189041,
+      "pr_auc": 0.8199572141195611,
+      "ece": 0.04324080070934318,
+      "mce": 0.21391212753613176
+    },
+    "sigmoid": {
+      "brier": 0.04602467172070159,
+      "log_loss": 0.18690612143488952,
+      "roc_auc": 0.8786852818542961,
+      "pr_auc": 0.8184035370566191,
+      "ece": 0.01298790738999803,
+      "mce": 0.14935158661748055
+    },
+    "isotonic": {
+      "brier": 0.04757842825795424,
+      "log_loss": 0.22241716574662088,
+      "roc_auc": 0.8567295380675662,
+      "pr_auc": 0.7882942909116949,
+      "ece": 0.008510161721834551,
+      "mce": 0.22712116137269522
+    }
+  },
+  "test_reference_uncalibrated_at_production_threshold": {
+    "threshold": 0.45,
+    "brier": 0.03901493419386898,
+    "log_loss": 0.16835701293839836,
+    "roc_auc": 0.9383416309579835,
+    "pr_auc": 0.8973210549326094,
+    "f1": 0.8717948717948718
+  },
+  "test_metrics_at_production_threshold": {
+    "uncalibrated": {
+      "threshold": 0.45,
+      "brier": 0.03901493419386898,
+      "log_loss": 0.16835701293839836,
+      "roc_auc": 0.9383416309579835,
+      "pr_auc": 0.8973210549326094,
+      "ece": 0.06860673392102905,
+      "f1": 0.8717948717948718,
+      "mce": 0.3489720359313815
+    },
+    "chosen": {
+      "threshold": 0.45,
+      "brier": 0.03055480623182025,
+      "log_loss": 0.13368611708262204,
+      "roc_auc": 0.9383416309579835,
+      "pr_auc": 0.8973210549326093,
+      "ece": 0.030072986905063916,
+      "f1": 0.8727272727272727,
+      "mce": 0.2257075687862521
+    }
+  },
+  "bootstrap_paired_test_difference": {
+    "brier_improvement": {
+      "mean": 0.008441896392069631,
+      "ci95_low": 0.00647519559369771,
+      "ci95_high": 0.010313123710146253,
+      "bootstrap_samples": 2000,
+      "interpretation": "positive values favour the calibrated candidate"
+    },
+    "log_loss_improvement": {
+      "mean": 0.03460935752575057,
+      "ci95_low": 0.027241438620198646,
+      "ci95_high": 0.041723408208921994,
+      "bootstrap_samples": 2000,
+      "interpretation": "positive values favour the calibrated candidate"
+    }
+  },
+  "serialization": {
+    "serializer": "joblib",
+    "model_path": "reports\\post_phase13\\workstream3\\random_forest_sigmoid_calibrated.joblib",
+    "interface": "FittedBaseline.predict_proba",
+    "clean_process": {
+      "rows": 1000,
+      "min": 0.019878109436620113,
+      "max": 0.9861776125752276,
+      "finite": true,
+      "head": [
+        0.03486081067243237,
+        0.024271846396509568,
+        0.035868397606489154,
+        0.0370368017113674,
+        0.04876407441891277
+      ]
+    },
+    "predictions_match": true,
+    "joblib_load_verified": true,
+    "finite_probabilities": true,
+    "valid_probability_range": true
+  },
+  "limitations": [
+    "Calibration was fitted on one 1,000-row validation split (142 positives); the test partition has 141 positives.",
+    "Isotonic calibration is more flexible but can produce ties and less stable out-of-range tails at this sample size.",
+    "The analysis does not establish subgroup calibration or calibration drift.",
+    "The calibrated estimator is serializable and compatible with FittedBaseline.predict_proba, but it is not wired into the production model registry; deployment requires an explicit integration decision.",
+    "Bootstrap intervals are percentile intervals on one split, not a substitute for repeated holdout or prospective validation."
+  ],
+  "test_reliability": {
+    "uncalibrated": {
+      "bins": [
+        {
+          "left": 0.0,
+          "right": 0.1,
+          "count": 675,
+          "mean_predicted": 0.04063561953899871,
+          "observed_rate": 0.017777777777777778,
+          "abs_gap": 0.022857841761220934
+        },
+        {
+          "left": 0.1,
+          "right": 0.2,
+          "count": 127,
+          "mean_predicted": 0.13352531612766372,
+          "observed_rate": 0.015748031496062992,
+          "abs_gap": 0.11777728463160073
+        },
+        {
+          "left": 0.2,
+          "right": 0.30000000000000004,
+          "count": 32,
+          "mean_predicted": 0.24831099109963084,
+          "observed_rate": 0.0,
+          "abs_gap": 0.24831099109963084
+        },
+        {
+          "left": 0.30000000000000004,
+          "right": 0.4,
+          "count": 17,
+          "mean_predicted": 0.3420426864163585,
+          "observed_rate": 0.11764705882352941,
+          "abs_gap": 0.22439562759282908
+        },
+        {
+          "left": 0.4,
+          "right": 0.5,
+          "count": 23,
+          "mean_predicted": 0.43978635079613526,
+          "observed_rate": 0.30434782608695654,
+          "abs_gap": 0.13543852470917872
+        },
+        {
+          "left": 0.5,
+          "right": 0.6000000000000001,
+          "count": 21,
+          "mean_predicted": 0.5557898688305233,
+          "observed_rate": 0.9047619047619048,
+          "abs_gap": 0.3489720359313815
+        },
+        {
+          "left": 0.6000000000000001,
+          "right": 0.7000000000000001,
+          "count": 29,
+          "mean_predicted": 0.6460339065767906,
+          "observed_rate": 0.896551724137931,
+          "abs_gap": 0.25051781756114044
+        },
+        {
+          "left": 0.7000000000000001,
+          "right": 0.8,
+          "count": 31,
+          "mean_predicted": 0.754876481842751,
+          "observed_rate": 0.9032258064516129,
+          "abs_gap": 0.14834932460886185
+        },
+        {
+          "left": 0.8,
+          "right": 0.9,
+          "count": 19,
+          "mean_predicted": 0.8589288262265832,
+          "observed_rate": 1.0,
+          "abs_gap": 0.14107117377341682
+        },
+        {
+          "left": 0.9,
+          "right": 1.0,
+          "count": 26,
+          "mean_predicted": 0.9433999498841346,
+          "observed_rate": 1.0,
+          "abs_gap": 0.05660005011586544
+        }
+      ],
+      "ece": 0.06860673392102905,
+      "mce": 0.3489720359313815
+    },
+    "sigmoid": {
+      "bins": [
+        {
+          "left": 0.0,
+          "right": 0.1,
+          "count": 802,
+          "mean_predicted": 0.03316206883918255,
+          "observed_rate": 0.017456359102244388,
+          "abs_gap": 0.015705709736938165
+        },
+        {
+          "left": 0.1,
+          "right": 0.2,
+          "count": 32,
+          "mean_predicted": 0.14011356380658996,
+          "observed_rate": 0.0,
+          "abs_gap": 0.14011356380658996
+        },
+        {
+          "left": 0.2,
+          "right": 0.30000000000000004,
+          "count": 15,
+          "mean_predicted": 0.2525642098025765,
+          "observed_rate": 0.13333333333333333,
+          "abs_gap": 0.11923087646924316
+        },
+        {
+          "left": 0.30000000000000004,
+          "right": 0.4,
+          "count": 7,
+          "mean_predicted": 0.36856471164339494,
+          "observed_rate": 0.14285714285714285,
+          "abs_gap": 0.2257075687862521
+        },
+        {
+          "left": 0.4,
+          "right": 0.5,
+          "count": 15,
+          "mean_predicted": 0.4416297785720453,
+          "observed_rate": 0.3333333333333333,
+          "abs_gap": 0.10829644523871196
+        },
+        {
+          "left": 0.5,
+          "right": 0.6000000000000001,
+          "count": 4,
+          "mean_predicted": 0.5502403805180891,
+          "observed_rate": 0.5,
+          "abs_gap": 0.0502403805180891
+        },
+        {
+          "left": 0.6000000000000001,
+          "right": 0.7000000000000001,
+          "count": 13,
+          "mean_predicted": 0.6488298579626284,
+          "observed_rate": 0.8461538461538461,
+          "abs_gap": 0.19732398819121777
+        },
+        {
+          "left": 0.7000000000000001,
+          "right": 0.8,
+          "count": 19,
+          "mean_predicted": 0.7570637017005936,
+          "observed_rate": 0.8947368421052632,
+          "abs_gap": 0.1376731404046696
+        },
+        {
+          "left": 0.8,
+          "right": 0.9,
+          "count": 25,
+          "mean_predicted": 0.8547566943207586,
+          "observed_rate": 0.88,
+          "abs_gap": 0.02524330567924138
+        },
+        {
+          "left": 0.9,
+          "right": 1.0,
+          "count": 68,
+          "mean_predicted": 0.9560666886929766,
+          "observed_rate": 0.9852941176470589,
+          "abs_gap": 0.029227428954082257
+        }
+      ],
+      "ece": 0.030072986905063916,
+      "mce": 0.2257075687862521
+    }
+  },
+  "validation_reliability": {
+    "uncalibrated": {
+      "bins": [
+        {
+          "left": 0.0,
+          "right": 0.1,
+          "count": 677,
+          "mean_predicted": 0.03940398197681259,
+          "observed_rate": 0.033973412112259974,
+          "abs_gap": 0.005430569864552613
+        },
+        {
+          "left": 0.1,
+          "right": 0.2,
+          "count": 139,
+          "mean_predicted": 0.1381302881784427,
+          "observed_rate": 0.050359712230215826,
+          "abs_gap": 0.08777057594822688
+        },
+        {
+          "left": 0.2,
+          "right": 0.30000000000000004,
+          "count": 42,
+          "mean_predicted": 0.24212603733518248,
+          "observed_rate": 0.047619047619047616,
+          "abs_gap": 0.19450698971613486
+        },
+        {
+          "left": 0.30000000000000004,
+          "right": 0.4,
+          "count": 14,
+          "mean_predicted": 0.35406718386970154,
+          "observed_rate": 0.21428571428571427,
+          "abs_gap": 0.13978146958398727
+        },
+        {
+          "left": 0.4,
+          "right": 0.5,
+          "count": 17,
+          "mean_predicted": 0.45715278899986,
+          "observed_rate": 0.4117647058823529,
+          "abs_gap": 0.04538808311750708
+        },
+        {
+          "left": 0.5,
+          "right": 0.6000000000000001,
+          "count": 17,
+          "mean_predicted": 0.540670563262865,
+          "observed_rate": 0.6470588235294118,
+          "abs_gap": 0.1063882602665468
+        },
+        {
+          "left": 0.6000000000000001,
+          "right": 0.7000000000000001,
+          "count": 23,
+          "mean_predicted": 0.64612978845109,
+          "observed_rate": 0.8260869565217391,
+          "abs_gap": 0.1799571680706491
+        },
+        {
+          "left": 0.7000000000000001,
+          "right": 0.8,
+          "count": 28,
+          "mean_predicted": 0.7503735867495825,
+          "observed_rate": 0.9642857142857143,
+          "abs_gap": 0.21391212753613176
+        },
+        {
+          "left": 0.8,
+          "right": 0.9,
+          "count": 22,
+          "mean_predicted": 0.8486485766678397,
+          "observed_rate": 1.0,
+          "abs_gap": 0.15135142333216034
+        },
+        {
+          "left": 0.9,
+          "right": 1.0,
+          "count": 21,
+          "mean_predicted": 0.9428820416899536,
+          "observed_rate": 1.0,
+          "abs_gap": 0.0571179583100464
+        }
+      ],
+      "ece": 0.04324080070934318,
+      "mce": 0.21391212753613176
+    },
+    "sigmoid": {
+      "bins": [
+        {
+          "left": 0.0,
+          "right": 0.1,
+          "count": 819,
+          "mean_predicted": 0.0340284919486297,
+          "observed_rate": 0.03663003663003663,
+          "abs_gap": 0.002601544681406935
+        },
+        {
+          "left": 0.1,
+          "right": 0.2,
+          "count": 39,
+          "mean_predicted": 0.13757979883592036,
+          "observed_rate": 0.05128205128205128,
+          "abs_gap": 0.08629774755386908
+        },
+        {
+          "left": 0.2,
+          "right": 0.30000000000000004,
+          "count": 8,
+          "mean_predicted": 0.24368094744507537,
+          "observed_rate": 0.125,
+          "abs_gap": 0.11868094744507537
+        },
+        {
+          "left": 0.30000000000000004,
+          "right": 0.4,
+          "count": 7,
+          "mean_predicted": 0.3468002551994761,
+          "observed_rate": 0.42857142857142855,
+          "abs_gap": 0.08177117337195244
+        },
+        {
+          "left": 0.4,
+          "right": 0.5,
+          "count": 7,
+          "mean_predicted": 0.43506587233176625,
+          "observed_rate": 0.2857142857142857,
+          "abs_gap": 0.14935158661748055
+        },
+        {
+          "left": 0.5,
+          "right": 0.6000000000000001,
+          "count": 14,
+          "mean_predicted": 0.5476175251770383,
+          "observed_rate": 0.5,
+          "abs_gap": 0.04761752517703832
+        },
+        {
+          "left": 0.6000000000000001,
+          "right": 0.7000000000000001,
+          "count": 10,
+          "mean_predicted": 0.6508672531624167,
+          "observed_rate": 0.6,
+          "abs_gap": 0.05086725316241669
+        },
+        {
+          "left": 0.7000000000000001,
+          "right": 0.8,
+          "count": 13,
+          "mean_predicted": 0.77161896843342,
+          "observed_rate": 0.8461538461538461,
+          "abs_gap": 0.07453487772042611
+        },
+        {
+          "left": 0.8,
+          "right": 0.9,
+          "count": 20,
+          "mean_predicted": 0.8579852266103863,
+          "observed_rate": 0.9,
+          "abs_gap": 0.04201477338961368
+        },
+        {
+          "left": 0.9,
+          "right": 1.0,
+          "count": 63,
+          "mean_predicted": 0.9533371987368617,
+          "observed_rate": 0.9841269841269841,
+          "abs_gap": 0.030789785390122337
+        }
+      ],
+      "ece": 0.01298790738999803,
+      "mce": 0.14935158661748055
+    },
+    "isotonic": {
+      "bins": [
+        {
+          "left": 0.0,
+          "right": 0.1,
+          "count": 847,
+          "mean_predicted": 0.035549373779469,
+          "observed_rate": 0.03659976387249114,
+          "abs_gap": 0.0010503900930221438
+        },
+        {
+          "left": 0.1,
+          "right": 0.2,
+          "count": 16,
+          "mean_predicted": 0.13716512745547332,
+          "observed_rate": 0.25,
+          "abs_gap": 0.11283487254452668
+        },
+        {
+          "left": 0.2,
+          "right": 0.30000000000000004,
+          "count": 11,
+          "mean_predicted": 0.2473400368481529,
+          "observed_rate": 0.36363636363636365,
+          "abs_gap": 0.11629632678821075
+        },
+        {
+          "left": 0.30000000000000004,
+          "right": 0.4,
+          "count": 7,
+          "mean_predicted": 0.3699783042298381,
+          "observed_rate": 0.14285714285714285,
+          "abs_gap": 0.22712116137269522
+        },
+        {
+          "left": 0.4,
+          "right": 0.5,
+          "count": 10,
+          "mean_predicted": 0.43005030518911863,
+          "observed_rate": 0.4,
+          "abs_gap": 0.03005030518911861
+        },
+        {
+          "left": 0.5,
+          "right": 0.6000000000000001,
+          "count": 5,
+          "mean_predicted": 0.5942857142857142,
+          "observed_rate": 0.4,
+          "abs_gap": 0.19428571428571417
+        },
+        {
+          "left": 0.6000000000000001,
+          "right": 0.7000000000000001,
+          "count": 7,
+          "mean_predicted": 0.6566174336470475,
+          "observed_rate": 0.7142857142857143,
+          "abs_gap": 0.0576682806386668
+        },
+        {
+          "left": 0.7000000000000001,
+          "right": 0.8,
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null,
+          "abs_gap": null
+        },
+        {
+          "left": 0.8,
+          "right": 0.9,
+          "count": 32,
+          "mean_predicted": 0.8531619943177458,
+          "observed_rate": 0.84375,
+          "abs_gap": 0.009411994317745753
+        },
+        {
+          "left": 0.9,
+          "right": 1.0,
+          "count": 65,
+          "mean_predicted": 0.9995264957245369,
+          "observed_rate": 0.9846153846153847,
+          "abs_gap": 0.01491111110915222
+        }
+      ],
+      "ece": 0.008510161721834551,
+      "mce": 0.22712116137269522
+    }
+  }
+}

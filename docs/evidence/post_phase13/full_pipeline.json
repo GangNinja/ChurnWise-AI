@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0",
+  "kind": "curated extract",
+  "source_files": {
+    "reports/post_phase13/workstream1/artifacts/pipelines/post13-full-20261024c/run.json": "f380a6c06686dd347ecfaf91b0d9ed43f8265e583510f1fa8b759a1d07d37db7",
+    "reports/post_phase13/workstream1/resource_c.json": "3865165b2bbc29bebe15ef4dcd0a6a19f4582456073e33f3fc9e0f61e8c0a1c3"
+  },
+  "note": "Curated from generated artifacts without changing numeric values. The full run tree is Git-ignored.",
+  "run_id": "post13-full-20261024c",
+  "status": "succeeded",
+  "config_digest": "59316acb574d10cec4108a00dbc07bad17cd340877a085e6a16ff788a552360f",
+  "started_at": "2026-10-24T08:14:58Z",
+  "finished_at": "2026-10-24T08:20:05Z",
+  "wall_time_s": 328.259,
+  "peak_tree_working_set_mib": 613.9,
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.13.0 (tags/v3.13.0:60403a5, Oct  7 2024, 09:38:07) [MSC v.1941 64 bit (AMD64)]",
+  "profile": {
+    "fast": false,
+    "seed": 42
+  },
+  "dataset": {
+    "dataset_id": "openml:46915",
+    "sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6",
+    "validation_status": "pass_with_warnings",
+    "features": 27,
+    "train_rows": 3000,
+    "val_rows": 1000,
+    "test_rows": 1000
+  },
+  "stages": [
+    {
+      "name": "source",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:14:58Z",
+      "finished_at": "2026-10-24T08:16:09Z"
+    },
+    {
+      "name": "preprocess",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:16:09Z",
+      "finished_at": "2026-10-24T08:16:09Z"
+    },
+    {
+      "name": "train",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:16:09Z",
+      "finished_at": "2026-10-24T08:16:26Z"
+    },
+    {
+      "name": "evaluate",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:16:26Z",
+      "finished_at": "2026-10-24T08:19:45Z"
+    },
+    {
+      "name": "explain",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:19:45Z",
+      "finished_at": "2026-10-24T08:20:01Z"
+    },
+    {
+      "name": "score",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:20:01Z",
+      "finished_at": "2026-10-24T08:20:02Z"
+    },
+    {
+      "name": "simulate",
+      "status": "succeeded",
+      "started_at": "2026-10-24T08:20:02Z",
+      "finished_at": "2026-10-24T08:20:05Z"
+    }
+  ],
+  "evaluation": {
+    "benchmark_run_id": "post13-full-20261024c-bench",
+    "selected_family": "random_forest",
+    "selected_threshold": 0.45,
+    "selection_metric": "f1",
+    "n_test": 1000,
+    "test_metrics": {
+      "n": 1000,
+      "n_positive": 141,
+      "positive_rate": 0.141,
+      "accuracy": 0.965,
+      "precision": 0.9015151515151515,
+      "recall": 0.8439716312056738,
+      "f1": 0.8717948717948718,
+      "roc_auc": 0.9383416309579835,
+      "pr_auc": 0.8973210549326094,
+      "brier": 0.03901493419386898,
+      "log_loss": 0.16835701293839836
+    },
+    "confusion_matrix": {
+      "labels": [
+        0,
+        1
+      ],
+      "matrix": [
+        [
+          846,
+          13
+        ],
+        [
+          22,
+          119
+        ]
+      ],
+      "tn": 846,
+      "fp": 13,
+      "fn": 22,
+      "tp": 119,
+      "n": 1000
+    }
+  },
+  "risk_scoring": {
+    "risk_run_id": "post13-full-20261024c-risk",
+    "n_scored": 1000,
+    "n_rejected": 0,
+    "tier_counts": {
+      "low": {
+        "count": 858,
+        "pct": 0.858
+      },
+      "medium": {
+        "count": 31,
+        "pct": 0.031
+      },
+      "high": {
+        "count": 40,
+        "pct": 0.04
+      },
+      "critical": {
+        "count": 71,
+        "pct": 0.071
+      }
+    }
+  },
+  "simulation": {
+    "scenario_id": "post13-full-20261024c-sim",
+    "budget": 1000.0,
+    "assumptions": {
+      "cost_per_contact": 5.0,
+      "effectiveness": 0.3,
+      "monthly_value": null,
+      "horizon_months": 6.0,
+      "value_unit": "value_units"
+    },
+    "contacted": 200,
+    "spend": 1000.0,
+    "expected_prevented_churn": 32.83338516165291,
+    "hypothetical": true
+  }
+}

@@ -98,3 +98,15 @@ The full install and test workflow was exercised from a clean environment
 recreated solely from the lock file. That closes the Phase 12 reproducibility
 gap: the green suite is no longer dependent on this machine's pre-existing
 `.venv`.
+
+## 5. Post-Phase-13 addendum (2026-10-24)
+
+`playwright>=1.40,<2.0` is now declared as a test-only dependency for the
+opt-in dashboard browser suite. Playwright 1.64.1 was already pinned in
+`requirements.lock.txt`; no production runtime dependency was added. A browser
+binary is not part of the Python lock: install bundled Chromium with
+`python -m playwright install chromium`, or use the machine's Edge/Chrome via
+`CHURNWISE_BROWSER_CHANNEL`. See
+`reports/post_phase13/DASHBOARD_E2E_REPORT.md` for the observed run and
+limitations. The 14-dependency count and clean-environment table above describe
+the Phase 12 audit before this test-only declaration.

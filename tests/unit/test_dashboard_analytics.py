@@ -107,8 +107,68 @@ def test_nested_get_never_raises_on_missing_or_wrong_types():
     assert analytics.nested_get({"a": 3}, "a", "b", default="x") == "x"
 
 
+def test_validation_check_counts_separate_warnings_from_fatal_failures():
+    checks = [
+        {"id": "V1", "severity": "fatal", "passed": True},
+        {"id": "V11", "severity": "warning", "passed": False},
+        {"id": "V12", "severity": "fatal", "passed": False},
+    ]
+    assert analytics.validation_check_counts(checks) == {
+        "total": 3,
+        "passed": 1,
+        "warnings": 1,
+        "fatal": 1,
+    }
+    assert analytics.validation_check_counts([])["total"] == 0
+
+
+def test_validation_status_kind_distinguishes_warnings_from_rejection():
+    assert analytics.validation_status_kind("pass") == "ok"
+    assert analytics.validation_status_kind("pass_with_warnings") == "warn"
+    assert analytics.validation_status_kind("reject") == "risk"
+    assert analytics.validation_status_kind(None) == "info"
+
+
 def test_dict_to_json_bytes_serialises_non_native_values():
     payload = {"threshold": 0.5, "path": __import__("pathlib").Path("artifacts/x")}
     decoded = json.loads(analytics.dict_to_json_bytes(payload))
     assert decoded["threshold"] == 0.5
     assert "artifacts" in decoded["path"]
+
+
+def test_probability_bins_keep_every_scored_probability_in_one_interval():
+    from churnwise.dashboard.components import charts
+
+    frame = pd.DataFrame(
+        {"churn_probability": [0.0, 0.05, 0.20, 0.45, 0.80, 1.0]}
+    )
+    bins = charts.probability_bins(frame, bins=4)
+
+    assert len(bins) == 4
+    assert int(bins["count"].sum()) == len(frame)
+    assert list(bins["count"]) == [3, 1, 0, 2]
+    assert bins.iloc[0]["low"] == 0.0 and bins.iloc[-1]["high"] == 1.0
+
+
+def test_customer_view_labels_predicted_class_and_original_attributes():
+    from churnwise.dashboard.components import tables
+
+    frame = pd.DataFrame(
+        {
+            "record_reference": ["risk_val_00000", "risk_val_00001"],
+            "churn_probability": [0.10, 0.90],
+            "risk_tier": ["low", "critical"],
+            "predicted_label": ["retained", "Yes"],
+            "account_length": [91.0, 112.0],
+            "international_plan": [0, 1],
+        }
+    )
+
+    view = tables.customer_view(
+        frame,
+        extra_columns=("account_length", "international_plan"),
+    )
+
+    assert list(view["Predicted class"]) == ["Retained", "Churn"]
+    assert list(view["International plan"]) == ["No", "Yes"]
+    assert list(view["Account length"]) == [91.0, 112.0]

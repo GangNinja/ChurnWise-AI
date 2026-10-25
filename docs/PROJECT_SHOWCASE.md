@@ -7,12 +7,13 @@ ChurnWise AI is a local-first Python platform that autonomously finds a public
 customer-churn dataset, validates it, learns a churn model, explains it, scores a
 customer population and explores retention-campaign scenarios. Every stage
 persists auditable artifacts and can be rerun through a resumable pipeline or an
-11-page Streamlit dashboard.
+five-page Streamlit retention workbench.
 
-> **Status:** implementation and verification complete through Phase 13. This is
-> a portfolio/research system, not a production service. See
-> [FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md) for the exact
-> evidence boundary.
+> **Status:** implementation and verification complete through Phase 13, plus
+> four post-Phase-13 validation workstreams: a full-profile pipeline, a
+> second-dataset experiment, probability calibration and browser E2E. This is a
+> portfolio/research system, not a production service. See
+> [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md) for the exact evidence boundary.
 
 ---
 
@@ -37,14 +38,14 @@ It is deliberately not a black-box “churn score API.”
 
 | Capability | Implementation |
 | --- | --- |
-| Dataset discovery | OpenML adapter, deterministic candidate ranking and suitability gates (target, size, licence, PII, schema) |
+| Dataset discovery | Reviewed OpenML, UCI and pinned-GitHub adapters; deterministic ranking; nine gates covering target, size, licence, PII and schema |
 | Acquisition | Bounded HTTPS download, SHA-256 integrity, archive safety, managed storage and provenance manifests |
 | Validation | Target/positive-class detection, 12 quality checks, EDA profile and plots, explicit pass/fail gate |
 | Preprocessing | Leakage-safe train/validation/test split; train-only imputation, encoding and scaling; persisted pipeline and schema |
 | Modelling | Keras MLP (ReLU hidden layers, sigmoid output, BCE, Adam, early stopping, checkpoint restore) plus Logistic Regression and Random Forest baselines |
 | Evaluation | Accuracy, precision, recall, F1, ROC-AUC, PR-AUC, Brier, log-loss, confusion matrices, threshold analysis and calibration views |
 | Explainability | Exact TreeSHAP for forests, DeepSHAP for the MLP, grouped original-feature contributions, global and local artifacts |
-| Risk intelligence | Calibrated probabilities, tiers independent of the 0.45 threshold, ranking/filtering, batch CSV validation and safe exports |
+| Risk intelligence | Model probabilities, tiers independent of the 0.45 threshold, ranking/filtering, batch CSV validation and safe exports |
 | Retention simulation | Budget/cost/effectiveness constraints, expected prevented churn, sensitivity analysis, undefined financial metrics kept undefined |
 | Dashboard | 11 Streamlit pages over persisted artifacts; explicit actions only; cached reads; honest empty states |
 | Orchestration | Seven-stage resumable pipeline with config digests, stage timing and failure codes |
@@ -114,8 +115,25 @@ Evidence: [phase13-live2/README.md](evidence/phase13-live2/README.md) and
 projections. The full generated trees are reproducible with the commands in
 those READMEs; bulky artifacts are git-ignored.
 
-> The live run used `--fast`. Its test metrics are valid for that configuration
-> but are not a tuned production benchmark.
+> The Phase 13 live run used `--fast`. Its test metrics are valid for that
+> configuration but are not a tuned production benchmark.
+
+### Full-profile validation (post-Phase 13)
+
+Run `post13-full-20261024c` used the documented non-`--fast` profile:
+
+| Item | Result |
+| --- | --- |
+| Stages | **7/7 succeeded** (`source`, `preprocess`, `train`, `evaluate`, `explain`, `score`, `simulate`) |
+| Wall time / peak memory | **328.259 s** / **613.9 MiB** |
+| Selected model | Random Forest at threshold 0.45, selected on validation F1 |
+| Test metrics | F1 **0.871795**, ROC-AUC **0.938342**, PR-AUC **0.897321**, Brier **0.039015** |
+| Risk tiers | 1,000 scored; 858 low / 31 medium / 40 high / 71 critical |
+| Simulation | 200 contacted at budget 1,000 / cost 5; expected prevented churn 32.8334 at assumed effectiveness 0.30 |
+
+The full-profile run reproduced the committed benchmark metrics exactly. The
+MLP weights were not bitwise identical across repeated runs because TensorFlow
+op determinism is disabled; reported metrics were identical.
 
 ### Benchmark profile (committed)
 
@@ -133,14 +151,31 @@ Regression 0.552 ± 0.025. The test partition was not used for selection.
 Exact values and threshold policy: [benchmark metrics](evidence/benchmark/metrics.json)
 and [benchmark report](evidence/benchmark/benchmark.md).
 
+### Post-Phase-13 experiments
+
+- **Calibration:** validation-only sigmoid selection improved test Brier from
+  0.0390 to 0.0306, log loss from 0.1684 to 0.1337 and ECE from 0.0686 to 0.0301,
+  with unchanged ROC/PR. It is **not integrated** into the production candidate.
+- **Second dataset:** OpenML `42178` (IBM Telco, 7,043 rows) was used to retrain
+  new models after an isolated ARFF-to-CSV format adapter. Logistic Regression
+  reached test ROC-AUC 0.8380 / PR-AUC 0.6510 / F1 0.6196. This is pipeline
+  robustness evidence, not transfer of the primary model.
+- **Browser E2E:** 10 tests across all five pages passed with a real
+  Chromium-based browser and real Streamlit servers.
+
+Details and limits: [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md).
+
 ### Test suite
 
 ```bash
 python -m pytest -q
-# 624 passed, 7 skipped (final Phase 13 run)
+# 634 passed, 17 skipped (7 live-network + 10 browser)
 
 python -m pytest -q -m live --run-live
 # 7 passed (requires network)
+
+CHURNWISE_BROWSER_E2E=1 python -m pytest tests/e2e -m browser -q
+# 10 passed (real browser and Streamlit servers)
 ```
 
 ### Explainability
@@ -158,12 +193,14 @@ python -m pytest -q -m live --run-live
 
 ### Dashboard
 
-- 11 pages: Overview, Data discovery, Data quality, Model training, Model
-  evaluation, Explainability, Risk intelligence, Assess records, Customer detail,
-  Retention simulator, Reliability & limits.
-- Verified with Streamlit `AppTest`: every page renders without exceptions; first
-  render measured at **1.937 s** in this environment.
-- Screenshot: [Overview](screenshots/phase13-overview.png)
+- Five pages: Executive Dashboard, Customer Risk Explorer, Model Laboratory,
+  Retention Workbench and Campaign Simulator.
+- Verified with Streamlit `AppTest`: every page renders without exceptions; the
+  documented first render was **1.937 s** in this environment.
+- Opt-in Playwright E2E: **10 passed**, covering all five pages plus risk
+  filtering/download, stored customer detail, simulator, individual assessment,
+  batch scoring/export, missing-model handling and empty states.
+- Screenshot: [Executive Dashboard](screenshots/redesign-executive.png)
 
 ---
 
@@ -212,11 +249,15 @@ python -m churnwise.cli run --dataset tests/fixtures/mini_churn.csv \
 # live OpenML, fast profile
 python -m churnwise.cli run --fast --seed 42 --run-id demo-live
 
+# full reference profile (network required, about 5.5 minutes)
+python -m churnwise.cli run --seed 42 --run-id reference-full
+
 python -m streamlit run churnwise/dashboard/app.py
 ```
 
-See [README.md](../README.md) and [DEMO_SCRIPT.md](DEMO_SCRIPT.md) for the full
-walkthrough.
+See [README.md](../README.md), [HOW_TO_RUN.md](HOW_TO_RUN.md) and
+[DEMO_SCRIPT.md](DEMO_SCRIPT.md) for the full walkthrough. For the complete
+technical narrative, see [PROJECT_CASE_STUDY.md](PROJECT_CASE_STUDY.md).
 
 ---
 
@@ -229,24 +270,33 @@ walkthrough.
    inputs.
 3. **Public benchmark, not production.** OpenML `46915` is a public dataset; no
    real customer data, deployment, monitoring or A/B test is included.
-4. **Fast-profile metrics are demonstrations.** The live Phase 13 run used a
-   reduced training/explanation profile.
-5. **MLP reproducibility is statistical, not bitwise.** Splits, tree models,
+4. **The Phase 13 live metrics came from a fast profile.** A later full-profile
+   validation run completed all seven stages and reproduced the committed
+   benchmark, but the evidence remains one dataset and one split.
+5. **Calibration is not in production.** Sigmoid improved probability-quality
+   metrics in a separate validation-only experiment, but the shipped candidate
+   remains the uncalibrated Random Forest at threshold 0.45.
+6. **The second dataset is not transfer evidence.** OpenML `42178` used newly
+   trained models on a different schema and population.
+7. **MLP reproducibility is statistical, not bitwise.** Splits, tree models,
    scoring, ranking and simulation are deterministic for fixed artifacts; MLP
    float results can differ across runs.
-6. **Local single-user design.** No authentication, multi-tenancy, database or
+8. **Local single-user design.** No authentication, multi-tenancy, database or
    cloud deployment; cleanup assumes one process at a time.
-7. **Artifact compatibility is phase-specific.** Validation is implemented per
+9. **Artifact compatibility is phase-specific.** Validation is implemented per
    artifact contract, not as a universal JSON-Schema registry.
-8. **Model risk requires governance.** Churn scores should be reviewed for bias,
-   calibrated for the target population, and paired with human decisions before
-   any customer-facing use.
+10. **Model risk requires governance.** Churn scores should be reviewed for bias,
+    calibrated for the target population, and paired with human decisions before
+    any customer-facing use.
 
 ---
 
 ## Documentation map
 
 - [README.md](../README.md) — setup, usage, testing
+- [HOW_TO_RUN.md](HOW_TO_RUN.md) — installation, configuration and troubleshooting
+- [PROJECT_CASE_STUDY.md](PROJECT_CASE_STUDY.md) — full technical narrative
+- [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md) — curated validation evidence
 - [ARCHITECTURE.md](ARCHITECTURE.md) — design and data flow
 - [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) — phase criteria
 - [FINAL_ACCEPTANCE_MATRIX.md](FINAL_ACCEPTANCE_MATRIX.md) — criterion-level status

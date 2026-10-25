@@ -35,3 +35,12 @@ regression tests are documented as D-12 in
 after the fix; the log above is that run.
 
 No test was removed, skipped, or weakened to obtain these outcomes.
+
+## Post-Phase-13 addendum (2026-10-24)
+
+This page preserves the Phase 13 record. A later opt-in Playwright suite added
+10 browser tests across all 11 dashboard pages (**10 passed in 80.67 s**). With
+those tests collected, the default suite result became **624 passed, 17 skipped**
+(7 live-network + 10 browser). The browser suite passed separately with
+`CHURNWISE_BROWSER_E2E=1`. See
+[VALIDATION_SUMMARY.md](../../VALIDATION_SUMMARY.md) for the curated evidence.

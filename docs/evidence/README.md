@@ -14,6 +14,7 @@ commands in the run-specific READMEs.
 | `phase13-live/` | Pre-fix live run: pipeline manifest, validation, metrics, risk and simulation |
 | `phase13-live2/` | Post-fix live run: same artifact set; authoritative for final numbers |
 | `phase13-tests/` | Preserved test logs and observed outcomes |
+| `post_phase13/` | Curated extracts for the full-profile, second-dataset, calibration and browser E2E workstreams, with source checksums |
 
 ## Integrity note
 

@@ -1,0 +1,17 @@
+ChurnWise AI — default regression suite, documentation pass
+Date: 2026-10-24
+Environment: Windows 11, CPython 3.13.0, project .venv
+Command: ./.venv/Scripts/python.exe -m pytest -q
+Exit status: 0
+
+Observed pytest summary:
+624 passed, 17 skipped, 1484 warnings in 527.67s (0:08:47)
+
+The 17 skips are:
+- 7 live-network tests (require --run-live)
+- 10 browser E2E tests (require CHURNWISE_BROWSER_E2E=1)
+
+The 1,484 warnings are library/runtime warnings (TensorFlow, Keras, gast,
+NumPy, SHAP/Matplotlib); no test failed. This rerun confirms the count; the
+earlier validation run recorded 291.80 s for the same 624/17 result. Timing
+varies with machine load.

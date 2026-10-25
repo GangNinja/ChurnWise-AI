@@ -1,0 +1,394 @@
+{
+  "schema_version": "1.0",
+  "kind": "curated extract",
+  "source_files": {
+    "reports/post_phase13/workstream2/experiment_summary.json": "ace4a3c4198be1ad18706765fd8cab19110eae99b7e74892e28bdb3196ef1fcf",
+    "reports/post_phase13/workstream2/adapter.json": "1596afa1f10f372ecca8551308d07be6a9ffa648a7be82290895727fbe978f45"
+  },
+  "note": "Separately trained experiment. Not evidence that the primary model transfers.",
+  "dataset": {
+    "dataset_id": "openml:42178",
+    "title": "telco-customer-churn",
+    "rows": 7043,
+    "columns": 21,
+    "target": "Churn",
+    "positive_rate": 0.2653698707936959,
+    "source_format": "arff",
+    "derived_format": "csv",
+    "source_sha256": "52fc98c22e7350402a0cbcbb1d5a7f50981ad0236bab440a58918ab32a8a20f2",
+    "derived_sha256": "1f69045fe796fcb3140c5066d0e275c43e34bf5a1f2e864a05da8cdf21b521ee",
+    "adapter_transformation": "OpenML ARFF STRING attributes -> CSV; values and row order preserved",
+    "licence": {
+      "name": "Public",
+      "url": null,
+      "status": "verified"
+    },
+    "licence_caution": "OpenML reports Public but supplies no licence URL; upstream reuse terms remain unverified."
+  },
+  "split": {
+    "strategy": "stratified",
+    "seed": 42,
+    "fingerprint": "303e4b26762d0fca12ad768bf924072c23c4160c529e56f7d2559e8fcecde17b",
+    "train_rows": 4225,
+    "validation_rows": 1409,
+    "test_rows": 1409,
+    "transformed_features": 49
+  },
+  "validation": {
+    "status": "pass_with_warnings",
+    "gate": {
+      "status": "pass_with_warnings",
+      "passed": true,
+      "can_preprocess": true,
+      "blocking": [],
+      "warnings": [
+        "V9",
+        "V11"
+      ],
+      "reasons": [
+        "V9 missingness: 11 missing cells",
+        "V11 identifier_and_cardinality: 1 identifier/cardinality warning(s); 3 numeric and 16 categorical usable features"
+      ]
+    }
+  },
+  "selected_family": "logistic_regression",
+  "selection": {
+    "selection_metric": "f1",
+    "selected_family": "logistic_regression",
+    "selected_label": "Logistic Regression",
+    "selected_validation_value": 0.6595744680851064,
+    "threshold": 0.61,
+    "selected_on": "validation",
+    "test_used_for_selection": false,
+    "recall_floor": null,
+    "ranking": [
+      {
+        "family": "logistic_regression",
+        "label": "Logistic Regression",
+        "metric": "f1",
+        "validation_value": 0.6595744680851064,
+        "validation_recall": 0.7459893048128342,
+        "validation_f1": 0.6595744680851064,
+        "validation_roc_auc": 0.859846547314578,
+        "test_value": 0.6195524146054181,
+        "rank": 1
+      },
+      {
+        "family": "mlp",
+        "label": "MLP Neural Network",
+        "metric": "f1",
+        "validation_value": 0.6533018867924528,
+        "validation_recall": 0.7406417112299465,
+        "validation_f1": 0.6533018867924528,
+        "validation_roc_auc": 0.8555865560980651,
+        "test_value": 0.615568862275449,
+        "rank": 2
+      },
+      {
+        "family": "random_forest",
+        "label": "Random Forest",
+        "metric": "f1",
+        "validation_value": 0.6330275229357797,
+        "validation_recall": 0.7379679144385026,
+        "validation_f1": 0.6330275229357797,
+        "validation_roc_auc": 0.8473197447622,
+        "test_value": 0.606199770378875,
+        "rank": 3
+      }
+    ],
+    "rationale": "Selected Logistic Regression because it had the highest validation f1 (0.6596) at its validation-selected operating threshold. MLP Neural Network followed with 0.6533. The MLP was not the best model on the validation criterion; the benchmark does not assume it must win. The test partition was not used to choose the model.",
+    "notes": [
+      "Selection uses validation predictions only, after thresholds were frozen.",
+      "Accuracy alone is not the selection criterion; the configured metric is f1."
+    ]
+  },
+  "families": {
+    "mlp": {
+      "threshold": {
+        "selected": 0.59,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.59,
+          "n": 1409,
+          "n_positive": 374,
+          "n_negative": 1035,
+          "positive_rate": 0.2654364797728886,
+          "predicted_positive": 474,
+          "predicted_positive_rate": 0.33640880056777855,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                838,
+                197
+              ],
+              [
+                97,
+                277
+              ]
+            ],
+            "tn": 838,
+            "fp": 197,
+            "fn": 97,
+            "tp": 277,
+            "n": 1409
+          },
+          "accuracy": 0.7913413768630234,
+          "precision": 0.5843881856540084,
+          "recall": 0.7406417112299465,
+          "f1": 0.6533018867924528,
+          "specificity": 0.8096618357487922,
+          "balanced_accuracy": 0.7751517734893694,
+          "macro_precision": 0.7403224350729936,
+          "macro_recall": 0.7751517734893694,
+          "macro_f1": 0.7520316540561248,
+          "roc_auc": 0.8555865560980651,
+          "pr_auc": 0.6762285994034478,
+          "brier": 0.16214433350259286,
+          "log_loss": 0.48237857417608165,
+          "class_metrics": {
+            "0": {
+              "precision": 0.8962566844919786,
+              "recall": 0.8096618357487922,
+              "f1": 0.8507614213197968,
+              "support": 1035
+            },
+            "1": {
+              "precision": 0.5843881856540084,
+              "recall": 0.7406417112299465,
+              "f1": 0.6533018867924528,
+              "support": 374
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation": {
+        "n": 1409,
+        "positive_rate": 0.2654364797728886,
+        "f1": 0.6533018867924528,
+        "roc_auc": 0.8555865560980651,
+        "pr_auc": 0.6762285994034478,
+        "brier": 0.16214433350259286,
+        "log_loss": 0.48237857417608165
+      },
+      "test": {
+        "n": 1409,
+        "positive_rate": 0.2654364797728886,
+        "f1": 0.615568862275449,
+        "roc_auc": 0.8342375158231935,
+        "pr_auc": 0.6269586432772275,
+        "brier": 0.1696324811441204,
+        "log_loss": 0.5054500459440966
+      }
+    },
+    "logistic_regression": {
+      "threshold": {
+        "selected": 0.61,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.61,
+          "n": 1409,
+          "n_positive": 374,
+          "n_negative": 1035,
+          "positive_rate": 0.2654364797728886,
+          "predicted_positive": 472,
+          "predicted_positive_rate": 0.33498935415188075,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                842,
+                193
+              ],
+              [
+                95,
+                279
+              ]
+            ],
+            "tn": 842,
+            "fp": 193,
+            "fn": 95,
+            "tp": 279,
+            "n": 1409
+          },
+          "accuracy": 0.7955997161107168,
+          "precision": 0.5911016949152542,
+          "recall": 0.7459893048128342,
+          "f1": 0.6595744680851064,
+          "specificity": 0.8135265700483092,
+          "balanced_accuracy": 0.7797579374305716,
+          "macro_precision": 0.744857144149196,
+          "macro_recall": 0.7797579374305716,
+          "macro_f1": 0.7567649216693281,
+          "roc_auc": 0.859846547314578,
+          "pr_auc": 0.6784646403970226,
+          "brier": 0.16150715736593413,
+          "log_loss": 0.4804716243752373,
+          "class_metrics": {
+            "0": {
+              "precision": 0.8986125933831377,
+              "recall": 0.8135265700483092,
+              "f1": 0.8539553752535497,
+              "support": 1035
+            },
+            "1": {
+              "precision": 0.5911016949152542,
+              "recall": 0.7459893048128342,
+              "f1": 0.6595744680851064,
+              "support": 374
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation": {
+        "n": 1409,
+        "positive_rate": 0.2654364797728886,
+        "f1": 0.6595744680851064,
+        "roc_auc": 0.859846547314578,
+        "pr_auc": 0.6784646403970226,
+        "brier": 0.16150715736593413,
+        "log_loss": 0.4804716243752373
+      },
+      "test": {
+        "n": 1409,
+        "positive_rate": 0.2654364797728886,
+        "f1": 0.6195524146054181,
+        "roc_auc": 0.8379601643028753,
+        "pr_auc": 0.6510479258722627,
+        "brier": 0.1691087558423002,
+        "log_loss": 0.5002475947355967
+      }
+    },
+    "random_forest": {
+      "threshold": {
+        "selected": 0.39,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.39,
+          "n": 1409,
+          "n_positive": 374,
+          "n_negative": 1035,
+          "positive_rate": 0.2654364797728886,
+          "predicted_positive": 498,
+          "predicted_positive_rate": 0.3534421575585522,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                813,
+                222
+              ],
+              [
+                98,
+                276
+              ]
+            ],
+            "tn": 813,
+            "fp": 222,
+            "fn": 98,
+            "tp": 276,
+            "n": 1409
+          },
+          "accuracy": 0.772888573456352,
+          "precision": 0.5542168674698795,
+          "recall": 0.7379679144385026,
+          "f1": 0.6330275229357797,
+          "specificity": 0.7855072463768116,
+          "balanced_accuracy": 0.7617375804076572,
+          "macro_precision": 0.7233213865340615,
+          "macro_recall": 0.7617375804076572,
+          "macro_f1": 0.7342938231328436,
+          "roc_auc": 0.8473197447622,
+          "pr_auc": 0.6543439010044231,
+          "brier": 0.13845469810597644,
+          "log_loss": 0.42688002980512857,
+          "class_metrics": {
+            "0": {
+              "precision": 0.8924259055982436,
+              "recall": 0.7855072463768116,
+              "f1": 0.8355601233299076,
+              "support": 1035
+            },
+            "1": {
+              "precision": 0.5542168674698795,
+              "recall": 0.7379679144385026,
+              "f1": 0.6330275229357797,
+              "support": 374
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation": {
+        "n": 1409,
+        "positive_rate": 0.2654364797728886,
+        "f1": 0.6330275229357797,
+        "roc_auc": 0.8473197447622,
+        "pr_auc": 0.6543439010044231,
+        "brier": 0.13845469810597644,
+        "log_loss": 0.42688002980512857
+      },
+      "test": {
+        "n": 1409,
+        "positive_rate": 0.2654364797728886,
+        "f1": 0.606199770378875,
+        "roc_auc": 0.8212573303366142,
+        "pr_auc": 0.6186066247461819,
+        "brier": 0.14980629611055565,
+        "log_loss": 0.45586665618902583
+      }
+    }
+  },
+  "timing_s": {
+    "acquire_s": 0.015,
+    "validate_s": 4.603,
+    "preprocess_s": 1.0,
+    "train_s": 26.012,
+    "benchmark_s": 133.152,
+    "total_s": 203.773
+  }
+}

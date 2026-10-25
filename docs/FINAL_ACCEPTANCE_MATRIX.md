@@ -6,6 +6,11 @@
 `phase13-final-live2` (all seven stages).  
 **Status vocabulary:** `VERIFIED` · `PARTIALLY VERIFIED` · `BLOCKED` · `NOT VERIFIED`
 
+> **Historical record (Phase 13).** Post-Phase-13 validation later completed the
+> full-profile pipeline and added a 10-test browser suite. See
+> [VALIDATION_SUMMARY.md](VALIDATION_SUMMARY.md) for the current evidence; the
+> phase statuses below are not retroactively changed.
+
 A status is assigned to the phase's stated completion criteria, not to every
 conceivable production property. Known limits are listed beside the status and
 carried into [FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md).

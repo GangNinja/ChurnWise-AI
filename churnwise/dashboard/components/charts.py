@@ -10,16 +10,19 @@ import plotly.graph_objects as go
 INK = "#12263a"
 MUTED = "#5b6b7f"
 LINE = "#dfe7ef"
-TEAL = "#0f766e"
-BLUE = "#1d4ed8"
-AMBER = "#b45309"
+TEAL = "#0b7a70"
+BLUE = "#2563eb"
+AMBER = "#b45b0b"
 RED = "#b42318"
 SLATE = "#475569"
+TIER_COLORS = {"low": "#94a3b8", "medium": BLUE, "high": AMBER, "critical": RED}
+TIER_ORDER = ("low", "medium", "high", "critical")
 FAMILY_COLORS = {
     "logistic_regression": BLUE,
     "random_forest": TEAL,
     "mlp": AMBER,
 }
+FAMILY_SHORT = {"logistic_regression": "LR", "random_forest": "RF", "mlp": "MLP"}
 
 
 def _empty(message: str) -> go.Figure:
@@ -71,13 +74,13 @@ def roc_chart(curves: Mapping[str, Any], *, selected: str | None = None) -> go.F
         fpr, tpr = roc.get("fpr"), roc.get("tpr")
         if not fpr or not tpr:
             continue
-        label = str(family).replace("_", " ").title()
+        label = FAMILY_SHORT.get(str(family), str(family).replace("_", " ").title())
         fig.add_trace(
             go.Scatter(
                 x=fpr,
                 y=tpr,
                 mode="lines",
-                name=f"{label} (AUC {float(roc.get('auc', 0)):.3f})",
+                name=f"{label} ({float(roc.get('auc', 0)):.3f})",
                 line=dict(color=FAMILY_COLORS.get(family, SLATE), width=3 if family == selected else 1.6),
             )
         )
@@ -93,7 +96,19 @@ def roc_chart(curves: Mapping[str, Any], *, selected: str | None = None) -> go.F
     )
     fig.update_xaxes(range=[0, 1], title="False positive rate")
     fig.update_yaxes(range=[0, 1], title="True positive rate")
-    return _layout(fig, height=360)
+    fig = _layout(fig, height=360)
+    fig.update_layout(
+        legend=dict(
+            orientation="v",
+            x=0.99,
+            y=0.03,
+            xanchor="right",
+            yanchor="bottom",
+            font=dict(size=10),
+            bgcolor="rgba(255,255,255,0.78)",
+        )
+    )
+    return fig
 
 
 def pr_chart(curves: Mapping[str, Any], *, selected: str | None = None) -> go.Figure:
@@ -105,19 +120,31 @@ def pr_chart(curves: Mapping[str, Any], *, selected: str | None = None) -> go.Fi
         recall, precision = pr.get("recall"), pr.get("precision")
         if not recall or not precision:
             continue
-        label = str(family).replace("_", " ").title()
+        label = FAMILY_SHORT.get(str(family), str(family).replace("_", " ").title())
         fig.add_trace(
             go.Scatter(
                 x=recall,
                 y=precision,
                 mode="lines",
-                name=f"{label} (AP {float(pr.get('pr_auc', 0)):.3f})",
+                name=f"{label} ({float(pr.get('pr_auc', 0)):.3f})",
                 line=dict(color=FAMILY_COLORS.get(family, SLATE), width=3 if family == selected else 1.6),
             )
         )
     fig.update_xaxes(range=[0, 1], title="Recall (positive class)")
     fig.update_yaxes(range=[0, 1], title="Precision (positive class)")
-    return _layout(fig, height=360)
+    fig = _layout(fig, height=360)
+    fig.update_layout(
+        legend=dict(
+            orientation="v",
+            x=0.99,
+            y=0.03,
+            xanchor="right",
+            yanchor="bottom",
+            font=dict(size=10),
+            bgcolor="rgba(255,255,255,0.78)",
+        )
+    )
+    return fig
 
 
 def confusion_chart(metrics: Mapping[str, Any], *, title: str = "Confusion matrix") -> go.Figure:
@@ -160,26 +187,241 @@ def class_balance_chart(frame: pd.DataFrame) -> go.Figure:
     return _layout(fig, height=280)
 
 
-def tier_chart(counts: Mapping[str, int]) -> go.Figure:
-    labels = [label for label in ("low", "medium", "high", "critical") if label in counts]
+def tier_chart(counts: Mapping[str, Any]) -> go.Figure:
+    """Static tier chart retained for simple summaries."""
+
+    labels = [label for label in TIER_ORDER if label in counts]
     if not labels:
         return _empty("No tier counts are available.")
     values = [
         int(counts[label].get("count", 0)) if isinstance(counts[label], Mapping) else int(counts[label])
         for label in labels
     ]
-    colors = {"low": "#94a3b8", "medium": BLUE, "high": AMBER, "critical": RED}
     fig = go.Figure(
         go.Bar(
             x=[label.title() for label in labels],
             y=values,
-            marker_color=[colors[label] for label in labels],
+            marker_color=[TIER_COLORS[label] for label in labels],
             text=values,
             textposition="outside",
             hovertemplate="%{x}: %{y} customers<extra></extra>",
         )
     )
     return _layout(fig, height=300, y_title="Customers")
+
+
+def tier_distribution_chart(
+    counts: Mapping[str, Any],
+    *,
+    mode: str = "counts",
+    selected: str | None = None,
+) -> go.Figure:
+    """Clickable tier distribution with count/share modes and a selected state."""
+
+    labels = [label for label in TIER_ORDER if label in counts]
+    if not labels:
+        return _empty("No tier counts are available.")
+    count_values = [
+        int(counts[label].get("count", 0)) if isinstance(counts[label], Mapping) else int(counts[label])
+        for label in labels
+    ]
+    total = sum(count_values) or 1
+    shares = [value / total for value in count_values]
+    share_mode = str(mode).lower().startswith("share")
+    values = [share * 100 for share in shares] if share_mode else count_values
+    colors = [
+        (TIER_COLORS[label] if selected in (None, label) else "#cbd5e1")
+        for label in labels
+    ]
+    text = [f"{share:.1%}" if share_mode else f"{value:,}" for value, share in zip(count_values, shares)]
+    fig = go.Figure(
+        go.Bar(
+            x=[label.title() for label in labels],
+            y=values,
+            customdata=[[label, value, share] for label, value, share in zip(labels, count_values, shares)],
+            marker_color=colors,
+            marker_line_width=0,
+            text=text,
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>%{customdata[1]:,} customers"
+                "<br>%{customdata[2]:.1%} of scored<extra></extra>"
+            ),
+        )
+    )
+    top = max(values) if values else 0
+    fig.update_yaxes(range=[0, top * 1.18 if top else 1], title="Share of scored customers (%)" if share_mode else "Customers")
+    fig.update_layout(
+        bargap=0.38, showlegend=False, clickmode="event+select", dragmode="select"
+    )
+    return _layout(fig, height=300)
+
+
+def probability_bins(frame: pd.DataFrame, *, bins: int = 20) -> pd.DataFrame:
+    """Precomputed probability intervals so a bar click has a stable meaning."""
+
+    if frame is None or frame.empty or "churn_probability" not in frame:
+        return pd.DataFrame(columns=["low", "high", "label", "count", "share"])
+    values = pd.to_numeric(frame["churn_probability"], errors="coerce").dropna()
+    values = values[(values >= 0.0) & (values <= 1.0)]
+    if values.empty or bins < 1:
+        return pd.DataFrame(columns=["low", "high", "label", "count", "share"])
+    edges = [index / bins for index in range(bins + 1)]
+    # Keep the displayed interval starts at exactly 0.00: pd.cut's
+    # include_lowest widens the first edge to a small negative number.
+    binned = values.mask(values == 0.0, 1e-12)
+    cuts = pd.cut(binned, bins=edges, include_lowest=False, right=True)
+    total = len(values)
+    rows = []
+    for interval in cuts.cat.categories:
+        count = int((cuts == interval).sum())
+        low = float(interval.left)
+        high = float(interval.right)
+        rows.append(
+            {
+                "low": low,
+                "high": high,
+                "label": f"{low:.2f}–{high:.2f}",
+                "count": count,
+                "share": count / total if total else 0.0,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def probability_distribution_chart(
+    bins: pd.DataFrame,
+    *,
+    threshold: float | None = None,
+    selected: tuple[float, float] | None = None,
+) -> go.Figure:
+    """Clickable probability histogram, built from precomputed bins."""
+
+    if bins is None or bins.empty:
+        return _empty("No scored probabilities are available.")
+    colors = []
+    for _, row in bins.iterrows():
+        overlaps = (
+            selected is not None
+            and float(row["high"]) > float(selected[0])
+            and float(row["low"]) < float(selected[1])
+        )
+        colors.append(TEAL if overlaps else "rgba(11,122,112,0.38)")
+    centers = (bins["low"] + bins["high"]) / 2
+    widths = bins["high"] - bins["low"]
+    fig = go.Figure(
+        go.Bar(
+            x=centers,
+            y=bins["count"],
+            width=widths * 0.9,
+            marker_color=colors,
+            marker_line_width=0,
+            customdata=[[row["label"], row["count"], row["share"], row["low"], row["high"]] for _, row in bins.iterrows()],
+            hovertemplate=(
+                "Probability %{customdata[0]}<br>%{customdata[1]:,} customers"
+                "<br>%{customdata[2]:.1%} of scored<extra></extra>"
+            ),
+        )
+    )
+    fig.update_xaxes(range=[0, 1], title="Churn probability")
+    fig.update_yaxes(title="Customers")
+    if threshold is not None:
+        fig.add_vline(
+            x=float(threshold),
+            line_width=1,
+            line_dash="dot",
+            line_color=AMBER,
+            annotation_text=f"threshold {float(threshold):.2f}",
+            annotation_position="top right",
+            annotation_font_size=10,
+            annotation_font_color=AMBER,
+        )
+    fig.update_layout(
+        bargap=0.12, showlegend=False, clickmode="event+select", dragmode="select"
+    )
+    return _layout(fig, height=300)
+
+
+def contribution_chart(rows: Sequence[Mapping[str, Any]]) -> go.Figure:
+    """Compact SHAP view for one customer: red raises risk, blue lowers it."""
+
+    if not rows:
+        return _empty("No stored feature contributions are available.")
+    frame = pd.DataFrame(rows).copy()
+    if "contribution" not in frame or "feature" not in frame:
+        return _empty("No stored feature contributions are available.")
+    frame["contribution"] = pd.to_numeric(frame["contribution"], errors="coerce")
+    frame = frame.dropna(subset=["contribution"]).sort_values("contribution")
+    labels = []
+    for _, row in frame.iterrows():
+        label = str(row.get("feature") or "feature")
+        active = row.get("active_level")
+        if active not in (None, "", "None"):
+            label = f"{label} · {active}"
+        labels.append(label)
+    colors = [RED if value > 0 else BLUE for value in frame["contribution"]]
+    fig = go.Figure(
+        go.Bar(
+            x=frame["contribution"],
+            y=labels,
+            orientation="h",
+            marker_color=colors,
+            marker_line_width=0,
+            text=[f"{value:+.3f}" for value in frame["contribution"]],
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate="%{y}<br>contribution %{x:+.4f}<extra></extra>",
+        )
+    )
+    fig.add_vline(x=0, line_width=1, line_color="#cbd5e1")
+    span = max(float(frame["contribution"].abs().max()), 0.001)
+    fig.update_xaxes(range=[-span * 1.25, span * 1.25], title="SHAP contribution (probability space)")
+    fig.update_yaxes(title="")
+    fig.update_layout(showlegend=False, bargap=0.3)
+    return _layout(fig, height=max(230, 34 * len(frame) + 70))
+
+
+def threshold_chart(analysis: Mapping[str, Any], family: str | None) -> go.Figure:
+    """Validation threshold sweep for the selected family."""
+
+    families = (analysis or {}).get("families") or {}
+    payload = families.get(str(family)) if family else None
+    if not payload:
+        return _empty("No threshold sweep is stored for this family.")
+    sweep = payload.get("sweep") or []
+    if not sweep:
+        return _empty("The threshold sweep is empty.")
+    frame = pd.DataFrame(sweep)
+    fig = go.Figure()
+    for metric, color in (("f1", TEAL), ("precision", BLUE), ("recall", AMBER)):
+        if metric not in frame:
+            continue
+        fig.add_trace(
+            go.Scatter(
+                x=frame["threshold"],
+                y=frame[metric],
+                mode="lines",
+                name=metric.upper() if metric == "f1" else metric.title(),
+                line=dict(color=color, width=2),
+                hovertemplate=f"threshold %{{x:.2f}}<br>{metric} %{{y:.3f}}<extra></extra>",
+            )
+        )
+    selected = payload.get("selected_threshold")
+    if selected is not None:
+        fig.add_vline(
+            x=float(selected),
+            line_width=1,
+            line_dash="dot",
+            line_color=SLATE,
+            annotation_text=f"selected {float(selected):.2f}",
+            annotation_position="top right",
+            annotation_font_size=10,
+        )
+    fig.update_xaxes(range=[0, 1], title="Classification threshold")
+    fig.update_yaxes(range=[0, 1.02], title="Validation metric")
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+    return _layout(fig, height=320)
 
 
 def probability_chart(frame: pd.DataFrame) -> go.Figure:
@@ -197,6 +439,73 @@ def probability_chart(frame: pd.DataFrame) -> go.Figure:
     fig.update_xaxes(range=[0, 1], title="Churn probability")
     fig.update_yaxes(title="Customers")
     return _layout(fig, height=300)
+
+
+def segment_risk_chart(frame: pd.DataFrame, feature: str, *, max_segments: int = 8) -> go.Figure:
+    """Compare stored mean probabilities across verified source-data segments."""
+
+    if frame is None or frame.empty or feature not in frame or "churn_probability" not in frame:
+        return _empty("Verified source attributes are unavailable for segment analysis.")
+    values = frame[feature]
+    probabilities = pd.to_numeric(frame["churn_probability"], errors="coerce")
+    valid = values.notna() & probabilities.notna()
+    if not valid.any():
+        return _empty("This attribute has no values that can be compared with stored probabilities.")
+
+    segments = values.loc[valid].copy()
+    numeric = pd.to_numeric(segments, errors="coerce")
+    if numeric.notna().all() and numeric.nunique() > max_segments:
+        try:
+            buckets = pd.qcut(numeric, q=min(4, numeric.nunique()), duplicates="drop")
+            segments = buckets.map(
+                lambda item: f"{item.left:g}–{item.right:g}" if pd.notna(item) else "Missing"
+            )
+        except (ValueError, TypeError):
+            segments = segments.astype(str)
+    else:
+        segments = segments.astype(str)
+
+    data = pd.DataFrame(
+        {"segment": segments, "probability": probabilities.loc[valid].to_numpy()}
+    )
+    grouped = (
+        data.groupby("segment", dropna=False, observed=True)["probability"]
+        .agg(mean_probability="mean", customers="size")
+        .sort_values("mean_probability", ascending=False)
+    )
+    if len(grouped) > max_segments:
+        head = grouped.iloc[: max_segments - 1]
+        tail = grouped.iloc[max_segments - 1 :]
+        other_count = int(tail["customers"].sum())
+        other_mean = float(
+            (tail["mean_probability"] * tail["customers"]).sum() / other_count
+        )
+        grouped = pd.concat(
+            [
+                head,
+                pd.DataFrame(
+                    {"mean_probability": [other_mean], "customers": [other_count]},
+                    index=["Other segments"],
+                ),
+            ]
+        )
+    grouped = grouped.iloc[::-1]
+    fig = go.Figure(
+        go.Bar(
+            x=grouped["mean_probability"],
+            y=grouped.index.astype(str),
+            orientation="h",
+            marker_color=TEAL,
+            customdata=grouped["customers"],
+            hovertemplate=(
+                "%{y}<br>Mean stored probability %{x:.3f}"
+                "<br>%{customdata:,} scored customers<extra></extra>"
+            ),
+        )
+    )
+    fig.update_xaxes(range=[0, 1], title="Mean stored probability")
+    fig.update_yaxes(title="")
+    return _layout(fig, height=max(230, 34 * len(grouped) + 90))
 
 
 def training_history_chart(history: Mapping[str, Sequence[float]], metric: str = "loss") -> go.Figure:
@@ -226,7 +535,7 @@ def cv_chart(cv_by_family: Mapping[str, Any]) -> go.Figure:
         f1 = cv.get("f1") or {}
         if not f1:
             continue
-        label = family.replace("_", " ").title()
+        label = FAMILY_SHORT.get(str(family), str(family).replace("_", " ").title())
         fig.add_trace(
             go.Bar(
                 x=[label],
@@ -239,7 +548,7 @@ def cv_chart(cv_by_family: Mapping[str, Any]) -> go.Figure:
                 hovertemplate="%{x}<br>Mean F1 %{y:.3f}<extra></extra>",
             )
         )
-    fig.update_yaxes(range=[0, 1.05], title="Fold mean F1")
+    fig.update_yaxes(range=[0, 1.18], title="Fold mean F1")
     fig.update_layout(showlegend=False)
     return _layout(fig, height=320)
 
@@ -287,6 +596,42 @@ def allocation_chart(allocation: Mapping[str, Any], unit: str = "value_units") -
     return _layout(fig, height=270, y_title=unit)
 
 
+def financial_bridge_chart(
+    projection: Mapping[str, Any], allocation: Mapping[str, Any], unit: str = "value_units"
+) -> go.Figure:
+    """Show projected saved value less campaign spend as a simple value bridge."""
+    saved = projection.get("expected_saved_value")
+    spend = allocation.get("allocated_spend")
+    net = projection.get("net_benefit")
+    if saved is None or spend is None:
+        return _empty("Add a monthly customer value to see the financial projection.")
+    saved_value = float(saved)
+    spend_value = float(spend)
+    net_value = float(net) if net is not None else saved_value - spend_value
+    fig = go.Figure(
+        go.Waterfall(
+            x=["Expected saved value", "Allocated campaign spend", "Projected net benefit"],
+            measure=["relative", "relative", "total"],
+            y=[saved_value, -spend_value, 0],
+            text=[
+                f"+{saved_value:,.2f}",
+                f"−{spend_value:,.2f}",
+                f"{net_value:,.2f}",
+            ],
+            textposition="outside",
+            increasing={"marker": {"color": TEAL}},
+            decreasing={"marker": {"color": AMBER}},
+            totals={"marker": {"color": BLUE}},
+            connector={"line": {"color": LINE, "width": 1}},
+            customdata=[[unit], [unit], [unit]],
+            hovertemplate="%{x}<br>%{y:,.2f} %{customdata[0]}<extra></extra>",
+        )
+    )
+    fig.update_yaxes(title=unit, zeroline=True, zerolinecolor=LINE)
+    fig.update_layout(showlegend=False)
+    return _layout(fig, height=320)
+
+
 def comparison_chart(rows: Sequence[Mapping[str, Any]], unit: str = "value_units") -> go.Figure:
     if not rows:
         return _empty("No comparison rows are available.")
@@ -315,13 +660,20 @@ __all__ = [
     "class_balance_chart",
     "comparison_chart",
     "confusion_chart",
+    "contribution_chart",
     "cv_chart",
     "feature_dependence_image_paths",
+    "financial_bridge_chart",
     "importance_chart",
     "pr_chart",
+    "probability_bins",
     "probability_chart",
+    "probability_distribution_chart",
     "roc_chart",
     "sensitivity_chart",
+    "segment_risk_chart",
+    "threshold_chart",
     "tier_chart",
+    "tier_distribution_chart",
     "training_history_chart",
 ]

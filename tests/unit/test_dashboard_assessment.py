@@ -2,10 +2,27 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
+import pandas as pd
 import pytest
 
 from churnwise.dashboard import actions
-from churnwise.dashboard.pages import assessment
+from churnwise.dashboard.pages import explorer as assessment
+
+
+def test_fake_sample_datasets_match_fitted_schema_and_invalid_sample_is_rejected():
+    schema_paths = sorted((Path(__file__).resolve().parents[2] / "artifacts" / "preprocessors").glob("*/schema.json"))
+    assert schema_paths, "expected a fitted preprocessing schema in the project artifacts"
+    required = json.loads(schema_paths[-1].read_text(encoding="utf-8"))["required_columns"]
+    samples = assessment._sample_datasets()
+    proper = [pd.read_csv(path) for name, path in samples.items() if name.startswith("Proper ·")]
+    improper = [pd.read_csv(path) for name, path in samples.items() if name.startswith("Improper ·")]
+    assert len(proper) == len(improper) == 6
+    assert all(set(required).issubset(frame.columns) for frame in proper)
+    assert all(len(frame) >= 1000 for frame in [*proper, *improper])
+    assert all(set(required) - set(frame.columns) for frame in improper)
 
 
 class FakeUpload:
@@ -108,7 +125,15 @@ def test_batch_frame_keeps_input_positions_and_safe_columns():
         ]
     }
     frame = assessment._batch_frame(payload)
-    assert list(frame.columns) == list(assessment.RESULT_COLUMNS)
+    assert list(frame.columns) == [
+        "input_position",
+        "record_reference",
+        "churn_probability",
+        "risk_tier",
+        "predicted_label",
+        "classification_threshold",
+        "explanation_status",
+    ]
     assert list(frame["input_position"]) == [1, 0]
     assert frame["churn_probability"].round(2).tolist() == [0.75, 0.25]
 
