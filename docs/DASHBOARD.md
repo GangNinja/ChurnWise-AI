@@ -46,8 +46,8 @@ Configuration uses the same `Settings` object as the CLI (`CHURNWISE_DATA_DIR`,
 
 | # | Navigation label | Module | Purpose | Primary artifacts |
 | --- | --- | --- | --- | --- |
-| 1 | Executive Dashboard | `pages/executive.py` | Situation summary: scored customers, predicted churn, risk distribution, dataset/model facts, priority customers | validation, benchmark, population risk summary/table |
-| 2 | Customer Risk Explorer | `pages/explorer.py` | One stored assessment, its drivers and explanation; explicit individual and batch scoring | population risk run, `drivers.json`, local SHAP, fitted schema |
+| 1 | Executive Dashboard | `pages/executive.py` | Telco MLP situation summary: observed churn in the scored labelled cohort, predicted churn, risk distribution, verified segments and priority customers | linked Telco validation, benchmark and population risk summary/table |
+| 2 | Customer Risk Explorer | `pages/explorer.py` | One stored assessment, its drivers and explanation; explicit individual scoring | population risk run, `drivers.json`, local SHAP, fitted schema |
 | 3 | Model Laboratory | `pages/laboratory.py` | Held-out performance, CV stability, global explanations, data quality, provenance, pipeline operations | benchmark metrics/curves, explanations, validation/EDA, discovery/attempts, prepared/model metadata |
 | 4 | Retention Workbench | `pages/workbench.py` | Filter, rank, fit customers to a budget, select and export a contact list | population risk table + summary |
 | 5 | Campaign Simulator | `pages/simulator.py` | Compare hypothetical scenarios from stored probabilities and explicit assumptions | `artifacts/simulations/<run>/`; live Phase 10 engine for new projections |
@@ -57,31 +57,34 @@ hash prefix and generated-at timestamp. Missing fields show `not available`.
 
 ### Executive Dashboard
 
-The page is an interactive workspace over one persisted population run, in this
-order:
+The page follows the provided Churn Analytics reference: a forest-green sidebar
+with contract, internet, payment, churn-status and senior-citizen filters; a
+dark-green dataset banner; four KPI cards; and seven two-column charts for
+contract, tenure, payment, internet service plus tech support, monthly-charge
+split and distribution, and service count. A retention-priority list sits beside
+the service-count chart. The filter selection scopes the KPIs and every chart.
 
-- Compact header, run details expander and a scoring-run selector.
-- Four KPIs: customers scored, predicted churn at the classification threshold,
-  high + critical tier membership and mean stored probability.
-- Side-by-side historical and predicted scope panels. The labelled dataset
-  (5,000 records, 707 observed churn, 14.1%) is kept separate from the scored
-  population; neither count is presented as the same population.
-- Compact filters: reference search, tier pills, probability range, a
-  high/critical toggle and reset.
-- Two interactive Plotly charts. Bars report stored tiers and 0.05 probability
-  bins; dragging across a bar filters the table, the selected bar is highlighted
-  and a clear control releases the selection. Filters never retrain or rescore.
-- Three data-derived insights: largest tier, high/critical share and probability
-  concentration below 0.20 with the median.
-- A 15-row highest-risk table with verified original attributes (account length,
-  international plan, service calls) when the split join is valid. Selecting a
-  row exposes **Open assessment** and **Open Retention Workbench** actions.
-- A compact selected-model strip with test F1, ROC-AUC and threshold, plus a
-  navigation action to Model Laboratory.
+The scoring-run selector and **Upload & predict** button sit directly under the
+banner. Uploading a CSV or choosing a bundled dataset opens the existing scorer
+in place, saves a new run, and selects it in the dashboard. New upload runs
+save only non-identifying Telco attributes needed by the charts, joined to
+scores by their original input positions.
+
+Below the reference analytics, the original ChurnWise additions remain:
+filters and the 15-row **Customers needing attention** table, the MLP Neural
+Network test metrics, and global SHAP drivers. The default run is the successful
+MLP scoring run whose dataset digest matches the instructor-provided Telco file;
+other saved runs remain selectable. Runs with observed outcomes report observed
+churn; unlabelled uploads use predicted outcomes and are labelled accordingly.
+
+The existing layout and dashboard sections are preserved. The scoring-run
+selector includes persisted results from uploaded and bundled test datasets,
+with distinct source labels, while the default run uses the instructor-provided
+Telco MLP artifacts.
 
 ### Customer Risk Explorer
 
-Three tabs share one scoring-run selector:
+Two tabs share one scoring-run selector:
 
 1. **Stored customers** — customer selector, profile of original account
    attributes, prominent probability/risk card (tier text, predicted class,
@@ -94,18 +97,14 @@ Three tabs share one scoring-run selector:
 2. **Score a customer** — schema-driven form using the fitted Phase 5 pipeline.
    Blank values use the pipeline's recorded imputation; local SHAP is optional
    and off by default. The result is session state, not a stored artifact.
-3. **Upload & predict dataset** — CSV upload or bundled synthetic dataset,
-  schema preview, identifier hashing, explanations for a selected subset,
-  rejection reasons and export. Scoring happens only on submit.
 
-In **Upload & predict dataset**, use **Or try a bundled dataset** to select one
-of the six valid or six schema-invalid examples in `testing_datasets/`. The app
-previews row/column counts and checks required columns before scoring. A
-successful score creates a uniquely identified input-population risk run; that
-run is immediately selected for Executive Dashboard insights and appears in the
-scoring-run selectors. The fitted model and preprocessing pipeline are reused;
-this action does not retrain the model. An optional `CustomerChurned` column is
-ignored as an input and does not turn predictions into observed outcomes.
+The **Upload & predict** button beside Executive Dashboard's scoring-run
+selector opens the CSV/preloaded-dataset scorer. It previews schema, hashes an
+optional identifier, explains the selected highest-risk rows, shows rejection
+reasons, and supports export. Scoring runs only on submit. Valid/invalid examples
+live under `testing_datasets/`; successful scores are selected in Executive
+Dashboard and added to the other run selectors. The fitted pipeline is reused
+without retraining. An optional outcome column is ignored as a predictor.
 
 ### Model Laboratory
 

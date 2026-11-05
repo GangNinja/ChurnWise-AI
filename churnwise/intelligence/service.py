@@ -597,6 +597,8 @@ class RiskService:
         batch_size: int | None = None,
         run_id: str | None = None,
         source_label: str | None = None,
+        observed_outcome_column: str | None = None,
+        observed_outcome_mapping: Mapping[str, int] | None = None,
         persist: bool = True,
         progress: Callable[[str], None] | None = None,
     ) -> RiskRun:
@@ -639,6 +641,32 @@ class RiskService:
                 values.append(parsed)
         else:
             values = None
+        observed_labels: list[int | None] | None = None
+        if observed_outcome_column:
+            if observed_outcome_column not in frame.columns:
+                raise RiskError(
+                    CODE_INVALID_INPUT,
+                    f"observed outcome column {observed_outcome_column!r} is not present in the input",
+                    "Pass an outcome column that exists in the CSV, or omit it.",
+                )
+            mapping = dict(observed_outcome_mapping or {})
+            if not mapping:
+                raise RiskError(
+                    CODE_INVALID_CONFIG,
+                    "an observed outcome mapping is required when an outcome column is supplied",
+                    "Provide the dataset's documented positive/negative label mapping.",
+                )
+            observed_labels = []
+            for position, value in enumerate(frame[observed_outcome_column].tolist()):
+                encoded = mapping.get(str(value).strip())
+                if encoded not in (0, 1):
+                    raise RiskError(
+                        CODE_INVALID_INPUT,
+                        f"observed outcome at input position {position} is not in the supplied mapping",
+                        "Correct the outcome labels or omit the outcome column.",
+                    )
+                observed_labels.append(int(encoded))
+
         batch = self.assess_batch(
             frame,
             batch_size=batch_size,
@@ -651,6 +679,14 @@ class RiskService:
             values=values,
             segment_fields=segment_fields,
         )
+        if observed_labels is not None:
+            batch = replace(
+                batch,
+                records=[
+                    replace(item, observed_churn=observed_labels[item.input_position])
+                    for item in batch.records
+                ],
+            )
         generated_at = batch.assessed_at
         run_id = run_id or self._default_run_id(
             self.model.dataset.dataset_id, "input", generated_at
@@ -1633,9 +1669,12 @@ class RiskService:
             ),
         }
         if split == "input":
+            known = [item.observed_churn for item in records if item.observed_churn is not None]
             summary["observed_outcome"] = {
-                "available": False,
-                "note": "caller-supplied records have no observed outcome in this artifact",
+                "available": bool(known),
+                "note": "source labels are retained for audit only; they are not model predictions" if known else "caller-supplied records have no observed outcome in this artifact",
+                "positive": int(sum(value == 1 for value in known)),
+                "negative": int(sum(value == 0 for value in known)),
             }
         elif split in {"val", "test", "all"}:
             summary["observed_outcome"] = {

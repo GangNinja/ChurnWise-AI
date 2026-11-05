@@ -588,7 +588,7 @@ def _batch_frame(payload: Mapping[str, Any]) -> pd.DataFrame:
 def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
     required, kinds, _ = _column_kinds(schema)
     st.markdown("#### Upload a customer dataset")
-    st.caption("Select a CSV from your computer. The model checks its columns before scoring; an outcome column is optional and ignored.")
+    st.caption("Select a CSV from your computer. The model checks its feature columns before scoring; a known outcome column is kept for audit only and never sent into the model.")
     template = pd.DataFrame(columns=required).to_csv(index=False).encode("utf-8")
     st.download_button(
         "Download header-only CSV template",
@@ -621,10 +621,10 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
     if upload is None and selected_sample != sample_names[0]:
         dataset_name = selected_sample
     source_label = (
-        upload.name
+        f"Preloaded · {samples[dataset_name].name}"
+        if upload is None and dataset_name in samples
+        else upload.name
         if upload is not None
-        else samples[dataset_name].name
-        if dataset_name in samples
         else None
     )
 
@@ -647,7 +647,40 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
             extra = [str(name) for name in frame.columns if str(name) not in required]
             st.caption(f"Parsed {format_count(len(frame))} rows and {format_count(len(frame.columns))} columns.")
             if missing:
-                st.error("Missing required column(s): " + ", ".join(missing) + ". No rows were scored.")
+                st.error(
+                    "This file is missing required model feature(s): "
+                    + ", ".join(f"`{name}`" for name in missing)
+                    + ". No predictions were generated."
+                )
+                with st.container(border=True):
+                    recovery_copy, recovery_action = st.columns([3.2, 1.25], vertical_alignment="center")
+                    with recovery_copy:
+                        st.markdown("#### Prepare a compatible CSV")
+                        st.caption(
+                            "Add the missing feature columns, or start with the template below. "
+                            "Review the full required-column checklist before uploading the corrected file."
+                        )
+                    with recovery_action:
+                        st.download_button(
+                            "Download template",
+                            data=template,
+                            file_name="churnwise_telco_mlp_template.csv",
+                            mime="text/csv",
+                            key="cw_batch_template_missing_columns",
+                            width="stretch",
+                        )
+                    with st.expander("Review required columns", expanded=True):
+                        required_view = pd.DataFrame(
+                            [
+                                {
+                                    "Required column": name,
+                                    "Status": "Missing" if name in missing else "Present",
+                                    "Expected type": kinds.get(name, "text"),
+                                }
+                                for name in required
+                            ]
+                        )
+                        st.dataframe(required_view, width="stretch", hide_index=True)
                 frame = None
             elif extra:
                 st.warning("Column(s) the model does not consume will be ignored: " + ", ".join(extra))
@@ -663,10 +696,10 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
         explanation_choice = st.selectbox(
             "Generate explanations for",
             [
-                "Top 10 highest-risk customers",
+                "All eligible rows (up to 1,000)",
                 "Top 25 highest-risk customers",
                 "Top 50 highest-risk customers",
-                "All eligible rows (up to 1,000)",
+                "Top 10 highest-risk customers",
             ],
             help="Top-row explanations show the strongest model associations. This can take longer; at most 1,000 highest-risk rows receive explanations.",
             key="cw_batch_explanation_coverage",
@@ -678,6 +711,13 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
             explanation_top_n = int(explanation_choice.split()[1])
         if st.button("Score this dataset", type="primary", key="cw_batch_score"):
             try:
+                validation, _ = access.validation_report(settings)
+                target = (validation or {}).get("target") or {}
+                outcome_column = str(target.get("column") or "")
+                outcome_mapping = target.get("mapping") or {}
+                if not outcome_column or outcome_column not in frame.columns or not outcome_mapping:
+                    outcome_column = None
+                    outcome_mapping = None
                 with st.spinner("Scoring the uploaded records with the selected model…"):
                     result = actions.assess_batch_records(
                         settings,
@@ -687,6 +727,8 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
                         explain=explanation_mode,
                         explain_top_n=explanation_top_n,
                         source_label=source_label,
+                        observed_outcome_column=outcome_column,
+                        observed_outcome_mapping=outcome_mapping,
                     )
             except actions.DashboardActionError as exc:
                 st.error(f"{exc.code}: {exc.message}")
@@ -697,11 +739,12 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
                 st.session_state["cw_batch_assessment"] = result
                 st.session_state["cw_batch_fingerprint"] = fingerprint
                 if result.get("run_id"):
-                    st.session_state["cw_exec_run"] = result["run_id"]
+                    st.session_state["cw_exec_run_pending"] = result["run_id"]
                 st.success(
                     f"Scored and saved {format_count(result.get('scored'))} of "
                     f"{format_count(result.get('total_received'))} rows."
                 )
+                st.rerun()
 
     result = st.session_state.get("cw_batch_assessment")
     if not result:
@@ -722,7 +765,22 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
     if frame.empty:
         st.info("No rows were scored; see the batch error below.")
     else:
-        st.dataframe(frame, width="stretch", hide_index=True)
+        st.dataframe(
+            frame,
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "churn_probability": st.column_config.ProgressColumn(
+                    "Churn probability", min_value=0.0, max_value=1.0, format="%.2f"
+                ),
+                "explanation_status": st.column_config.TextColumn("SHAP status"),
+                "model_explanation": st.column_config.TextColumn(
+                    "Why this prediction",
+                    help="Stored SHAP explanation: model associations for the selected customer, not a causal claim.",
+                    width="large",
+                ),
+            },
+        )
         st.download_button(
             "Download batch results (CSV)",
             data=frame.to_csv(index=False).encode("utf-8"),
@@ -747,7 +805,7 @@ def _batch_section(settings: Settings, schema: Mapping[str, Any]) -> None:
         if st.button("Open Executive Dashboard insights", key="cw_batch_open_executive"):
             st.session_state["cw_pending_navigation"] = "Executive Dashboard"
             st.rerun()
-    st.caption("Batch scoring does not compute SHAP; stored local explanations remain on the stored assessment above.")
+    st.caption("Selected rows include saved SHAP explanations from the fitted MLP. Other rows are marked by explanation status and are never recomputed while the page renders.")
 
 
 # ---------------------------------------------------------------------------
@@ -802,9 +860,7 @@ def render(settings: Settings) -> None:
         if selected_run != run_id:
             st.rerun()
 
-    tab_customer, tab_score, tab_batch = st.tabs(
-        ["Stored customers", "Score a customer", "Upload & predict dataset"]
-    )
+    tab_customer, tab_score = st.tabs(["Stored customers", "Score a customer"])
     with tab_customer:
         if not runs:
             layout.empty_state(
@@ -837,18 +893,3 @@ def render(settings: Settings) -> None:
             )
         else:
             _individual_form(settings, schema)
-
-    with tab_batch:
-        st.caption(
-            "Upload a customer CSV or try a synthetic dataset, preview its schema, then choose Predict churn risk. "
-            "Stored assessments are never recomputed on render."
-        )
-        schema, _ = _schema(settings)
-        if not schema:
-            layout.empty_state(
-                "No preprocessing schema is available",
-                "Batch scoring needs the fitted Phase 5 pipeline.",
-                "python -m churnwise.cli prepare && python -m churnwise.cli train",
-            )
-        else:
-            _batch_section(settings, schema)

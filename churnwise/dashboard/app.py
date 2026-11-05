@@ -1,6 +1,7 @@
 """ChurnWise AI interactive dashboard entry point.
 
-Five product pages over persisted artifacts:
+Five product pages over persisted artifacts, with the reference redesign
+applied only to the Executive Dashboard:
 
     Executive Dashboard -> Customer Risk Explorer -> Model Laboratory
     -> Retention Workbench -> Campaign Simulator
@@ -32,11 +33,12 @@ PAGE_LABELS = {label: key for key, label in PAGES}
 
 def _sidebar() -> str:
     with st.sidebar:
-        layout.brand()
-        st.divider()
         pending = st.session_state.pop("cw_pending_navigation", None)
         if pending in PAGE_LABELS:
             st.session_state["cw_navigation"] = pending
+        label = st.session_state.get("cw_navigation", "Executive Dashboard")
+        layout.brand("Churn Analytics", "Telco customer retention intelligence")
+        st.divider()
         label = st.radio(
             "Navigate",
             options=[item[1] for item in PAGES],
@@ -64,7 +66,7 @@ def main() -> None:
     layout.inject_styles()
     settings = current_settings()
     page_key = _sidebar()
-    module = importlib.import_module(f"churnwise.dashboard.pages.{page_key}")
+    module = importlib.reload(importlib.import_module(f"churnwise.dashboard.pages.{page_key}"))
     try:
         module.render(settings)
     except ArtifactError as exc:

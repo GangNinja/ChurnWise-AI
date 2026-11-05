@@ -168,15 +168,15 @@ Expected live population:
 - 200 selected by a 1,000 budget at cost 5, expected prevented churn 32.8334 at
   assumed effectiveness 0.30.
 
-For a batch-upload demonstration, open **Customer Risk Explorer → Upload &
-predict dataset**. Select **Proper · testing4.csv** (1,800 synthetic rows) under
-**Or try a bundled dataset**, then click **Score this dataset**. The saved upload
-run becomes selectable in Executive Dashboard; use **Open Executive Dashboard
-insights** to view its population. Next, choose **Improper · testing4.csv** to
-show the pre-score schema error for missing `voice_mail_plan`. The optional
-`CustomerChurned` values in these generated files are ignored and are not
-observed outcome evidence. See [testing_datasets/README.md](../testing_datasets/README.md)
-for every sample size and missing column.
+For a batch-upload demonstration, open **Executive Dashboard → Analyze another
+customer dataset → Upload & predict**. Select **Proper · testing4.csv** (1,800
+synthetic rows) under **Or try a bundled dataset**, then click **Score this
+dataset**. The saved MLP run becomes the active dashboard population. Next,
+choose **Improper · testing4.csv** to show the pre-score schema error for the
+missing `InternetService` feature. The illustrative `Churn` values are retained
+for audit only and never passed to the model. See
+[testing_datasets/README.md](../testing_datasets/README.md) for each sample size
+and missing feature.
 
 On **Campaign Simulator**, show the **Projection charts** beneath the outcome
 KPIs: the financial value bridge and projected prevented-churn comparison. Use

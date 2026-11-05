@@ -14,37 +14,37 @@ NAV_HINT = "python -m churnwise.cli"
 _CSS = """
 <style>
 :root {
-  --cw-ink: #102536;
-  --cw-muted: #617286;
-  --cw-line: #dfe7ee;
+  --cw-ink: #1b2922;
+  --cw-muted: #718079;
+  --cw-line: #e0e9e4;
   --cw-panel: #ffffff;
-  --cw-canvas: #f5f7f9;
-  --cw-teal: #0b7a70;
-  --cw-teal-soft: #e8f5f2;
-  --cw-amber: #b45b0b;
-  --cw-red: #b42318;
-  --cw-blue: #2563eb;
-  --cw-sidebar: #0c2233;
+  --cw-canvas: #f5f7f5;
+  --cw-teal: #477d61;
+  --cw-teal-soft: #edf5ef;
+  --cw-amber: #ad4936;
+  --cw-red: #ad4936;
+  --cw-blue: #4d80a2;
+  --cw-sidebar: #1d3b30;
 }
 html, body, [class*="css"] {
   font-family: "Aptos", "Segoe UI", system-ui, -apple-system, sans-serif;
   color: var(--cw-ink);
 }
 .stApp { background: var(--cw-canvas); }
-.block-container { max-width: 1280px; padding-top: 2rem; padding-bottom: 2.25rem; }
+.block-container { max-width: 1680px; padding: 1.25rem 1.5rem 2.25rem; }
 h1, h2, h3 { color: var(--cw-ink); letter-spacing: -0.02em; }
 h2 { margin-top: 0.4rem; }
 [data-testid="stMetric"] {
   background: var(--cw-panel);
   border: 1px solid var(--cw-line);
-  border-radius: 11px;
-  padding: 0.75rem 0.9rem;
-  box-shadow: 0 1px 2px rgba(16, 38, 58, 0.035);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 2px 5px rgba(28,56,43,.07);
 }
 [data-testid="stMetricLabel"] p {
   color: var(--cw-muted);
-  font-size: 0.7rem;
-  letter-spacing: 0.065em;
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   white-space: normal !important;
   line-height: 1.3;
@@ -55,24 +55,26 @@ h2 { margin-top: 0.4rem; }
   white-space: normal !important;
   text-overflow: clip !important;
 }
-[data-testid="stMetricValue"] { color: var(--cw-ink); font-weight: 650; font-size: 1.62rem !important; }
+[data-testid="stMetricValue"] { color: var(--cw-ink); font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: 1.8rem !important; }
 [data-testid="stMetricValue"] p {
   font-size: inherit !important;
   white-space: normal !important;
   overflow-wrap: anywhere;
   line-height: 1.22;
 }
-[data-testid="stDataFrame"] { border: 1px solid var(--cw-line); border-radius: 10px; }
+[data-testid="stDataFrame"] { border: 1px solid var(--cw-line); border-radius: 10px; background: #fff; }
 [data-testid="stDataFrame"] [data-testid="stDataFrameResizable"] { font-size: 0.82rem; }
 [data-testid="stSidebar"] { background: var(--cw-sidebar); }
-[data-testid="stSidebar"] * { color: #e8eef5; }
-[data-testid="stSidebar"] .stRadio label p { color: #dbe6f0; }
+[data-testid="stSidebar"] * { color: #dce8e0; }
+[data-testid="stSidebar"] .stRadio label p { color: #dce8e0; }
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { color: #afc4b8; }
+[data-testid="stSidebar"] [data-testid="stSelectbox"] > div > div { background: #29483c; border-color: #456557; border-radius: 8px; }
 [data-testid="stSidebar"] div[role="radiogroup"] > div { width: 100%; }
 [data-testid="stSidebar"] label[data-testid="stRadioOption"] {
   display: flex;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.32rem 0.55rem;
+  padding: 0.4rem 0.65rem;
   border-radius: 7px;
   border-left: 3px solid transparent;
 }
@@ -85,41 +87,43 @@ h2 { margin-top: 0.4rem; }
 }
 [data-testid="stSidebar"] label[data-testid="stRadioOption"]:has(input:checked) {
   background: rgba(255,255,255,0.10);
-  border-left-color: #2dd4bf;
+  border-left-color: #73bb9b;
 }
 [data-testid="stSidebar"] label[data-testid="stRadioOption"]:has(input:checked) p {
   color: #ffffff;
   font-weight: 600;
 }
-[data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.16); }
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] code { color: #f4d7a1; }
+[data-testid="stSidebar"] hr { border-color: #426253; }
+[data-testid="stSidebar"] [data-testid="stExpander"] details { border-color: #426253; }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] code { color: #d5ebdc; }
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] * { color: #102a43 !important; }
-.cw-brand { padding: 0.1rem 0 0.45rem 0; }
-.cw-brand .cw-brand-name { font-size: 1.16rem; font-weight: 700; letter-spacing: 0.01em; color: #ffffff; }
-.cw-brand .cw-brand-sub { font-size: 0.72rem; color: #a9bdd1; line-height: 1.45; margin-top: 0.18rem; }
-.cw-brand .cw-brand-mark { display:inline-block; width:0.42rem; height:0.42rem; border-radius:50%; background:#2dd4bf; margin-right:0.42rem; vertical-align:middle; }
+.cw-brand { padding: 0.2rem 0 0.65rem 0; }
+.cw-brand .cw-brand-name { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.01em; color: #ffffff; }
+.cw-brand .cw-brand-sub { font-size: 0.74rem; color: #aabeb3; line-height: 1.45; margin-top: 0.2rem; }
+.cw-brand .cw-brand-mark { display:inline-block; width:0.48rem; height:0.48rem; border-radius:50%; background:#73bb9b; margin-right:0.48rem; vertical-align:middle; }
 .cw-hero {
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdfd 100%);
-  border: 1px solid var(--cw-line);
-  border-left: 4px solid var(--cw-teal);
-  border-radius: 12px;
-  padding: 0.72rem 1.05rem 0.62rem 1.05rem;
-  margin-bottom: 0.45rem;
+  background: linear-gradient(110deg,#163a2d,#2f5b45);
+  border: 1px solid #315a45;
+  border-left: 6px solid #73bb82;
+  border-radius: 13px;
+  padding: 1.25rem 1.55rem 1.05rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 3px 10px rgba(24,52,40,.12);
 }
 .cw-eyebrow {
-  color: var(--cw-teal);
+  color: #85d09a;
   font-size: 0.68rem;
   font-weight: 750;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   margin-bottom: 0.2rem;
 }
-.cw-title { font-size: 1.5rem; line-height: 1.12; font-weight: 680; margin: 0; color: var(--cw-ink); }
-.cw-subtitle { color: var(--cw-muted); font-size: 0.82rem; line-height: 1.35; margin-top: 0.2rem; max-width: 92ch; }
-.cw-context-line { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem; margin-top:0.38rem; color:var(--cw-muted); font-size:0.7rem; }
-.cw-context-line strong { color:var(--cw-ink); font-weight:650; }
-.cw-context-dot { display:inline-block; width:0.42rem; height:0.42rem; border-radius:50%; background:var(--cw-teal); }
+.cw-title { font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.6rem,2.1vw,2.05rem); line-height: 1.16; font-weight: 700; margin: 0; color: #f5faf6; }
+.cw-subtitle { color: #c5d6cb; font-size: 0.95rem; line-height: 1.4; margin-top: 0.32rem; max-width: 92ch; }
+.cw-context-line { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem; margin-top:0.48rem; color:#c5d6cb; font-size:0.76rem; }
+.cw-context-line strong { color:#ffffff; font-weight:650; }
+.cw-context-dot { display:inline-block; width:0.42rem; height:0.42rem; border-radius:50%; background:#73bb9b; }
 .cw-identity { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.45rem; margin: 0.25rem 0 0.35rem 0; }
 .cw-id-card {
   background: var(--cw-panel);
@@ -131,8 +135,8 @@ h2 { margin-top: 0.4rem; }
 .cw-id-label { display: block; color: var(--cw-muted); font-size: 0.64rem; letter-spacing: 0.07em; text-transform: uppercase; }
 .cw-id-value { display: block; color: var(--cw-ink); font-size: 0.78rem; margin-top: 0.18rem; word-break: break-word; }
 .cw-id-value.missing { color: var(--cw-amber); font-style: italic; }
-.cw-section { margin: 1.2rem 0 0.4rem 0; display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-.cw-section h3 { font-size: 1.02rem; margin: 0; color: var(--cw-ink) !important; letter-spacing:-0.01em; }
+.cw-section { margin: 1.25rem 0 0.55rem 0; display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-bottom:1px solid var(--cw-line); padding-bottom:.42rem; }
+.cw-section h3 { font-size: 1.04rem; margin: 0; color: var(--cw-ink) !important; letter-spacing:-0.01em; font-weight:730; }
 .cw-section h3 span { color: inherit !important; }
 .cw-section p { color: var(--cw-muted); font-size: 0.8rem; margin: 0.15rem 0 0.25rem 0; }
 .cw-insight { background:var(--cw-panel); border:1px solid var(--cw-line); border-radius:10px; padding:0.65rem 0.8rem; height:100%; }
@@ -193,15 +197,20 @@ h2 { margin-top: 0.4rem; }
   font-size: 0.82rem;
 }
 .cw-footer { color: var(--cw-muted); font-size: 0.72rem; border-top: 1px solid var(--cw-line); margin-top: 2rem; padding-top: 0.7rem; }
-.stButton > button, .stDownloadButton > button { border-radius:8px; font-size:0.8rem; font-weight:600; }
-.stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] { background:var(--cw-teal); border-color:var(--cw-teal); }
+.stButton > button, .stDownloadButton > button { border-radius:8px; font-size:0.8rem; font-weight:600; border-color:#cad4cd; }
+.stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] { background:var(--cw-teal); border-color:var(--cw-teal); color:#fff; }
 .stButton > button[kind="tertiary"] { color:var(--cw-teal); padding-left:0; }
+[data-testid="stVerticalBlockBorderWrapper"] { background: white; border-color: var(--cw-line) !important; border-radius: 11px; box-shadow: 0 2px 6px rgba(28,56,43,.065); }
 [data-testid="stExpander"] details { border-color:var(--cw-line); border-radius:9px; }
 @media (max-width: 900px) {
   .block-container { padding-top: 1.25rem; padding-bottom: 1.5rem; }
   .cw-identity { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cw-title { font-size: 1.4rem; }
+  .cw-title { font-size: 1.5rem; }
   .cw-profile { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .block-container { padding-left: .7rem; padding-right: .7rem; }
+  .cw-hero { padding: 1rem 1.05rem .9rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -214,12 +223,12 @@ def inject_styles() -> None:
     st.markdown(_CSS, unsafe_allow_html=True)
 
 
-def brand() -> None:
+def brand(name: str = "ChurnWise AI", subtitle: str = "Retention intelligence over audited artifacts") -> None:
     st.markdown(
-        """
+        f"""
         <div class="cw-brand">
-          <div class="cw-brand-name"><span class="cw-brand-mark"></span>ChurnWise AI</div>
-          <div class="cw-brand-sub">Retention intelligence over audited artifacts</div>
+          <div class="cw-brand-name"><span class="cw-brand-mark"></span>{html.escape(name)}</div>
+          <div class="cw-brand-sub">{html.escape(subtitle)}</div>
         </div>
         """,
         unsafe_allow_html=True,

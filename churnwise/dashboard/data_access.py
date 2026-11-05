@@ -427,11 +427,19 @@ def risk_run_labels(settings: Settings, runs: list[str] | None = None) -> dict[s
         for run_id in run_ids
     }
 
+    def is_preloaded_source(summary: Mapping[str, Any]) -> bool:
+        source = str(summary.get("source_label") or "").strip()
+        source_name = Path(source.split("·")[-1].strip()).name.lower()
+        return source.lower().startswith("preloaded ·") or (
+            source_name.startswith("testing") and source_name.endswith(".csv")
+        )
+
     input_runs = sorted(
         (
             run_id
             for run_id, summary in summaries.items()
             if str((summary.get("population") or {}).get("split") or "").lower() == "input"
+            and not is_preloaded_source(summary)
         ),
         key=lambda run_id: (str(summaries[run_id].get("generated_at") or ""), run_id),
     )
@@ -453,10 +461,16 @@ def risk_run_labels(settings: Settings, runs: list[str] | None = None) -> dict[s
 
         if split == "input":
             source = str(summary.get("source_label") or "Uploaded dataset").strip()
-            labels[run_id] = (
-                f"Upload {input_numbers[run_id]:02d} · {source} · "
-                f"{received:,} rows · {stamp}"
-            )
+            if is_preloaded_source(summary):
+                source_name = source.split("·", 1)[-1].strip()
+                labels[run_id] = f"Preloaded dataset · {source_name} · {received:,} rows · {stamp}"
+            elif source.lower().startswith("primary dataset ·"):
+                labels[run_id] = f"Primary dataset · {source.split('·', 1)[-1].strip()} · {received:,} rows · {stamp}"
+            else:
+                labels[run_id] = (
+                    f"Upload {input_numbers[run_id]:02d} · {source} · "
+                    f"{received:,} rows · {stamp}"
+                )
         else:
             split_label = {
                 "train": "Training",
@@ -473,9 +487,33 @@ def simulation_ids(settings: Settings) -> list[str]:
 
 
 def default_risk_run_id(settings: Settings, runs: list[str] | None = None) -> str | None:
-    """Default to the newest population run, while keeping batches selectable."""
+    """Prefer the teacher-provided Telco MLP population, then newest population.
+
+    The digest check prevents a similarly named run or another dataset's model
+    from becoming the primary dashboard evidence by accident.
+    """
 
     available = list(runs if runs is not None else risk_ids(settings))
+    telco_digest = "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a"
+    primary_input: str | None = None
+    mlp_population: str | None = None
+    for run_id in available:
+        summary, _ = risk_summary(settings, run_id)
+        manifest, _ = risk_manifest(settings, run_id)
+        if not summary or not manifest:
+            continue
+        family = str((summary.get("model") or {}).get("family") or manifest.get("model_family") or "").lower()
+        digest = str(manifest.get("dataset_sha256") or "").lower()
+        split = str((summary.get("population") or {}).get("split") or "").lower()
+        if family == "mlp" and digest == telco_digest and split == "input" and str(summary.get("source_label") or "").lower().startswith("primary dataset ·"):
+            primary_input = run_id
+            break
+        if family == "mlp" and digest == telco_digest and split != "input":
+            mlp_population = mlp_population or run_id
+    if primary_input:
+        return primary_input
+    if mlp_population:
+        return mlp_population
     primary = latest_population_risk_dir(settings)
     if primary is not None and primary.name in available:
         return primary.name
@@ -620,6 +658,29 @@ def customer_population(
     if not summary or summary_path is None:
         return CustomerPopulation(None, reason="No population risk summary is available.")
     split_name = str((summary.get("population") or {}).get("split") or "").strip().lower()
+    if split_name == "input":
+        risk = load_frame(summary_path.parent / RISK_SCORES)
+        attributes = load_frame(summary_path.parent / "dashboard_attributes.parquet")
+        if risk is None or risk.empty:
+            return CustomerPopulation(None, reason="The uploaded scoring run has no stored score rows.")
+        if attributes is None or attributes.empty or "input_position" not in attributes:
+            return CustomerPopulation(
+                None,
+                reason="This older upload has no saved chart attributes. Rescore it to populate the Executive Dashboard charts.",
+            )
+        if attributes["input_position"].duplicated().any():
+            return CustomerPopulation(None, reason="The saved upload attributes have duplicate row positions; the join was refused.")
+        joined = risk.merge(attributes, on="input_position", how="left", validate="one_to_one")
+        raw_columns = tuple(column for column in attributes.columns if column != "input_position")
+        present = joined.loc[:, list(raw_columns)].notna().any(axis=1) if raw_columns else pd.Series(False, index=joined.index)
+        if not bool(present.all()):
+            return CustomerPopulation(None, reason="Some scored rows do not match saved upload attributes; the join was refused.")
+        return CustomerPopulation(
+            joined,
+            raw_columns=raw_columns,
+            split="input",
+            reason=f"Verified {len(joined):,}-row join to saved, non-identifying upload attributes.",
+        )
     if split_name not in {"train", "val", "test"}:
         return CustomerPopulation(
             None,
@@ -714,7 +775,13 @@ def customer_population(
             ):
                 return CustomerPopulation(None, reason="Observed labels do not match the source rows; the join was refused.")
 
-    raw_rows = raw.iloc[[indices[position] for position in positions]].reset_index(drop=True)
+    # Score tables are ranked for presentation. Sort them by input position and
+    # fetch source rows in that same order before concatenating; otherwise the
+    # verified labels can appear valid while category fields shift to another
+    # customer's score.
+    risk_sorted = risk.sort_values("input_position").reset_index(drop=True)
+    sorted_positions = pd.to_numeric(risk_sorted["input_position"], errors="raise").astype(int).tolist()
+    raw_rows = raw.iloc[[indices[position] for position in sorted_positions]].reset_index(drop=True)
     keep_raw = [str(column) for column in raw_rows.columns if str(column) != target_column]
     if usable:
         keep_raw = [column for column in keep_raw if column in usable]
@@ -722,7 +789,6 @@ def customer_population(
     collisions = set(raw_rows.columns) & set(risk.columns)
     if collisions:
         raw_rows = raw_rows.rename(columns={column: f"raw_{column}" for column in collisions})
-    risk_sorted = risk.sort_values("input_position").reset_index(drop=True)
     joined = pd.concat([risk_sorted, raw_rows], axis=1)
     return CustomerPopulation(
         joined,

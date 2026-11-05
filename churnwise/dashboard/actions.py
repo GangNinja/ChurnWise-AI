@@ -7,6 +7,8 @@ business logic is duplicated in the UI.
 
 from __future__ import annotations
 
+import os
+import shutil
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -229,13 +231,18 @@ def train_mlp(settings: Settings, config: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def _risk_service(settings: Settings, thresholds: Sequence[float] | None = None):
+def _risk_service(
+    settings: Settings,
+    thresholds: Sequence[float] | None = None,
+    *,
+    benchmark_run_id: str | None = "telco-mlp-primary-evaluation",
+):
     from churnwise.intelligence import RiskConfig, RiskThresholds, RiskService
 
     config = RiskConfig(
         thresholds=RiskThresholds(boundaries=tuple(thresholds) if thresholds else RiskThresholds().boundaries)
     )
-    return RiskService(settings, config)
+    return RiskService(settings, config, benchmark_run_id=benchmark_run_id)
 
 
 def assess_customer_record(
@@ -275,6 +282,8 @@ def assess_batch_records(
     explain: str = "none",
     explain_top_n: int = 10,
     source_label: str | None = None,
+    observed_outcome_column: str | None = None,
+    observed_outcome_mapping: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     """Score uploaded records through Phase 9, preserving input positions."""
 
@@ -296,7 +305,31 @@ def assess_batch_records(
             explain_top_n=explain_top_n,
             reference_column=reference_column,
             source_label=source_label,
+            observed_outcome_column=observed_outcome_column,
+            observed_outcome_mapping=observed_outcome_mapping,
         )
+        # Preserve only non-identifying Telco features used by the executive
+        # charts. This lets a previously selected upload populate the same
+        # filtered dashboard after the current browser session ends.
+        feature_columns = [
+            name for name in (
+                "Contract", "InternetService", "PaymentMethod", "SeniorCitizen", "tenure",
+                "MonthlyCharges", "PhoneService", "MultipleLines", "OnlineSecurity",
+                "OnlineBackup", "DeviceProtection", "TechSupport", "StreamingTV", "StreamingMovies",
+            ) if name in frame.columns
+        ]
+        if feature_columns:
+            attributes = frame[feature_columns].copy()
+            attributes.insert(0, "input_position", range(len(attributes)))
+            artifact_dir = Path(settings.artifact_dir) / "predictions" / run.run_id
+            artifact_dir.mkdir(parents=True, exist_ok=True)
+            target = artifact_dir / "dashboard_attributes.parquet"
+            temporary = artifact_dir / "dashboard_attributes.parquet.tmp"
+            try:
+                attributes.to_parquet(temporary, index=False)
+                os.replace(temporary, target)
+            except (OSError, ValueError):
+                temporary.unlink(missing_ok=True)
     except RiskError as exc:
         raise DashboardActionError(
             exc.message,
@@ -320,6 +353,37 @@ def assess_batch_records(
         }
     )
     return payload
+
+
+def remove_uploaded_scoring_run(settings: Settings, run_id: str) -> None:
+    """Remove one user-upload scoring artifact after verifying its origin."""
+    from churnwise.dashboard import data_access as access
+
+    summary, _ = access.risk_summary(settings, run_id)
+    population = (summary or {}).get("population") or {}
+    source = str((summary or {}).get("source_label") or "").strip().lower()
+    dataset_hash = str((summary or {}).get("dataset_sha256") or "").lower()
+    protected_hash = "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a"
+    if (
+        not summary
+        or str(population.get("split") or "").lower() != "input"
+        or source.startswith(("preloaded ·", "primary dataset ·"))
+        or dataset_hash == protected_hash
+    ):
+        raise DashboardActionError(
+            "Only user-uploaded scoring runs can be removed.",
+            code="CW-UI-012",
+            remediation="Select an Upload entry. The primary Telco dataset and bundled datasets are protected.",
+        )
+    root = (Path(settings.artifact_dir) / "predictions").resolve()
+    target = (root / run_id).resolve()
+    if target.parent != root or not target.is_dir():
+        raise DashboardActionError(
+            "The selected upload artifact could not be safely located.",
+            code="CW-UI-012",
+            remediation="Refresh the artifact list and select an existing uploaded scoring run.",
+        )
+    shutil.rmtree(target)
 
 
 def run_campaign_projection(

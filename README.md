@@ -36,17 +36,17 @@ explicit instead of hiding them behind a single accuracy number.
 
 | Item | Verified result |
 | --- | --- |
-| Primary dataset | OpenML `46915`, 5,000 rows, 20 raw columns, 14.14% churn, MIT licence |
-| Selected model | Random Forest, validation F1 0.7985, threshold 0.45 |
-| Held-out test | F1 **0.8718**, ROC-AUC **0.9383**, PR-AUC **0.8973**, Brier **0.0390** |
+| Primary dataset | Instructor-provided IBM Telco Customer Churn CSV, 7,043 rows, 21 columns; 1,869 observed churn labels (26.54%) |
+| Primary model | Multilayer Perceptron (MLP), selected and scored on the matching Telco dataset digest |
+| Held-out test | MLP F1 **0.6075**, accuracy **0.7771**, precision **0.5704**, recall **0.6497** at the validation-selected threshold **0.62** (1,409 test rows) |
 | Pipeline | Seven stages: source → preprocess → train → evaluate → explain → score → simulate |
 | Dashboard | 5 Streamlit pages over persisted artifacts |
 | Default suite | **634 passed, 17 skipped** (post-audit rerun) |
 | Browser E2E | **10 passed** across all 5 pages (opt-in) |
 | Full-profile run | All seven stages in 328.259 s, 613.9 MiB peak |
 
-The test split was scored once. Random Forest was selected on **validation F1**,
-not test performance.
+The test split was scored once. The MLP and decision threshold were selected
+using validation evidence; held-out test results were not used to choose either.
 
 ## What it does
 
@@ -99,18 +99,24 @@ A separate validation-only experiment selected sigmoid calibration:
 held-out Brier improved **0.0390 → 0.0306**, log loss **0.1684 → 0.1337** and ECE
 **0.0686 → 0.0301**, while ROC-AUC and PR-AUC were unchanged. The calibrated
 model serializes and reloads, but it is **not** wired into the production
-registry, CLI, API or dashboard. The production candidate remains the
-uncalibrated Random Forest at threshold 0.45.
+registry, CLI, API or dashboard. This describes the historical OpenML
+experiment; the current primary dashboard uses the Telco MLP run below.
 
-### The second dataset is not transfer evidence
+### Earlier OpenML work is historical evidence
 
-The pipeline was retrained on OpenML `42178` (IBM Telco, 7,043 rows, 26.54%
-positive) after a documented ARFF-to-CSV format adapter. Logistic Regression was
-selected on its own validation split and reached test ROC-AUC **0.8380**, PR-AUC
-**0.6510** and F1 **0.6196**. These are new models on a different dataset; they
-do not show that the primary model transfers to another population. The dataset's
-`Public` licence field has no licence URL, so upstream reuse terms remain
-unverified.
+The project previously used OpenML `46915` / Random Forest as its primary
+demonstration. That work remains in the artifact history and can still be
+selected, but it is not the current primary dataset or model. The current
+instructor-provided file is normalized, hashed, split, fitted, evaluated, and
+scored as one linked evidence chain. `customerID` is a record reference, not a
+predictor; `Churn` is the binary target. Blank `TotalCharges` values are handled
+by the fitted preprocessing pipeline.
+
+The current test metrics above come from the held-out test split and are kept
+separate from the scored validation population. A dashboard's “observed churn”
+count refers only to labels for the rows in that scored cohort; “predicted churn”
+is the MLP output at the saved decision threshold. The metrics are evidence for
+this split, not proof of causal impact or performance on a new population.
 
 ## Dashboard
 
@@ -118,13 +124,15 @@ The product has five pages, organised as one workflow — understand churn →
 investigate a customer → evaluate the model → prioritise retention → simulate a
 campaign:
 
-1. **Executive Dashboard** — scored customers, predicted churn, interactive
-risk-tier and probability distributions, verified original attributes and a
-high-risk customer table with direct assessment navigation.
+1. **Executive Dashboard** — defaults to the successful, SHA-256-matched Telco
+MLP scoring run; uses the screenshot-matched green Churn Analytics layout with
+five segment filters, four data-backed KPI cards, seven customer/revenue charts,
+a retention-priority list, the customer-attention table, selected-model test
+metrics and SHAP. **Upload & predict** sits beside the scoring-run selector.
 2. **Customer Risk Explorer** — a stored customer profile and assessment with
-stored SHAP drivers, plus explicit individual and batch scoring. Upload a CSV,
-preview its schema, score it with the fitted model, and open the saved scoring
-run in Executive Dashboard for population-level insights.
+  stored SHAP drivers, plus explicit individual scoring. Batch CSV and preloaded
+  dataset scoring is available from **Upload & predict** beside the Executive
+  Dashboard scoring-run selector.
 3. **Model Laboratory** — held-out performance, CV stability, global SHAP, data
 quality and provenance; discovery, acquisition and MLP training live only in a
 collapsed Operations tab.
@@ -143,24 +151,24 @@ The dashboard:
   actions, never on ordinary page render;
 - scores individual records and batch CSVs through the same risk service used by
   the CLI;
-- includes six synthetic, schema-valid CSVs and six deliberately invalid CSVs
+- includes six synthetic Telco CSVs with the full MLP feature schema and six
+  matching schema-invalid CSVs
   under [`testing_datasets/`](testing_datasets/README.md) for upload demos;
 - labels simulations as hypothetical and leaves unsupported financial fields
   undefined.
 
-To try an upload, open **Customer Risk Explorer → Upload & predict dataset** and
-choose **Proper · testing4.csv** from the bundled-dataset menu (1,800 rows), or
-upload `testing_datasets/proper_datasets/testing4.csv`. Select **Score this
-dataset**; the resulting scoring run becomes available in Executive Dashboard
-and the other scoring-run selectors. To demonstrate schema validation, choose
-**Improper · testing4.csv** or upload
-`testing_datasets/improper_datasets/testing4.csv`; it is rejected because it is
-missing `voice_mail_plan`. These generated examples are synthetic, and their
-`CustomerChurned` column is ignored during prediction.
+To try an upload, open **Executive Dashboard → Analyze another customer
+dataset → Upload & predict**. Choose **Proper · testing4.csv** (1,800 rows) in
+the bundled dataset menu, or upload
+`testing_datasets/proper_datasets/testing4.csv`. The saved MLP run becomes the
+active dashboard population. For schema validation, choose **Improper ·
+testing4.csv** or upload `testing_datasets/improper_datasets/testing4.csv`; it
+is rejected because it is missing `InternetService`. These examples are
+synthetic. Their `Churn` labels are kept for audit and never enter the model.
 
-The upload examples require a fitted telecom-schema model (OpenML `46915`). The
-offline `mini_churn.csv` fixture uses a different schema; the live workflow and
-exact upload steps are documented in [docs/HOW_TO_RUN.md](docs/HOW_TO_RUN.md).
+Uploads use the teacher-provided Telco MLP and preprocessing schema. The
+offline `mini_churn.csv` fixture uses a different schema; see
+[docs/HOW_TO_RUN.md](docs/HOW_TO_RUN.md) for the matching model workflow.
 
 In Campaign Simulator, **Autofill example assumptions** creates varied draft
 values; click **Run projection** to apply them. The value bridge and scenario

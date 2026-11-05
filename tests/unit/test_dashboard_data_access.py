@@ -57,6 +57,52 @@ def test_population_risk_run_is_preferred_over_a_newer_batch(tmp_path):
     assert payload["n_rows"] == 1000
 
 
+def test_default_risk_run_prefers_hash_matched_teacher_telco_mlp(tmp_path, monkeypatch):
+    settings = Settings(project_root=tmp_path)
+    telco = "teacher-telco-risk"
+    openml = "newer-openml-risk"
+    summaries = {
+        telco: {"model": {"family": "mlp"}, "population": {"split": "val"}},
+        openml: {"model": {"family": "random_forest"}, "population": {"split": "val"}},
+    }
+    manifests = {
+        telco: {"dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a"},
+        openml: {"dataset_sha256": "87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6"},
+    }
+    monkeypatch.setattr(data_access, "risk_summary", lambda _settings, run_id: (summaries[run_id], None))
+    monkeypatch.setattr(data_access, "risk_manifest", lambda _settings, run_id: (manifests[run_id], None))
+
+    assert data_access.default_risk_run_id(settings, [openml, telco]) == telco
+
+
+def test_scoring_run_labels_distinguish_preloaded_datasets_from_uploads(tmp_path, monkeypatch):
+    settings = Settings(project_root=tmp_path)
+    payloads = {
+        "preloaded": {
+            "population": {"split": "input", "received": 1200},
+            "model": {"family": "mlp"},
+            "source_label": "Preloaded · testing2.csv",
+            "generated_at": "2026-01-01T00:00:00Z",
+        },
+        "upload": {
+            "population": {"split": "input", "received": 1500},
+            "model": {"family": "mlp"},
+            "source_label": "customers.csv",
+            "generated_at": "2026-01-02T00:00:00Z",
+        },
+    }
+    monkeypatch.setattr(data_access, "run_ids", lambda *_args: ["preloaded", "upload"])
+    monkeypatch.setattr(
+        data_access,
+        "load_json",
+        lambda path: payloads[path.parent.name] if path.parent.name in payloads else None,
+    )
+
+    labels = data_access.risk_run_labels(settings)
+    assert "Preloaded dataset · testing2.csv" in labels["preloaded"]
+    assert "Upload 01 · customers.csv" in labels["upload"]
+
+
 def test_local_explanation_is_scoped_to_family_and_returns_same_run_plot(tmp_path):
     settings = Settings(project_root=tmp_path)
     root = settings.artifact_dir / "explanations"

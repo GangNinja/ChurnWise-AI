@@ -215,34 +215,22 @@ the Phase 13 environment.
 
 ### Try the bundled customer CSVs
 
-The examples in `testing_datasets/` use the project's telecom feature schema.
-They require a fitted model/preprocessing pipeline built from the matching
-telecom dataset (OpenML `46915`). The 160-row `tests/fixtures/mini_churn.csv`
-workflow is useful for an offline app smoke test, but it has a different schema
-and is not compatible with these telecom CSVs. If you do not already have the
-matching artifacts, run the live workflow first (network required):
+The CSV examples in `testing_datasets/` match the teacher-provided Telco MLP
+schema. The project already includes the fitted MLP and its preprocessing
+pipeline. The 160-row `tests/fixtures/mini_churn.csv` fixture uses a different
+schema and is not compatible with these files.
 
-```powershell
-python -m churnwise.cli run --seed 42 --run-id upload-demo
-```
-
-Then open **Customer Risk Explorer → Upload & predict dataset**. To use the
-valid 1,800-row sample, either choose **Proper · testing4.csv** under **Or try a
-bundled dataset**, or upload
-`testing_datasets/proper_datasets/testing4.csv` from the file picker. Click
-**Score this dataset**. The resulting saved run is selected for Executive
-Dashboard insights; click **Open Executive Dashboard insights** or navigate
-there and select the newly labeled uploaded run. Upload runs are also available from other
-scoring-run selectors.
-
-For a schema-rejection demo, choose **Improper · testing4.csv** or upload
-`testing_datasets/improper_datasets/testing4.csv`. It is missing the required
-`voice_mail_plan` column, so the page reports the mismatch and scores no rows.
-The other valid and invalid files range from 1,000 to 3,000 rows. All records
-are generated examples; their optional `CustomerChurned` column is ignored by
-prediction and is not evidence of observed outcomes. See
-[`testing_datasets/README.md`](../testing_datasets/README.md) for the complete
-list and each invalid file's missing column.
+Open **Executive Dashboard → Analyze another customer dataset → Upload &
+predict**. Choose **Proper · testing4.csv** (1,800 rows) from the bundled list,
+or upload `testing_datasets/proper_datasets/testing4.csv`. Click **Score this
+dataset**; the new MLP run becomes active in the dashboard's scoring-run
+selector. For a schema-rejection demonstration, choose **Improper ·
+testing4.csv** or upload `testing_datasets/improper_datasets/testing4.csv`.
+It omits the required `InternetService` column, so no rows are scored. The
+matching files range from 1,000 to 3,000 rows. All are synthetic examples;
+their `Churn` labels are retained for audit only and never passed to the model.
+See [`testing_datasets/README.md`](../testing_datasets/README.md) for each
+sample size and omitted field.
 
 ### Read the Campaign Simulator charts
 
