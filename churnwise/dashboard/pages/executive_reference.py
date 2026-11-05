@@ -160,7 +160,11 @@ def render(settings: Settings) -> None:
     manifest, _ = access.risk_manifest(settings, run_id)
     validation, _ = access.validation_report(settings)
     if not summary:
-        layout.empty_state("No scoring runs are available", "Score a population in Model Laboratory or use the upload control after a run is available.")
+        layout.empty_state(
+            "No scoring runs are available",
+            "Score a population in Model Laboratory or upload a dataset after a compatible model is available.",
+            "python -m churnwise.cli score --population val --explain all",
+        )
         return
 
     population = access.customer_population(settings, run_id)
@@ -172,7 +176,11 @@ def render(settings: Settings) -> None:
         original = original.copy() if original is not None else pd.DataFrame()
         raw_columns = ()
     if original.empty:
-        layout.empty_state("This scoring run has no score rows", "Choose a different saved run or score a dataset.")
+        layout.empty_state(
+            "This scoring run has no score rows",
+            "Choose a different saved run or score a dataset.",
+            "python -m churnwise.cli score --population val --explain all",
+        )
         return
 
     original["churn_probability"] = pd.to_numeric(original["churn_probability"], errors="coerce")
