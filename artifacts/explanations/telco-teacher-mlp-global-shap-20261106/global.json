@@ -1,0 +1,603 @@
+{
+  "schema_version": "1.0",
+  "phase": 8,
+  "run_id": "telco-teacher-mlp-global-shap-20261106",
+  "family": "mlp",
+  "output_space": "probability",
+  "generated_at": "2026-11-05T19:59:29Z",
+  "base_value": 0.4674999713897705,
+  "feature_importance": [
+    {
+      "rank": 1,
+      "feature": "Contract",
+      "kind": "categorical",
+      "mean_abs_shap": 0.07933884647988453,
+      "mean_shap": 0.010948354743544764,
+      "share": 0.1357740889967851,
+      "positive_share": 0.65,
+      "n_columns": 3,
+      "columns": [
+        "categorical__Contract_Month-to-month",
+        "categorical__Contract_One year",
+        "categorical__Contract_Two year"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 2,
+      "feature": "tenure",
+      "kind": "numeric",
+      "mean_abs_shap": 0.04666967705012816,
+      "mean_shap": 0.015062832210080358,
+      "share": 0.07986671304657644,
+      "positive_share": 0.55,
+      "n_columns": 1,
+      "columns": [
+        "numeric__tenure"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 3,
+      "feature": "tenure_band",
+      "kind": "categorical",
+      "mean_abs_shap": 0.0447527248791812,
+      "mean_shap": 0.00014845501536183344,
+      "share": 0.07658619604628553,
+      "positive_share": 0.35,
+      "n_columns": 5,
+      "columns": [
+        "categorical__tenure_band_0-6",
+        "categorical__tenure_band_12-24",
+        "categorical__tenure_band_24-48",
+        "categorical__tenure_band_48+",
+        "categorical__tenure_band_6-12"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 4,
+      "feature": "avg_monthly_charge",
+      "kind": "numeric",
+      "mean_abs_shap": 0.0418100102165178,
+      "mean_shap": -0.024099565427809284,
+      "share": 0.07155027202888876,
+      "positive_share": 0.5,
+      "n_columns": 1,
+      "columns": [
+        "numeric__avg_monthly_charge"
+      ],
+      "direction": "mixed"
+    },
+    {
+      "rank": 5,
+      "feature": "MonthlyCharges",
+      "kind": "numeric",
+      "mean_abs_shap": 0.03946735218417048,
+      "mean_shap": -0.021058561766501196,
+      "share": 0.06754123642671875,
+      "positive_share": 0.45,
+      "n_columns": 1,
+      "columns": [
+        "numeric__MonthlyCharges"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 6,
+      "feature": "OnlineSecurity",
+      "kind": "categorical",
+      "mean_abs_shap": 0.037731046304248596,
+      "mean_shap": 0.0006341165704980084,
+      "share": 0.06456986288745352,
+      "positive_share": 0.45,
+      "n_columns": 3,
+      "columns": [
+        "categorical__OnlineSecurity_No",
+        "categorical__OnlineSecurity_No internet service",
+        "categorical__OnlineSecurity_Yes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 7,
+      "feature": "PaymentMethod",
+      "kind": "categorical",
+      "mean_abs_shap": 0.03640568764742056,
+      "mean_shap": -0.006497268570135929,
+      "share": 0.062301751209393595,
+      "positive_share": 0.4,
+      "n_columns": 4,
+      "columns": [
+        "categorical__PaymentMethod_Bank transfer (automatic)",
+        "categorical__PaymentMethod_Credit card (automatic)",
+        "categorical__PaymentMethod_Electronic check",
+        "categorical__PaymentMethod_Mailed check"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 8,
+      "feature": "TechSupport",
+      "kind": "categorical",
+      "mean_abs_shap": 0.031998304403216035,
+      "mean_shap": 0.008297476239469689,
+      "share": 0.05475931176904599,
+      "positive_share": 0.5,
+      "n_columns": 3,
+      "columns": [
+        "categorical__TechSupport_No",
+        "categorical__TechSupport_No internet service",
+        "categorical__TechSupport_Yes"
+      ],
+      "direction": "mixed"
+    },
+    {
+      "rank": 9,
+      "feature": "InternetService",
+      "kind": "categorical",
+      "mean_abs_shap": 0.02951529745358858,
+      "mean_shap": 0.0006632237295561949,
+      "share": 0.0505100943740864,
+      "positive_share": 0.65,
+      "n_columns": 3,
+      "columns": [
+        "categorical__InternetService_DSL",
+        "categorical__InternetService_Fiber optic",
+        "categorical__InternetService_No"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 10,
+      "feature": "tenure_years",
+      "kind": "numeric",
+      "mean_abs_shap": 0.02939472001662069,
+      "mean_shap": 0.008858153603476148,
+      "share": 0.0503037478945969,
+      "positive_share": 0.5,
+      "n_columns": 1,
+      "columns": [
+        "numeric__tenure_years"
+      ],
+      "direction": "mixed"
+    },
+    {
+      "rank": 11,
+      "feature": "PaperlessBilling",
+      "kind": "boolean",
+      "mean_abs_shap": 0.0287041109748728,
+      "mean_shap": 0.004858229855327046,
+      "share": 0.049121895401694364,
+      "positive_share": 0.55,
+      "n_columns": 1,
+      "columns": [
+        "boolean__PaperlessBilling"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 12,
+      "feature": "OnlineBackup",
+      "kind": "categorical",
+      "mean_abs_shap": 0.022280582993727878,
+      "mean_shap": -0.012504244874493451,
+      "share": 0.03812918882123717,
+      "positive_share": 0.35,
+      "n_columns": 3,
+      "columns": [
+        "categorical__OnlineBackup_No",
+        "categorical__OnlineBackup_No internet service",
+        "categorical__OnlineBackup_Yes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 13,
+      "feature": "PhoneService",
+      "kind": "boolean",
+      "mean_abs_shap": 0.020810791040103867,
+      "mean_shap": 0.0060946109651259465,
+      "share": 0.03561390567342003,
+      "positive_share": 0.3,
+      "n_columns": 1,
+      "columns": [
+        "boolean__PhoneService"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 14,
+      "feature": "StreamingMovies",
+      "kind": "categorical",
+      "mean_abs_shap": 0.01504975292302697,
+      "mean_shap": -0.005371577913887449,
+      "share": 0.025754930698025248,
+      "positive_share": 0.45,
+      "n_columns": 3,
+      "columns": [
+        "categorical__StreamingMovies_No",
+        "categorical__StreamingMovies_No internet service",
+        "categorical__StreamingMovies_Yes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 15,
+      "feature": "TotalCharges",
+      "kind": "numeric",
+      "mean_abs_shap": 0.013373990994747948,
+      "mean_shap": 0.005167515589994365,
+      "share": 0.022887167183902737,
+      "positive_share": 0.65,
+      "n_columns": 1,
+      "columns": [
+        "numeric__TotalCharges"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 16,
+      "feature": "gender",
+      "kind": "categorical",
+      "mean_abs_shap": 0.011900097157998063,
+      "mean_shap": -0.006137853948343944,
+      "share": 0.020364864404854528,
+      "positive_share": 0.3,
+      "n_columns": 2,
+      "columns": [
+        "categorical__gender_Female",
+        "categorical__gender_Male"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 17,
+      "feature": "Dependents",
+      "kind": "boolean",
+      "mean_abs_shap": 0.010927404271694748,
+      "mean_shap": -0.0007991771433594529,
+      "share": 0.018700276420896757,
+      "positive_share": 0.7,
+      "n_columns": 1,
+      "columns": [
+        "boolean__Dependents"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 18,
+      "feature": "MultipleLines",
+      "kind": "categorical",
+      "mean_abs_shap": 0.010739115707510792,
+      "mean_shap": -0.0013264443979423969,
+      "share": 0.018378054591303216,
+      "positive_share": 0.45,
+      "n_columns": 3,
+      "columns": [
+        "categorical__MultipleLines_No",
+        "categorical__MultipleLines_No phone service",
+        "categorical__MultipleLines_Yes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 19,
+      "feature": "SeniorCitizen",
+      "kind": "categorical",
+      "mean_abs_shap": 0.010736969314290036,
+      "mean_shap": -0.003997227258958446,
+      "share": 0.01837438142743574,
+      "positive_share": 0.15,
+      "n_columns": 2,
+      "columns": [
+        "categorical__SeniorCitizen_0",
+        "categorical__SeniorCitizen_1"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 20,
+      "feature": "StreamingTV",
+      "kind": "categorical",
+      "mean_abs_shap": 0.008545181733758452,
+      "mean_shap": 0.0021887129371757513,
+      "share": 0.014623533321815835,
+      "positive_share": 0.45,
+      "n_columns": 3,
+      "columns": [
+        "categorical__StreamingTV_No",
+        "categorical__StreamingTV_No internet service",
+        "categorical__StreamingTV_Yes"
+      ],
+      "direction": "decreases_churn"
+    },
+    {
+      "rank": 21,
+      "feature": "DeviceProtection",
+      "kind": "categorical",
+      "mean_abs_shap": 0.008204757095278181,
+      "mean_shap": -0.002469740272827038,
+      "share": 0.014040958111657752,
+      "positive_share": 0.55,
+      "n_columns": 3,
+      "columns": [
+        "categorical__DeviceProtection_No",
+        "categorical__DeviceProtection_No internet service",
+        "categorical__DeviceProtection_Yes"
+      ],
+      "direction": "increases_churn"
+    },
+    {
+      "rank": 22,
+      "feature": "Partner",
+      "kind": "boolean",
+      "mean_abs_shap": 0.005988111064710018,
+      "mean_shap": 0.0008344231506927865,
+      "share": 0.010247569263925537,
+      "positive_share": 0.5,
+      "n_columns": 1,
+      "columns": [
+        "boolean__Partner"
+      ],
+      "direction": "mixed"
+    }
+  ],
+  "sample": {
+    "split": "val",
+    "sampled_rows": 20,
+    "available_rows": 1409,
+    "sampling": "seeded uniform without replacement",
+    "seed": 42,
+    "positions": [
+      119,
+      124,
+      131,
+      180,
+      281,
+      603,
+      611,
+      634,
+      721,
+      737,
+      911,
+      974,
+      1007,
+      1031,
+      1067,
+      1076,
+      1104,
+      1182,
+      1197,
+      1366
+    ],
+    "test_rows_used": 0,
+    "local_selection": "highest and lowest predicted risk within the sample"
+  },
+  "additivity_error": 1.0256428628618863e-07,
+  "explainer": {
+    "name": "shap.DeepExplainer",
+    "output_space": "probability",
+    "background_rows": 50,
+    "feature_count": 49,
+    "selected_by_fallback": false,
+    "fallback_reason": null,
+    "notes": [
+      "Deep SHAP on the sigmoid output; values sum to P(churn = 1)."
+    ],
+    "warnings": [],
+    "source_features": 22,
+    "transformed_columns": 49,
+    "aggregation": "sum of transformed-column SHAP values per source feature",
+    "mapping": {
+      "aggregation": "sum of transformed-column SHAP values per source feature",
+      "source_features": 22,
+      "transformed_columns": 49,
+      "one_hot_groups": [
+        {
+          "feature": "Contract",
+          "columns": [
+            "categorical__Contract_Month-to-month",
+            "categorical__Contract_One year",
+            "categorical__Contract_Two year"
+          ],
+          "labels": [
+            "Contract=Month-to-month",
+            "Contract=One year",
+            "Contract=Two year"
+          ]
+        },
+        {
+          "feature": "DeviceProtection",
+          "columns": [
+            "categorical__DeviceProtection_No",
+            "categorical__DeviceProtection_No internet service",
+            "categorical__DeviceProtection_Yes"
+          ],
+          "labels": [
+            "DeviceProtection=No",
+            "DeviceProtection=No internet service",
+            "DeviceProtection=Yes"
+          ]
+        },
+        {
+          "feature": "InternetService",
+          "columns": [
+            "categorical__InternetService_DSL",
+            "categorical__InternetService_Fiber optic",
+            "categorical__InternetService_No"
+          ],
+          "labels": [
+            "InternetService=DSL",
+            "InternetService=Fiber optic",
+            "InternetService=No"
+          ]
+        },
+        {
+          "feature": "MultipleLines",
+          "columns": [
+            "categorical__MultipleLines_No",
+            "categorical__MultipleLines_No phone service",
+            "categorical__MultipleLines_Yes"
+          ],
+          "labels": [
+            "MultipleLines=No",
+            "MultipleLines=No phone service",
+            "MultipleLines=Yes"
+          ]
+        },
+        {
+          "feature": "OnlineBackup",
+          "columns": [
+            "categorical__OnlineBackup_No",
+            "categorical__OnlineBackup_No internet service",
+            "categorical__OnlineBackup_Yes"
+          ],
+          "labels": [
+            "OnlineBackup=No",
+            "OnlineBackup=No internet service",
+            "OnlineBackup=Yes"
+          ]
+        },
+        {
+          "feature": "OnlineSecurity",
+          "columns": [
+            "categorical__OnlineSecurity_No",
+            "categorical__OnlineSecurity_No internet service",
+            "categorical__OnlineSecurity_Yes"
+          ],
+          "labels": [
+            "OnlineSecurity=No",
+            "OnlineSecurity=No internet service",
+            "OnlineSecurity=Yes"
+          ]
+        },
+        {
+          "feature": "PaymentMethod",
+          "columns": [
+            "categorical__PaymentMethod_Bank transfer (automatic)",
+            "categorical__PaymentMethod_Credit card (automatic)",
+            "categorical__PaymentMethod_Electronic check",
+            "categorical__PaymentMethod_Mailed check"
+          ],
+          "labels": [
+            "PaymentMethod=Bank transfer (automatic)",
+            "PaymentMethod=Credit card (automatic)",
+            "PaymentMethod=Electronic check",
+            "PaymentMethod=Mailed check"
+          ]
+        },
+        {
+          "feature": "SeniorCitizen",
+          "columns": [
+            "categorical__SeniorCitizen_0",
+            "categorical__SeniorCitizen_1"
+          ],
+          "labels": [
+            "SeniorCitizen=0",
+            "SeniorCitizen=1"
+          ]
+        },
+        {
+          "feature": "StreamingMovies",
+          "columns": [
+            "categorical__StreamingMovies_No",
+            "categorical__StreamingMovies_No internet service",
+            "categorical__StreamingMovies_Yes"
+          ],
+          "labels": [
+            "StreamingMovies=No",
+            "StreamingMovies=No internet service",
+            "StreamingMovies=Yes"
+          ]
+        },
+        {
+          "feature": "StreamingTV",
+          "columns": [
+            "categorical__StreamingTV_No",
+            "categorical__StreamingTV_No internet service",
+            "categorical__StreamingTV_Yes"
+          ],
+          "labels": [
+            "StreamingTV=No",
+            "StreamingTV=No internet service",
+            "StreamingTV=Yes"
+          ]
+        },
+        {
+          "feature": "TechSupport",
+          "columns": [
+            "categorical__TechSupport_No",
+            "categorical__TechSupport_No internet service",
+            "categorical__TechSupport_Yes"
+          ],
+          "labels": [
+            "TechSupport=No",
+            "TechSupport=No internet service",
+            "TechSupport=Yes"
+          ]
+        },
+        {
+          "feature": "gender",
+          "columns": [
+            "categorical__gender_Female",
+            "categorical__gender_Male"
+          ],
+          "labels": [
+            "gender=Female",
+            "gender=Male"
+          ]
+        },
+        {
+          "feature": "tenure_band",
+          "columns": [
+            "categorical__tenure_band_0-6",
+            "categorical__tenure_band_12-24",
+            "categorical__tenure_band_24-48",
+            "categorical__tenure_band_48+",
+            "categorical__tenure_band_6-12"
+          ],
+          "labels": [
+            "tenure_band=0-6",
+            "tenure_band=12-24",
+            "tenure_band=24-48",
+            "tenure_band=48+",
+            "tenure_band=6-12"
+          ]
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+    "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+    "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+    "preprocessing_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+    "model_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp",
+    "model_sha256": "8f1c26089a266f5f95ea17969f3be3acea4f9f5b12a97cd5aec84573c35456cf",
+    "model_path": "artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/model.keras",
+    "framework": "tensorflow.keras",
+    "benchmark_run_id": "telco-mlp-primary-evaluation"
+  },
+  "plots": {
+    "importance": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/importance.png",
+    "summary": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/summary.png",
+    "dependence": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/dependence_tenure.png"
+  },
+  "warnings": [],
+  "duration_seconds": 8.49352839999483,
+  "config": {
+    "sample_size": 200,
+    "background_size": 100,
+    "mlp_sample_size": 20,
+    "mlp_background_size": 50,
+    "local_examples": 10,
+    "top_k": 5,
+    "seed": 42,
+    "tolerance": 0.0001,
+    "chunk_size": 100,
+    "max_local_batch": 500,
+    "permutation_max_evals": 500,
+    "fingerprint": "72c1dae58d7bbb2f728b854759c5b1996b371dd63a4bc9e13d10c213cf9ea8af"
+  }
+}

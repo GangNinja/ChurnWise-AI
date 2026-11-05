@@ -1,0 +1,750 @@
+{
+  "schema_version": "1.0",
+  "phase": 5,
+  "pipeline_version": "1.0",
+  "run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+  "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+  "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+  "manifest_sha256": "e0ec734dc5f8debf8cb346c3fcbc69ccfd08fa0dd20a8629dcabc141c85d7a4b",
+  "generated_at": "2026-10-30T17:14:55Z",
+  "code_version": "0.10.0",
+  "seed": 42,
+  "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+  "config": {
+    "seed": 42,
+    "train_fraction": 0.6,
+    "val_fraction": 0.2,
+    "test_fraction": 0.2,
+    "imbalance": "class_weight",
+    "oversample_ratio": 1.0,
+    "numeric_imputation": "median",
+    "categorical_imputation": "missing_category",
+    "scaling": "standard",
+    "missing_indicator_threshold": 0.01,
+    "max_categorical_levels": 30,
+    "min_frequency": 0.0,
+    "derived_features": true,
+    "drop_duplicate_rows": true,
+    "min_rows": 100,
+    "min_class_count": 2,
+    "numeric_coerce_threshold": 0.98,
+    "outlier_policy": "report_only",
+    "version": "1.0",
+    "fingerprint": "989d8802b962726b058a2f3300ae30941c859dbe563e851137dd8b1d678cef18"
+  },
+  "target": {
+    "column": "Churn",
+    "positive_label": "Yes",
+    "negative_label": "No",
+    "mapping": {
+      "No": 0,
+      "Yes": 1
+    },
+    "positive_rate": 0.2653698707936959
+  },
+  "required_columns": [
+    "Contract",
+    "Dependents",
+    "DeviceProtection",
+    "InternetService",
+    "MonthlyCharges",
+    "MultipleLines",
+    "OnlineBackup",
+    "OnlineSecurity",
+    "PaperlessBilling",
+    "Partner",
+    "PaymentMethod",
+    "PhoneService",
+    "SeniorCitizen",
+    "StreamingMovies",
+    "StreamingTV",
+    "TechSupport",
+    "TotalCharges",
+    "gender",
+    "tenure"
+  ],
+  "preprocessing": {
+    "numeric": [
+      "tenure",
+      "MonthlyCharges",
+      "TotalCharges",
+      "tenure_years",
+      "avg_monthly_charge"
+    ],
+    "boolean": [
+      "Partner",
+      "Dependents",
+      "PhoneService",
+      "PaperlessBilling"
+    ],
+    "categorical": [
+      "gender",
+      "SeniorCitizen",
+      "MultipleLines",
+      "InternetService",
+      "OnlineSecurity",
+      "OnlineBackup",
+      "DeviceProtection",
+      "TechSupport",
+      "StreamingTV",
+      "StreamingMovies",
+      "Contract",
+      "PaymentMethod",
+      "tenure_band"
+    ],
+    "numeric_coerced": [],
+    "missing_indicators": [],
+    "numeric_imputation": "median",
+    "categorical_imputation": "missing_category",
+    "missing_category": "__missing__",
+    "scaling": "standard",
+    "encoding": "one_hot",
+    "handle_unknown": "ignore",
+    "min_frequency": 0.0,
+    "max_categorical_levels": 30,
+    "categories": {
+      "gender": [
+        "Female",
+        "Male"
+      ],
+      "SeniorCitizen": [
+        "0",
+        "1"
+      ],
+      "MultipleLines": [
+        "No",
+        "No phone service",
+        "Yes"
+      ],
+      "InternetService": [
+        "DSL",
+        "Fiber optic",
+        "No"
+      ],
+      "OnlineSecurity": [
+        "No",
+        "No internet service",
+        "Yes"
+      ],
+      "OnlineBackup": [
+        "No",
+        "No internet service",
+        "Yes"
+      ],
+      "DeviceProtection": [
+        "No",
+        "No internet service",
+        "Yes"
+      ],
+      "TechSupport": [
+        "No",
+        "No internet service",
+        "Yes"
+      ],
+      "StreamingTV": [
+        "No",
+        "No internet service",
+        "Yes"
+      ],
+      "StreamingMovies": [
+        "No",
+        "No internet service",
+        "Yes"
+      ],
+      "Contract": [
+        "Month-to-month",
+        "One year",
+        "Two year"
+      ],
+      "PaymentMethod": [
+        "Bank transfer (automatic)",
+        "Credit card (automatic)",
+        "Electronic check",
+        "Mailed check"
+      ],
+      "tenure_band": [
+        "0-6",
+        "12-24",
+        "24-48",
+        "48+",
+        "6-12"
+      ]
+    },
+    "output_dtype": "float64"
+  },
+  "derived": [
+    {
+      "name": "tenure_years",
+      "capability": "has_tenure",
+      "formula": "tenure_years",
+      "sources": [
+        "tenure"
+      ],
+      "source_roles": [
+        "tenure"
+      ],
+      "dtype": "numeric",
+      "description": "tenure in years"
+    },
+    {
+      "name": "tenure_band",
+      "capability": "has_tenure",
+      "formula": "tenure_band",
+      "sources": [
+        "tenure"
+      ],
+      "source_roles": [
+        "tenure"
+      ],
+      "dtype": "categorical",
+      "description": "tenure grouped into 0-6, 6-12, 12-24, 24-48 and 48+ month bands"
+    },
+    {
+      "name": "avg_monthly_charge",
+      "capability": "has_total_charges",
+      "formula": "avg_monthly_charge",
+      "sources": [
+        "TotalCharges",
+        "tenure"
+      ],
+      "source_roles": [
+        "total_charges",
+        "tenure"
+      ],
+      "dtype": "numeric",
+      "description": "total charges divided by tenure in months"
+    }
+  ],
+  "derived_skipped": [
+    {
+      "feature": "support_calls_per_year",
+      "capability": "has_support_calls",
+      "reason": "Phase 4 did not evidence the required capability: has_support_calls"
+    },
+    {
+      "feature": "usage_band",
+      "capability": "has_usage_minutes",
+      "reason": "Phase 4 did not evidence the required capability: has_usage_minutes"
+    },
+    {
+      "feature": "support_calls_per_usage_hour",
+      "capability": "has_support_calls",
+      "reason": "Phase 4 did not evidence the required capability: has_support_calls, has_usage_minutes"
+    }
+  ],
+  "feature_names": [
+    "numeric__tenure",
+    "numeric__MonthlyCharges",
+    "numeric__TotalCharges",
+    "numeric__tenure_years",
+    "numeric__avg_monthly_charge",
+    "boolean__Partner",
+    "boolean__Dependents",
+    "boolean__PhoneService",
+    "boolean__PaperlessBilling",
+    "categorical__gender_Female",
+    "categorical__gender_Male",
+    "categorical__SeniorCitizen_0",
+    "categorical__SeniorCitizen_1",
+    "categorical__MultipleLines_No",
+    "categorical__MultipleLines_No phone service",
+    "categorical__MultipleLines_Yes",
+    "categorical__InternetService_DSL",
+    "categorical__InternetService_Fiber optic",
+    "categorical__InternetService_No",
+    "categorical__OnlineSecurity_No",
+    "categorical__OnlineSecurity_No internet service",
+    "categorical__OnlineSecurity_Yes",
+    "categorical__OnlineBackup_No",
+    "categorical__OnlineBackup_No internet service",
+    "categorical__OnlineBackup_Yes",
+    "categorical__DeviceProtection_No",
+    "categorical__DeviceProtection_No internet service",
+    "categorical__DeviceProtection_Yes",
+    "categorical__TechSupport_No",
+    "categorical__TechSupport_No internet service",
+    "categorical__TechSupport_Yes",
+    "categorical__StreamingTV_No",
+    "categorical__StreamingTV_No internet service",
+    "categorical__StreamingTV_Yes",
+    "categorical__StreamingMovies_No",
+    "categorical__StreamingMovies_No internet service",
+    "categorical__StreamingMovies_Yes",
+    "categorical__Contract_Month-to-month",
+    "categorical__Contract_One year",
+    "categorical__Contract_Two year",
+    "categorical__PaymentMethod_Bank transfer (automatic)",
+    "categorical__PaymentMethod_Credit card (automatic)",
+    "categorical__PaymentMethod_Electronic check",
+    "categorical__PaymentMethod_Mailed check",
+    "categorical__tenure_band_0-6",
+    "categorical__tenure_band_12-24",
+    "categorical__tenure_band_24-48",
+    "categorical__tenure_band_48+",
+    "categorical__tenure_band_6-12"
+  ],
+  "output_features": [
+    {
+      "name": "numeric__tenure",
+      "source": "tenure",
+      "role": "numeric",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "numeric__MonthlyCharges",
+      "source": "MonthlyCharges",
+      "role": "numeric",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "numeric__TotalCharges",
+      "source": "TotalCharges",
+      "role": "numeric",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "numeric__tenure_years",
+      "source": "tenure_years",
+      "role": "numeric",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "numeric__avg_monthly_charge",
+      "source": "avg_monthly_charge",
+      "role": "numeric",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "boolean__Partner",
+      "source": "Partner",
+      "role": "boolean",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "boolean__Dependents",
+      "source": "Dependents",
+      "role": "boolean",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "boolean__PhoneService",
+      "source": "PhoneService",
+      "role": "boolean",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "boolean__PaperlessBilling",
+      "source": "PaperlessBilling",
+      "role": "boolean",
+      "value": null,
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__gender_Female",
+      "source": "gender",
+      "role": "categorical",
+      "value": "Female",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__gender_Male",
+      "source": "gender",
+      "role": "categorical",
+      "value": "Male",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__SeniorCitizen_0",
+      "source": "SeniorCitizen",
+      "role": "categorical",
+      "value": "0",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__SeniorCitizen_1",
+      "source": "SeniorCitizen",
+      "role": "categorical",
+      "value": "1",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__MultipleLines_No",
+      "source": "MultipleLines",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__MultipleLines_No phone service",
+      "source": "MultipleLines",
+      "role": "categorical",
+      "value": "No phone service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__MultipleLines_Yes",
+      "source": "MultipleLines",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__InternetService_DSL",
+      "source": "InternetService",
+      "role": "categorical",
+      "value": "DSL",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__InternetService_Fiber optic",
+      "source": "InternetService",
+      "role": "categorical",
+      "value": "Fiber optic",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__InternetService_No",
+      "source": "InternetService",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__OnlineSecurity_No",
+      "source": "OnlineSecurity",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__OnlineSecurity_No internet service",
+      "source": "OnlineSecurity",
+      "role": "categorical",
+      "value": "No internet service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__OnlineSecurity_Yes",
+      "source": "OnlineSecurity",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__OnlineBackup_No",
+      "source": "OnlineBackup",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__OnlineBackup_No internet service",
+      "source": "OnlineBackup",
+      "role": "categorical",
+      "value": "No internet service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__OnlineBackup_Yes",
+      "source": "OnlineBackup",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__DeviceProtection_No",
+      "source": "DeviceProtection",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__DeviceProtection_No internet service",
+      "source": "DeviceProtection",
+      "role": "categorical",
+      "value": "No internet service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__DeviceProtection_Yes",
+      "source": "DeviceProtection",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__TechSupport_No",
+      "source": "TechSupport",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__TechSupport_No internet service",
+      "source": "TechSupport",
+      "role": "categorical",
+      "value": "No internet service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__TechSupport_Yes",
+      "source": "TechSupport",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__StreamingTV_No",
+      "source": "StreamingTV",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__StreamingTV_No internet service",
+      "source": "StreamingTV",
+      "role": "categorical",
+      "value": "No internet service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__StreamingTV_Yes",
+      "source": "StreamingTV",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__StreamingMovies_No",
+      "source": "StreamingMovies",
+      "role": "categorical",
+      "value": "No",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__StreamingMovies_No internet service",
+      "source": "StreamingMovies",
+      "role": "categorical",
+      "value": "No internet service",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__StreamingMovies_Yes",
+      "source": "StreamingMovies",
+      "role": "categorical",
+      "value": "Yes",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__Contract_Month-to-month",
+      "source": "Contract",
+      "role": "categorical",
+      "value": "Month-to-month",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__Contract_One year",
+      "source": "Contract",
+      "role": "categorical",
+      "value": "One year",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__Contract_Two year",
+      "source": "Contract",
+      "role": "categorical",
+      "value": "Two year",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__PaymentMethod_Bank transfer (automatic)",
+      "source": "PaymentMethod",
+      "role": "categorical",
+      "value": "Bank transfer (automatic)",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__PaymentMethod_Credit card (automatic)",
+      "source": "PaymentMethod",
+      "role": "categorical",
+      "value": "Credit card (automatic)",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__PaymentMethod_Electronic check",
+      "source": "PaymentMethod",
+      "role": "categorical",
+      "value": "Electronic check",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__PaymentMethod_Mailed check",
+      "source": "PaymentMethod",
+      "role": "categorical",
+      "value": "Mailed check",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__tenure_band_0-6",
+      "source": "tenure_band",
+      "role": "categorical",
+      "value": "0-6",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__tenure_band_12-24",
+      "source": "tenure_band",
+      "role": "categorical",
+      "value": "12-24",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__tenure_band_24-48",
+      "source": "tenure_band",
+      "role": "categorical",
+      "value": "24-48",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__tenure_band_48+",
+      "source": "tenure_band",
+      "role": "categorical",
+      "value": "48+",
+      "dtype": "float64"
+    },
+    {
+      "name": "categorical__tenure_band_6-12",
+      "source": "tenure_band",
+      "role": "categorical",
+      "value": "6-12",
+      "dtype": "float64"
+    }
+  ],
+  "class_weights": {
+    "0": 0.6805734536082474,
+    "1": 1.884478144513827
+  },
+  "class_balance": {
+    "counts": {
+      "all": {
+        "0": 5174,
+        "1": 1869
+      },
+      "train": {
+        "0": 3104,
+        "1": 1121
+      },
+      "val": {
+        "0": 1035,
+        "1": 374
+      },
+      "test": {
+        "0": 1035,
+        "1": 374
+      }
+    },
+    "rates": {
+      "all": 0.2653698707936959,
+      "train": 0.26532544378698225,
+      "val": 0.2654364797728886,
+      "test": 0.2654364797728886
+    },
+    "strategy": "class_weight",
+    "class_weights": {
+      "0": 0.6805734536082474,
+      "1": 1.884478144513827
+    },
+    "ratio": 2.7683253076511503,
+    "resampled": false,
+    "resampled_train_rows": 0
+  },
+  "excluded": [
+    {
+      "column": "customerID",
+      "reason": "identifier retained for output only; never a feature",
+      "stage": "phase5"
+    },
+    {
+      "column": "Churn",
+      "reason": "prediction target",
+      "stage": "phase4"
+    }
+  ],
+  "outliers": {
+    "tenure": {
+      "count": 0,
+      "pct": 0.0,
+      "lower": -60.0,
+      "upper": 124.0,
+      "treated": false
+    },
+    "MonthlyCharges": {
+      "count": 0,
+      "pct": 0.0,
+      "lower": -46.65,
+      "upper": 172.14999999999998,
+      "treated": false
+    },
+    "TotalCharges": {
+      "count": 0,
+      "pct": 0.0,
+      "lower": -4792.03125,
+      "upper": 9060.11875,
+      "treated": false
+    },
+    "tenure_years": {
+      "count": 0,
+      "pct": 0.0,
+      "lower": -5.0,
+      "upper": 10.333333333333332,
+      "treated": false
+    },
+    "avg_monthly_charge": {
+      "count": 0,
+      "pct": 0.0,
+      "lower": -47.35489130434783,
+      "upper": 173.2929347826087,
+      "treated": false
+    }
+  },
+  "invalid_numeric": {},
+  "warnings": [],
+  "provenance": {
+    "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+    "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+    "manifest_sha256": "e0ec734dc5f8debf8cb346c3fcbc69ccfd08fa0dd20a8629dcabc141c85d7a4b",
+    "validation_report": "reports/validation/fixture-wa-fn-usec-telco-customer-churn-88be4b93.json",
+    "source": {
+      "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+      "title": "Teacher-provided Telco Customer Churn: WA_Fn-UseC_-Telco-Customer-Churn.csv",
+      "source_id": "teacher_provided",
+      "provider": "local_file",
+      "source_dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+      "download_url": "https://fixtures.churnwise.invalid/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+      "landing_url": "https://fixtures.churnwise.invalid/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+      "license": "Teacher-provided dataset; upstream licence not recorded (unverified)",
+      "retrieved_at": "2026-10-30T17:14:52Z",
+      "run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0",
+      "manifest_path": "data/manifests/fixture-wa-fn-usec-telco-customer-churn-88be4b93.json",
+      "acquisition_attempt": 1,
+      "candidate_rank": null,
+      "fallback_of": null,
+      "cached": false,
+      "artifact_path": "data/raw/teacher_provided/fixture-wa-fn-usec-telco-customer-churn-88be4b93/2026-10-30/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+      "artifact_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+      "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a"
+    },
+    "generated_at": "2026-10-30T17:14:55Z",
+    "code_version": "0.10.0"
+  },
+  "preprocessor_hash": "64094e20109f86e2aa23c2469d7d14cfb452d2afaa9f237a6d3ce63341922764",
+  "preprocessor_path": "artifacts/preprocessors/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep/pipeline.joblib"
+}

@@ -1,0 +1,230 @@
+{
+  "schema_version": "1.0",
+  "phase": 8,
+  "run_id": "telco-teacher-mlp-global-shap-20261106",
+  "generated_at": "2026-11-05T19:59:29Z",
+  "family": "mlp",
+  "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+  "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+  "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+  "preprocessing_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+  "model": {
+    "model_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp",
+    "model_sha256": "8f1c26089a266f5f95ea17969f3be3acea4f9f5b12a97cd5aec84573c35456cf",
+    "model_path": "artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/model.keras",
+    "framework": "tensorflow.keras",
+    "preprocessing_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+    "benchmark_run_id": "telco-mlp-primary-evaluation"
+  },
+  "threshold": 0.59,
+  "positive_label": "Yes",
+  "output_space": "probability",
+  "explainer": {
+    "name": "shap.DeepExplainer",
+    "output_space": "probability",
+    "background_rows": 50,
+    "feature_count": 49,
+    "selected_by_fallback": false,
+    "fallback_reason": null,
+    "notes": [
+      "Deep SHAP on the sigmoid output; values sum to P(churn = 1)."
+    ],
+    "warnings": []
+  },
+  "sampling": {
+    "split": "val",
+    "sampled_rows": 20,
+    "available_rows": 1409,
+    "sampling": "seeded uniform without replacement",
+    "seed": 42,
+    "positions": [
+      119,
+      124,
+      131,
+      180,
+      281,
+      603,
+      611,
+      634,
+      721,
+      737,
+      911,
+      974,
+      1007,
+      1031,
+      1067,
+      1076,
+      1104,
+      1182,
+      1197,
+      1366
+    ],
+    "test_rows_used": 0,
+    "local_selection": "highest and lowest predicted risk within the sample"
+  },
+  "background": {
+    "split": "train",
+    "rows": 50,
+    "seed": 42,
+    "positions": [
+      268,
+      286,
+      359,
+      372,
+      387,
+      394,
+      537,
+      696,
+      766,
+      842,
+      955,
+      1166,
+      1495,
+      1556,
+      1690,
+      1810,
+      1834,
+      1864,
+      1881,
+      1889,
+      1894,
+      2099,
+      2151,
+      2203,
+      2292,
+      2334,
+      2662,
+      2704,
+      2734,
+      2863,
+      2917,
+      2954,
+      3006,
+      3081,
+      3188,
+      3196,
+      3232,
+      3282,
+      3288,
+      3294,
+      3458,
+      3486,
+      3521,
+      3589,
+      3615,
+      3738,
+      3771,
+      3891,
+      4084,
+      4097
+    ]
+  },
+  "local_examples": [
+    {
+      "row_position": 119,
+      "probability": 0.17181508243083954,
+      "predicted_class": 0
+    },
+    {
+      "row_position": 131,
+      "probability": 0.06985246390104294,
+      "predicted_class": 0
+    },
+    {
+      "row_position": 603,
+      "probability": 0.7796602249145508,
+      "predicted_class": 1
+    },
+    {
+      "row_position": 721,
+      "probability": 0.12145759910345078,
+      "predicted_class": 0
+    },
+    {
+      "row_position": 737,
+      "probability": 0.8968773484230042,
+      "predicted_class": 1
+    },
+    {
+      "row_position": 974,
+      "probability": 0.055178988724946976,
+      "predicted_class": 0
+    },
+    {
+      "row_position": 1007,
+      "probability": 0.7145563960075378,
+      "predicted_class": 1
+    },
+    {
+      "row_position": 1031,
+      "probability": 0.8693739175796509,
+      "predicted_class": 1
+    },
+    {
+      "row_position": 1076,
+      "probability": 0.9257462024688721,
+      "predicted_class": 1
+    },
+    {
+      "row_position": 1182,
+      "probability": 0.13726715743541718,
+      "predicted_class": 0
+    }
+  ],
+  "duration_seconds": 8.49352839999483,
+  "config": {
+    "sample_size": 200,
+    "background_size": 100,
+    "mlp_sample_size": 20,
+    "mlp_background_size": 50,
+    "local_examples": 10,
+    "top_k": 5,
+    "seed": 42,
+    "tolerance": 0.0001,
+    "chunk_size": 100,
+    "max_local_batch": 500,
+    "permutation_max_evals": 500,
+    "fingerprint": "72c1dae58d7bbb2f728b854759c5b1996b371dd63a4bc9e13d10c213cf9ea8af"
+  },
+  "environment": {
+    "python": "3.13.0",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.4",
+    "shap": "0.54.1",
+    "scikit_learn": "1.7.2",
+    "tensorflow": "2.21.0"
+  },
+  "paths": {
+    "global_json": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/global.json",
+    "importance_png": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/importance.png",
+    "summary_png": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/summary.png",
+    "dependence_png": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/dependence_tenure.png",
+    "local_plot_119": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00119.png",
+    "local_json_119": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00119.json",
+    "local_plot_131": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00131.png",
+    "local_json_131": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00131.json",
+    "local_plot_603": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00603.png",
+    "local_json_603": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00603.json",
+    "local_plot_721": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00721.png",
+    "local_json_721": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00721.json",
+    "local_plot_737": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00737.png",
+    "local_json_737": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00737.json",
+    "local_plot_974": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00974.png",
+    "local_json_974": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00974.json",
+    "local_plot_1007": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01007.png",
+    "local_json_1007": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01007.json",
+    "local_plot_1031": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01031.png",
+    "local_json_1031": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01031.json",
+    "local_plot_1076": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01076.png",
+    "local_json_1076": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01076.json",
+    "local_plot_1182": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01182.png",
+    "local_json_1182": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_01182.json"
+  },
+  "warnings": [],
+  "privacy": "global explanations expose no customer records; local files store only model contributions and transformed feature values, no identifiers or raw source rows",
+  "limitations": [
+    "SHAP values explain model output, not causal effects.",
+    "Sampling is seeded uniform without replacement; another sample changes the estimated global ranking slightly.",
+    "The test partition is not used for explanations."
+  ]
+}

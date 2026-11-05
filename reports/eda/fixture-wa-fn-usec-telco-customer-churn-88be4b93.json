@@ -1,0 +1,966 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+  "format": "csv",
+  "source_path": "data/raw/teacher_provided/fixture-wa-fn-usec-telco-customer-churn-88be4b93/2026-10-30/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+  "n_rows": 7043,
+  "n_cols": 21,
+  "memory_bytes": 6822129,
+  "missing_cells": 11,
+  "missing_cell_pct": 7.43730688356558e-05,
+  "duplicate_rows": 0,
+  "duplicate_row_pct": 0.0,
+  "duplicate_columns": [],
+  "duplicate_headers": [],
+  "columns": [
+    {
+      "name": "customerID",
+      "dtype": "object",
+      "kind": "text",
+      "role": "id",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 7043,
+      "unique_ratio": 1.0,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "7590-VHVEG",
+          "count": 1,
+          "pct": 0.0001419849495953429
+        },
+        {
+          "value": "5575-GNVDE",
+          "count": 1,
+          "pct": 0.0001419849495953429
+        },
+        {
+          "value": "3668-QPYBK",
+          "count": 1,
+          "pct": 0.0001419849495953429
+        },
+        {
+          "value": "7795-CFOCW",
+          "count": 1,
+          "pct": 0.0001419849495953429
+        },
+        {
+          "value": "9237-HQITU",
+          "count": 1,
+          "pct": 0.0001419849495953429
+        }
+      ],
+      "sample_values": [
+        "7590-VHVEG",
+        "5575-GNVDE",
+        "3668-QPYBK"
+      ],
+      "flags": [
+        "id_like",
+        "text_like"
+      ],
+      "reasons": [
+        "unique key / identifier-like column",
+        "free-text / very high cardinality"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "name": "gender",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "Male",
+          "count": 3555,
+          "pct": 0.504756495811444
+        },
+        {
+          "value": "Female",
+          "count": 3488,
+          "pct": 0.495243504188556
+        }
+      ],
+      "sample_values": [
+        "Female",
+        "Male",
+        "Male"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "SeniorCitizen",
+      "dtype": "int64",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "0",
+          "count": 5901,
+          "pct": 0.8378531875621185
+        },
+        {
+          "value": "1",
+          "count": 1142,
+          "pct": 0.1621468124378816
+        }
+      ],
+      "sample_values": [
+        "0",
+        "0",
+        "0"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "Partner",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 3641,
+          "pct": 0.5169672014766434
+        },
+        {
+          "value": "Yes",
+          "count": 3402,
+          "pct": 0.4830327985233565
+        }
+      ],
+      "sample_values": [
+        "Yes",
+        "No",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "Dependents",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 4933,
+          "pct": 0.7004117563538265
+        },
+        {
+          "value": "Yes",
+          "count": 2110,
+          "pct": 0.2995882436461735
+        }
+      ],
+      "sample_values": [
+        "No",
+        "No",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "tenure",
+      "dtype": "int64",
+      "kind": "numeric",
+      "role": "numeric",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 73,
+      "unique_ratio": 0.010364901320460031,
+      "constant": false,
+      "near_constant": false,
+      "numeric": {
+        "count": 7043,
+        "mean": 32.37114865824223,
+        "std": 24.55948102309446,
+        "min": 0.0,
+        "q25": 9.0,
+        "median": 29.0,
+        "q75": 55.0,
+        "max": 72.0,
+        "skew": 0.2395397495619829,
+        "outlier_count": 0,
+        "outlier_pct": 0.0,
+        "infinite_count": 0
+      },
+      "top_values": [],
+      "sample_values": [
+        "1",
+        "34",
+        "2"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "PhoneService",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "Yes",
+          "count": 6361,
+          "pct": 0.9031662643759761
+        },
+        {
+          "value": "No",
+          "count": 682,
+          "pct": 0.09683373562402385
+        }
+      ],
+      "sample_values": [
+        "No",
+        "Yes",
+        "Yes"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "MultipleLines",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 3390,
+          "pct": 0.48132897912821243
+        },
+        {
+          "value": "Yes",
+          "count": 2971,
+          "pct": 0.42183728524776376
+        },
+        {
+          "value": "No phone service",
+          "count": 682,
+          "pct": 0.09683373562402385
+        }
+      ],
+      "sample_values": [
+        "No phone service",
+        "No",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "InternetService",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "Fiber optic",
+          "count": 3096,
+          "pct": 0.4395854039471816
+        },
+        {
+          "value": "DSL",
+          "count": 2421,
+          "pct": 0.34374556297032516
+        },
+        {
+          "value": "No",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "DSL",
+        "DSL",
+        "DSL"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "OnlineSecurity",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 3498,
+          "pct": 0.4966633536845094
+        },
+        {
+          "value": "Yes",
+          "count": 2019,
+          "pct": 0.2866676132329973
+        },
+        {
+          "value": "No internet service",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "No",
+        "Yes",
+        "Yes"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "OnlineBackup",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 3088,
+          "pct": 0.43844952435041884
+        },
+        {
+          "value": "Yes",
+          "count": 2429,
+          "pct": 0.3448814425670879
+        },
+        {
+          "value": "No internet service",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "Yes",
+        "No",
+        "Yes"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "DeviceProtection",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 3095,
+          "pct": 0.43944341899758627
+        },
+        {
+          "value": "Yes",
+          "count": 2422,
+          "pct": 0.3438875479199205
+        },
+        {
+          "value": "No internet service",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "No",
+        "Yes",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "TechSupport",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 3473,
+          "pct": 0.4931137299446259
+        },
+        {
+          "value": "Yes",
+          "count": 2044,
+          "pct": 0.2902172369728809
+        },
+        {
+          "value": "No internet service",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "No",
+        "No",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "StreamingTV",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 2810,
+          "pct": 0.3989777083629135
+        },
+        {
+          "value": "Yes",
+          "count": 2707,
+          "pct": 0.38435325855459324
+        },
+        {
+          "value": "No internet service",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "No",
+        "No",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "StreamingMovies",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 2785,
+          "pct": 0.39542808462303
+        },
+        {
+          "value": "Yes",
+          "count": 2732,
+          "pct": 0.3879028822944768
+        },
+        {
+          "value": "No internet service",
+          "count": 1526,
+          "pct": 0.21666903308249325
+        }
+      ],
+      "sample_values": [
+        "No",
+        "No",
+        "No"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "Contract",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 3,
+      "unique_ratio": 0.0004259548487860287,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "Month-to-month",
+          "count": 3875,
+          "pct": 0.5501916796819537
+        },
+        {
+          "value": "Two year",
+          "count": 1695,
+          "pct": 0.24066448956410622
+        },
+        {
+          "value": "One year",
+          "count": 1473,
+          "pct": 0.20914383075394008
+        }
+      ],
+      "sample_values": [
+        "Month-to-month",
+        "One year",
+        "Month-to-month"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "PaperlessBilling",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "Yes",
+          "count": 4171,
+          "pct": 0.5922192247621753
+        },
+        {
+          "value": "No",
+          "count": 2872,
+          "pct": 0.4077807752378248
+        }
+      ],
+      "sample_values": [
+        "Yes",
+        "No",
+        "Yes"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "PaymentMethod",
+      "dtype": "object",
+      "kind": "categorical",
+      "role": "categorical",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 4,
+      "unique_ratio": 0.0005679397983813716,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "Electronic check",
+          "count": 2365,
+          "pct": 0.3357944057929859
+        },
+        {
+          "value": "Mailed check",
+          "count": 1612,
+          "pct": 0.22887973874769274
+        },
+        {
+          "value": "Bank transfer (automatic)",
+          "count": 1544,
+          "pct": 0.21922476217520942
+        },
+        {
+          "value": "Credit card (automatic)",
+          "count": 1522,
+          "pct": 0.2161010932841119
+        }
+      ],
+      "sample_values": [
+        "Electronic check",
+        "Mailed check",
+        "Mailed check"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "MonthlyCharges",
+      "dtype": "float64",
+      "kind": "numeric",
+      "role": "numeric",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 1585,
+      "unique_ratio": 0.22504614510861848,
+      "constant": false,
+      "near_constant": false,
+      "numeric": {
+        "count": 7043,
+        "mean": 64.76169246059918,
+        "std": 30.090047097678493,
+        "min": 18.25,
+        "q25": 35.5,
+        "median": 70.35,
+        "q75": 89.85,
+        "max": 118.75,
+        "skew": -0.22052443394398033,
+        "outlier_count": 0,
+        "outlier_pct": 0.0,
+        "infinite_count": 0
+      },
+      "top_values": [],
+      "sample_values": [
+        "29.85",
+        "56.95",
+        "53.85"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "TotalCharges",
+      "dtype": "float64",
+      "kind": "numeric",
+      "role": "numeric",
+      "missing_count": 11,
+      "missing_pct": 0.001561834445548772,
+      "unique_count": 6530,
+      "unique_ratio": 0.9271617208575891,
+      "constant": false,
+      "near_constant": false,
+      "numeric": {
+        "count": 7032,
+        "mean": 2283.300440841866,
+        "std": 2266.771361883145,
+        "min": 18.8,
+        "q25": 401.45,
+        "median": 1397.475,
+        "q75": 3794.7375,
+        "max": 8684.8,
+        "skew": 0.9616424997242504,
+        "outlier_count": 0,
+        "outlier_pct": 0.0,
+        "infinite_count": 0
+      },
+      "top_values": [],
+      "sample_values": [
+        "29.85",
+        "1889.5",
+        "108.15"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    },
+    {
+      "name": "Churn",
+      "dtype": "object",
+      "kind": "target",
+      "role": "target",
+      "missing_count": 0,
+      "missing_pct": 0.0,
+      "unique_count": 2,
+      "unique_ratio": 0.0002839698991906858,
+      "constant": false,
+      "near_constant": false,
+      "numeric": null,
+      "top_values": [
+        {
+          "value": "No",
+          "count": 5174,
+          "pct": 0.7346301292063041
+        },
+        {
+          "value": "Yes",
+          "count": 1869,
+          "pct": 0.2653698707936959
+        }
+      ],
+      "sample_values": [
+        "No",
+        "No",
+        "Yes"
+      ],
+      "flags": [],
+      "reasons": [],
+      "duplicate_of": null
+    }
+  ],
+  "target": {
+    "column": "Churn",
+    "classes": [
+      "No",
+      "Yes"
+    ],
+    "counts": {
+      "No": 5174,
+      "Yes": 1869
+    },
+    "mapping": {
+      "No": 0,
+      "Yes": 1
+    },
+    "positive_label": "Yes",
+    "negative_label": "No",
+    "positive_count": 1869,
+    "positive_rate": 0.2653698707936959,
+    "confidence": "high",
+    "method": "churn-style target name: conventional positive label is churn",
+    "reason": null,
+    "ambiguous": false,
+    "candidates": [
+      {
+        "column": "Churn",
+        "score": 1.4,
+        "name_score": 0.8,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "No",
+          "Yes"
+        ],
+        "has_known_labels": true
+      },
+      {
+        "column": "Dependents",
+        "score": 0.65,
+        "name_score": 0.0,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "No",
+          "Yes"
+        ],
+        "has_known_labels": true
+      },
+      {
+        "column": "PaperlessBilling",
+        "score": 0.65,
+        "name_score": 0.0,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "Yes",
+          "No"
+        ],
+        "has_known_labels": true
+      },
+      {
+        "column": "Partner",
+        "score": 0.65,
+        "name_score": 0.0,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "No",
+          "Yes"
+        ],
+        "has_known_labels": true
+      },
+      {
+        "column": "PhoneService",
+        "score": 0.65,
+        "name_score": 0.0,
+        "unique_count": 2,
+        "missing_pct": 0.0,
+        "labels": [
+          "Yes",
+          "No"
+        ],
+        "has_known_labels": true
+      }
+    ],
+    "missing_count": 0,
+    "missing_pct": 0.0
+  },
+  "roles": {
+    "target": "Churn",
+    "id": "customerID",
+    "numeric": [
+      "tenure",
+      "MonthlyCharges",
+      "TotalCharges"
+    ],
+    "categorical": [
+      "gender",
+      "SeniorCitizen",
+      "Partner",
+      "Dependents",
+      "PhoneService",
+      "MultipleLines",
+      "InternetService",
+      "OnlineSecurity",
+      "OnlineBackup",
+      "DeviceProtection",
+      "TechSupport",
+      "StreamingTV",
+      "StreamingMovies",
+      "Contract",
+      "PaperlessBilling",
+      "PaymentMethod"
+    ],
+    "dropped": [],
+    "revenue_proxy": "MonthlyCharges",
+    "capabilities": {
+      "has_tenure": true,
+      "has_monthly_charge": true,
+      "has_total_charges": true,
+      "has_contract": true,
+      "has_payment_method": true,
+      "has_internet_service": true,
+      "has_support_calls": false,
+      "has_usage_minutes": false,
+      "has_plan": false,
+      "has_senior_citizen": true,
+      "has_gender": true,
+      "has_revenue_proxy": true
+    },
+    "capability_sources": {
+      "has_tenure": "tenure",
+      "has_monthly_charge": "MonthlyCharges",
+      "has_total_charges": "TotalCharges",
+      "has_contract": "Contract",
+      "has_payment_method": "PaymentMethod",
+      "has_internet_service": "InternetService",
+      "has_support_calls": null,
+      "has_usage_minutes": null,
+      "has_plan": null,
+      "has_senior_citizen": "SeniorCitizen",
+      "has_gender": "gender",
+      "has_revenue_proxy": "MonthlyCharges"
+    }
+  },
+  "capabilities": {
+    "has_tenure": true,
+    "has_monthly_charge": true,
+    "has_total_charges": true,
+    "has_contract": true,
+    "has_payment_method": true,
+    "has_internet_service": true,
+    "has_support_calls": false,
+    "has_usage_minutes": false,
+    "has_plan": false,
+    "has_senior_citizen": true,
+    "has_gender": true,
+    "has_revenue_proxy": true
+  },
+  "capability_sources": {
+    "has_tenure": "tenure",
+    "has_monthly_charge": "MonthlyCharges",
+    "has_total_charges": "TotalCharges",
+    "has_contract": "Contract",
+    "has_payment_method": "PaymentMethod",
+    "has_internet_service": "InternetService",
+    "has_support_calls": null,
+    "has_usage_minutes": null,
+    "has_plan": null,
+    "has_senior_citizen": "SeniorCitizen",
+    "has_gender": "gender",
+    "has_revenue_proxy": "MonthlyCharges"
+  },
+  "warnings": [],
+  "generated_at": "2026-10-30T17:33:55Z"
+}

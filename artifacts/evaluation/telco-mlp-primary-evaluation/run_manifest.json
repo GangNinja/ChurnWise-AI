@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "phase": 7,
+  "benchmark_run_id": "telco-mlp-primary-evaluation",
+  "generated_at": "2026-10-30T17:24:43Z",
+  "code_version": "0.10.0",
+  "preprocessing_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+  "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+  "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+  "preprocessor_hash": "64094e20109f86e2aa23c2469d7d14cfb452d2afaa9f237a6d3ce63341922764",
+  "selected_model_family": "mlp",
+  "selection_metric": "f1",
+  "selection_rationale": "Selected the required primary model MLP Neural Network using validation f1 (0.6533); other families are comparison baselines. The test partition was not used to choose the model.",
+  "thresholds": {
+    "logistic_regression": 0.61,
+    "random_forest": 0.39,
+    "mlp": 0.59
+  },
+  "test_rows_evaluated": 1409,
+  "test_evaluation_calls": 1,
+  "complete": true,
+  "families": {
+    "logistic_regression": {
+      "status": "completed",
+      "source": "fitted_in_phase7"
+    },
+    "random_forest": {
+      "status": "completed",
+      "source": "fitted_in_phase7"
+    },
+    "mlp": {
+      "status": "completed",
+      "source": "phase6_artifact"
+    }
+  },
+  "artifacts": {
+    "root": "artifacts/evaluation/telco-mlp-primary-evaluation",
+    "metrics": "artifacts/evaluation/telco-mlp-primary-evaluation/metrics.json",
+    "benchmark_markdown": "artifacts/evaluation/telco-mlp-primary-evaluation/benchmark.md",
+    "curves": "artifacts/evaluation/telco-mlp-primary-evaluation/curves.json",
+    "threshold_analysis": "artifacts/evaluation/telco-mlp-primary-evaluation/threshold_analysis.json",
+    "predictions": "artifacts/evaluation/telco-mlp-primary-evaluation/predictions.npz",
+    "run_manifest": "artifacts/evaluation/telco-mlp-primary-evaluation/run_manifest.json",
+    "plots": {
+      "confusion_matrix_logistic_regression": "artifacts/evaluation/telco-mlp-primary-evaluation/confusion_matrix_logistic_regression.png",
+      "confusion_matrix_random_forest": "artifacts/evaluation/telco-mlp-primary-evaluation/confusion_matrix_random_forest.png",
+      "confusion_matrix_mlp": "artifacts/evaluation/telco-mlp-primary-evaluation/confusion_matrix_mlp.png",
+      "roc_curves": "artifacts/evaluation/telco-mlp-primary-evaluation/roc_curves.png",
+      "precision_recall_curves": "artifacts/evaluation/telco-mlp-primary-evaluation/precision_recall_curves.png",
+      "metric_comparison": "artifacts/evaluation/telco-mlp-primary-evaluation/metric_comparison.png",
+      "threshold_analysis": "artifacts/evaluation/telco-mlp-primary-evaluation/threshold_analysis.png",
+      "probability_distributions": "artifacts/evaluation/telco-mlp-primary-evaluation/probability_distributions.png"
+    },
+    "baseline_models": {
+      "logistic_regression": "artifacts/evaluation/telco-mlp-primary-evaluation/models/logistic_regression/model.joblib",
+      "random_forest": "artifacts/evaluation/telco-mlp-primary-evaluation/models/random_forest/model.joblib"
+    }
+  },
+  "warnings": []
+}

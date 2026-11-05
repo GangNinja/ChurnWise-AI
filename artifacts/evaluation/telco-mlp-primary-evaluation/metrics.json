@@ -1,0 +1,1748 @@
+{
+  "schema_version": "1.0",
+  "phase": 7,
+  "benchmark_run_id": "telco-mlp-primary-evaluation",
+  "generated_at": "2026-10-30T17:24:43Z",
+  "code_version": "0.10.0",
+  "seed": 42,
+  "preprocessing": {
+    "run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+    "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+    "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+    "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+    "split_sizes": {
+      "train": 4225,
+      "val": 1409,
+      "test": 1409
+    },
+    "split_strategy": "stratified",
+    "split_seed": 42,
+    "preprocessor_hash": "64094e20109f86e2aa23c2469d7d14cfb452d2afaa9f237a6d3ce63341922764",
+    "preprocessor_path": "artifacts/preprocessors/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep/pipeline.joblib",
+    "pipeline_version": "1.0",
+    "config_fingerprint": "989d8802b962726b058a2f3300ae30941c859dbe563e851137dd8b1d678cef18",
+    "target": {
+      "column": "Churn",
+      "positive_label": "Yes",
+      "negative_label": "No",
+      "mapping": {
+        "No": 0,
+        "Yes": 1
+      },
+      "positive_rate": 0.2653698707936959
+    },
+    "feature_names": [
+      "numeric__tenure",
+      "numeric__MonthlyCharges",
+      "numeric__TotalCharges",
+      "numeric__tenure_years",
+      "numeric__avg_monthly_charge",
+      "boolean__Partner",
+      "boolean__Dependents",
+      "boolean__PhoneService",
+      "boolean__PaperlessBilling",
+      "categorical__gender_Female",
+      "categorical__gender_Male",
+      "categorical__SeniorCitizen_0",
+      "categorical__SeniorCitizen_1",
+      "categorical__MultipleLines_No",
+      "categorical__MultipleLines_No phone service",
+      "categorical__MultipleLines_Yes",
+      "categorical__InternetService_DSL",
+      "categorical__InternetService_Fiber optic",
+      "categorical__InternetService_No",
+      "categorical__OnlineSecurity_No",
+      "categorical__OnlineSecurity_No internet service",
+      "categorical__OnlineSecurity_Yes",
+      "categorical__OnlineBackup_No",
+      "categorical__OnlineBackup_No internet service",
+      "categorical__OnlineBackup_Yes",
+      "categorical__DeviceProtection_No",
+      "categorical__DeviceProtection_No internet service",
+      "categorical__DeviceProtection_Yes",
+      "categorical__TechSupport_No",
+      "categorical__TechSupport_No internet service",
+      "categorical__TechSupport_Yes",
+      "categorical__StreamingTV_No",
+      "categorical__StreamingTV_No internet service",
+      "categorical__StreamingTV_Yes",
+      "categorical__StreamingMovies_No",
+      "categorical__StreamingMovies_No internet service",
+      "categorical__StreamingMovies_Yes",
+      "categorical__Contract_Month-to-month",
+      "categorical__Contract_One year",
+      "categorical__Contract_Two year",
+      "categorical__PaymentMethod_Bank transfer (automatic)",
+      "categorical__PaymentMethod_Credit card (automatic)",
+      "categorical__PaymentMethod_Electronic check",
+      "categorical__PaymentMethod_Mailed check",
+      "categorical__tenure_band_0-6",
+      "categorical__tenure_band_12-24",
+      "categorical__tenure_band_24-48",
+      "categorical__tenure_band_48+",
+      "categorical__tenure_band_6-12"
+    ],
+    "feature_count": 49,
+    "provenance": {
+      "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+      "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+      "manifest_sha256": "e0ec734dc5f8debf8cb346c3fcbc69ccfd08fa0dd20a8629dcabc141c85d7a4b",
+      "validation_report": "reports/validation/fixture-wa-fn-usec-telco-customer-churn-88be4b93.json",
+      "source": {
+        "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+        "title": "Teacher-provided Telco Customer Churn: WA_Fn-UseC_-Telco-Customer-Churn.csv",
+        "source_id": "teacher_provided",
+        "provider": "local_file",
+        "source_dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+        "download_url": "https://fixtures.churnwise.invalid/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+        "landing_url": "https://fixtures.churnwise.invalid/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+        "license": "Teacher-provided dataset; upstream licence not recorded (unverified)",
+        "retrieved_at": "2026-10-30T17:14:52Z",
+        "run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0",
+        "manifest_path": "data/manifests/fixture-wa-fn-usec-telco-customer-churn-88be4b93.json",
+        "acquisition_attempt": 1,
+        "candidate_rank": null,
+        "fallback_of": null,
+        "cached": false,
+        "artifact_path": "data/raw/teacher_provided/fixture-wa-fn-usec-telco-customer-churn-88be4b93/2026-10-30/WA_Fn-UseC_-Telco-Customer-Churn.csv",
+        "artifact_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+        "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a"
+      },
+      "generated_at": "2026-10-30T17:14:55Z",
+      "code_version": "0.10.0"
+    }
+  },
+  "dataset": {
+    "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+    "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+    "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+    "feature_count": 49,
+    "feature_names": [
+      "numeric__tenure",
+      "numeric__MonthlyCharges",
+      "numeric__TotalCharges",
+      "numeric__tenure_years",
+      "numeric__avg_monthly_charge",
+      "boolean__Partner",
+      "boolean__Dependents",
+      "boolean__PhoneService",
+      "boolean__PaperlessBilling",
+      "categorical__gender_Female",
+      "categorical__gender_Male",
+      "categorical__SeniorCitizen_0",
+      "categorical__SeniorCitizen_1",
+      "categorical__MultipleLines_No",
+      "categorical__MultipleLines_No phone service",
+      "categorical__MultipleLines_Yes",
+      "categorical__InternetService_DSL",
+      "categorical__InternetService_Fiber optic",
+      "categorical__InternetService_No",
+      "categorical__OnlineSecurity_No",
+      "categorical__OnlineSecurity_No internet service",
+      "categorical__OnlineSecurity_Yes",
+      "categorical__OnlineBackup_No",
+      "categorical__OnlineBackup_No internet service",
+      "categorical__OnlineBackup_Yes",
+      "categorical__DeviceProtection_No",
+      "categorical__DeviceProtection_No internet service",
+      "categorical__DeviceProtection_Yes",
+      "categorical__TechSupport_No",
+      "categorical__TechSupport_No internet service",
+      "categorical__TechSupport_Yes",
+      "categorical__StreamingTV_No",
+      "categorical__StreamingTV_No internet service",
+      "categorical__StreamingTV_Yes",
+      "categorical__StreamingMovies_No",
+      "categorical__StreamingMovies_No internet service",
+      "categorical__StreamingMovies_Yes",
+      "categorical__Contract_Month-to-month",
+      "categorical__Contract_One year",
+      "categorical__Contract_Two year",
+      "categorical__PaymentMethod_Bank transfer (automatic)",
+      "categorical__PaymentMethod_Credit card (automatic)",
+      "categorical__PaymentMethod_Electronic check",
+      "categorical__PaymentMethod_Mailed check",
+      "categorical__tenure_band_0-6",
+      "categorical__tenure_band_12-24",
+      "categorical__tenure_band_24-48",
+      "categorical__tenure_band_48+",
+      "categorical__tenure_band_6-12"
+    ],
+    "n_train": 4225,
+    "n_val": 1409,
+    "n_test": 1409,
+    "test_positive_count": 374,
+    "test_negative_count": 1035,
+    "test_positive_rate": 0.2654364797728886,
+    "validation_positive_rate": 0.2654364797728886,
+    "train_positive_rate": 0.26532544378698225,
+    "class_weights": {
+      "0": 0.6805734536082474,
+      "1": 1.884478144513827
+    },
+    "target": {
+      "column": "Churn",
+      "positive_label": "Yes",
+      "negative_label": "No",
+      "mapping": {
+        "No": 0,
+        "Yes": 1
+      },
+      "positive_rate": 0.2653698707936959
+    },
+    "test_rows_used": 1409,
+    "matrix_sha256": {
+      "train": "54a214d803890fa0f9b6efabc183ecb6f50e47f342ff1fb6e8f5119c091b83e8",
+      "val": "35d730c7c654a38275297e9fd1dd358f9c6606c43390c69118ec77a5320daeea",
+      "test": "9537589778fa4a4b6665c4055a5c9de21654a835f653b9879cda349636de718b"
+    }
+  },
+  "evaluation_config": {
+    "seed": 42,
+    "threshold_strategy": "max_f1",
+    "fixed_threshold": 0.5,
+    "recall_floor": null,
+    "selection_metric": "f1",
+    "selection_min_recall": null,
+    "primary_family": "mlp",
+    "cv_folds": 0,
+    "version": "1.0",
+    "fingerprint": "811e26d078c76813ef166c991d77c181a3db2f8fff2ed1e1faee08e94e0b4ae2"
+  },
+  "threshold_policy": {
+    "primary": {
+      "strategy": "max_f1",
+      "selected_on": "validation",
+      "frozen_before_test": true,
+      "fixed_threshold": 0.5,
+      "recall_floor": null
+    },
+    "default_threshold": 0.5,
+    "default_threshold_reporting": "Every family also reports metrics at the 0.5 default; those numbers never influenced threshold or model selection."
+  },
+  "families": {
+    "mlp": {
+      "family": "mlp",
+      "label": "MLP Neural Network",
+      "status": "completed",
+      "source": "phase6_artifact",
+      "notes": [
+        "Loaded from the existing Phase 6 artifact; it was not retrained or reselected on the test split.",
+        "Test metrics were computed once, after the threshold was frozen."
+      ],
+      "error": null,
+      "model": {
+        "model_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp",
+        "model_sha256": "8f1c26089a266f5f95ea17969f3be3acea4f9f5b12a97cd5aec84573c35456cf",
+        "artifact_path": "artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/model.keras",
+        "framework": "tensorflow.keras",
+        "config": {
+          "seed": 42,
+          "hidden_units": [
+            64,
+            32
+          ],
+          "dropout": [
+            0.3,
+            0.2
+          ],
+          "l2": 0.0001,
+          "learning_rate": 0.001,
+          "batch_size": 64,
+          "epochs": 150,
+          "early_stopping_patience": 12,
+          "reduce_lr_patience": 5,
+          "reduce_lr_factor": 0.5,
+          "min_learning_rate": 1e-05,
+          "threshold": 0.5,
+          "deterministic": false,
+          "shuffle": true,
+          "verbose": 0,
+          "fingerprint": "443bb6a160c3ef7aa12e91da101417a23e904bff3c93d05925e046ee0618e9b8"
+        },
+        "parameter_count": 5313,
+        "train_rows": 4225,
+        "fit_seconds": 12.303484499978367,
+        "trained_at": "2026-10-30T17:14:55Z"
+      },
+      "class_weight": {
+        "0": 0.6805734536082474,
+        "1": 1.884478144513827
+      },
+      "threshold": {
+        "selected": 0.59,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.59,
+          "n": 1409,
+          "n_positive": 374,
+          "n_negative": 1035,
+          "positive_rate": 0.2654364797728886,
+          "predicted_positive": 474,
+          "predicted_positive_rate": 0.33640880056777855,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                838,
+                197
+              ],
+              [
+                97,
+                277
+              ]
+            ],
+            "tn": 838,
+            "fp": 197,
+            "fn": 97,
+            "tp": 277,
+            "n": 1409
+          },
+          "accuracy": 0.7913413768630234,
+          "precision": 0.5843881856540084,
+          "recall": 0.7406417112299465,
+          "f1": 0.6533018867924528,
+          "specificity": 0.8096618357487922,
+          "balanced_accuracy": 0.7751517734893694,
+          "macro_precision": 0.7403224350729936,
+          "macro_recall": 0.7751517734893694,
+          "macro_f1": 0.7520316540561248,
+          "roc_auc": 0.8555865560980651,
+          "pr_auc": 0.6762285994034478,
+          "brier": 0.16214433350259286,
+          "log_loss": 0.48237857417608165,
+          "class_metrics": {
+            "0": {
+              "precision": 0.8962566844919786,
+              "recall": 0.8096618357487922,
+              "f1": 0.8507614213197968,
+              "support": 1035
+            },
+            "1": {
+              "precision": 0.5843881856540084,
+              "recall": 0.7406417112299465,
+              "f1": 0.6533018867924528,
+              "support": 374
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.59,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 474,
+        "predicted_positive_rate": 0.33640880056777855,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              838,
+              197
+            ],
+            [
+              97,
+              277
+            ]
+          ],
+          "tn": 838,
+          "fp": 197,
+          "fn": 97,
+          "tp": 277,
+          "n": 1409
+        },
+        "accuracy": 0.7913413768630234,
+        "precision": 0.5843881856540084,
+        "recall": 0.7406417112299465,
+        "f1": 0.6533018867924528,
+        "specificity": 0.8096618357487922,
+        "balanced_accuracy": 0.7751517734893694,
+        "macro_precision": 0.7403224350729936,
+        "macro_recall": 0.7751517734893694,
+        "macro_f1": 0.7520316540561248,
+        "roc_auc": 0.8555865560980651,
+        "pr_auc": 0.6762285994034478,
+        "brier": 0.16214433350259286,
+        "log_loss": 0.48237857417608165,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8962566844919786,
+            "recall": 0.8096618357487922,
+            "f1": 0.8507614213197968,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5843881856540084,
+            "recall": 0.7406417112299465,
+            "f1": 0.6533018867924528,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "validation_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 587,
+        "predicted_positive_rate": 0.41660752306600424,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              754,
+              281
+            ],
+            [
+              68,
+              306
+            ]
+          ],
+          "tn": 754,
+          "fp": 281,
+          "fn": 68,
+          "tp": 306,
+          "n": 1409
+        },
+        "accuracy": 0.752306600425834,
+        "precision": 0.5212947189097104,
+        "recall": 0.8181818181818182,
+        "f1": 0.6368366285119668,
+        "specificity": 0.7285024154589372,
+        "balanced_accuracy": 0.7733421168203778,
+        "macro_precision": 0.7192848290412299,
+        "macro_recall": 0.7733421168203778,
+        "macro_f1": 0.7244495474277659,
+        "roc_auc": 0.8555865560980651,
+        "pr_auc": 0.6762285994034478,
+        "brier": 0.16214433350259286,
+        "log_loss": 0.48237857417608165,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9172749391727494,
+            "recall": 0.7285024154589372,
+            "f1": 0.8120624663435649,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5212947189097104,
+            "recall": 0.8181818181818182,
+            "f1": 0.6368366285119668,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.59,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 461,
+        "predicted_positive_rate": 0.3271823988644429,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              831,
+              204
+            ],
+            [
+              117,
+              257
+            ]
+          ],
+          "tn": 831,
+          "fp": 204,
+          "fn": 117,
+          "tp": 257,
+          "n": 1409
+        },
+        "accuracy": 0.7721788502484032,
+        "precision": 0.5574837310195228,
+        "recall": 0.6871657754010695,
+        "f1": 0.615568862275449,
+        "specificity": 0.8028985507246377,
+        "balanced_accuracy": 0.7450321630628536,
+        "macro_precision": 0.7170330047502678,
+        "macro_recall": 0.7450321630628536,
+        "macro_f1": 0.726846458369192,
+        "roc_auc": 0.8342375158231935,
+        "pr_auc": 0.6269586432772275,
+        "brier": 0.1696324811441204,
+        "log_loss": 0.5054500459440966,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8765822784810127,
+            "recall": 0.8028985507246377,
+            "f1": 0.838124054462935,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5574837310195228,
+            "recall": 0.6871657754010695,
+            "f1": 0.615568862275449,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 571,
+        "predicted_positive_rate": 0.40525195173882184,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              760,
+              275
+            ],
+            [
+              78,
+              296
+            ]
+          ],
+          "tn": 760,
+          "fp": 275,
+          "fn": 78,
+          "tp": 296,
+          "n": 1409
+        },
+        "accuracy": 0.7494677075940384,
+        "precision": 0.5183887915936952,
+        "recall": 0.7914438502673797,
+        "f1": 0.6264550264550264,
+        "specificity": 0.7342995169082126,
+        "balanced_accuracy": 0.7628716835877962,
+        "macro_precision": 0.7126550163219072,
+        "macro_recall": 0.7628716835877962,
+        "macro_f1": 0.7189936637881111,
+        "roc_auc": 0.8342375158231935,
+        "pr_auc": 0.6269586432772275,
+        "brier": 0.1696324811441204,
+        "log_loss": 0.5054500459440966,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9069212410501193,
+            "recall": 0.7342995169082126,
+            "f1": 0.811532301121196,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5183887915936952,
+            "recall": 0.7914438502673797,
+            "f1": 0.6264550264550264,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "train_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.59,
+        "n": 4225,
+        "n_positive": 1121,
+        "n_negative": 3104,
+        "positive_rate": 0.26532544378698225,
+        "predicted_positive": 1321,
+        "predicted_positive_rate": 0.31266272189349115,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              2603,
+              501
+            ],
+            [
+              301,
+              820
+            ]
+          ],
+          "tn": 2603,
+          "fp": 501,
+          "fn": 301,
+          "tp": 820,
+          "n": 4225
+        },
+        "accuracy": 0.8101775147928995,
+        "precision": 0.6207418622255867,
+        "recall": 0.7314897413024085,
+        "f1": 0.6715806715806716,
+        "specificity": 0.8385953608247423,
+        "balanced_accuracy": 0.7850425510635755,
+        "macro_precision": 0.7585458622422699,
+        "macro_recall": 0.7850425510635755,
+        "macro_f1": 0.7690459949115076,
+        "roc_auc": 0.8744674650762849,
+        "pr_auc": 0.7056145173491841,
+        "brier": 0.14957540108442122,
+        "log_loss": 0.4506025387791758,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8963498622589532,
+            "recall": 0.8385953608247423,
+            "f1": 0.8665113182423435,
+            "support": 3104
+          },
+          "1": {
+            "precision": 0.6207418622255867,
+            "recall": 0.7314897413024085,
+            "f1": 0.6715806715806716,
+            "support": 1121
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "curves": {
+        "roc": {
+          "auc": 0.8342375158231935,
+          "points": 391
+        },
+        "pr": {
+          "pr_auc": 0.6269586432772275,
+          "points": 1408
+        },
+        "file": "curves.json"
+      },
+      "generalisation": {
+        "train_f1_minus_validation_f1": 0.01827878478821876,
+        "train_roc_auc_minus_validation_roc_auc": 0.018880908978219813,
+        "test_f1_minus_validation_f1": -0.03773302451700378,
+        "note": "Train metrics are in-sample; they are reported only as an overfitting signal, never as performance evidence."
+      }
+    },
+    "logistic_regression": {
+      "family": "logistic_regression",
+      "label": "Logistic Regression",
+      "status": "completed",
+      "source": "fitted_in_phase7",
+      "notes": [
+        "Fitted in Phase 7 on the Phase 5 training partition with the documented fixed hyperparameters; no test row was used.",
+        "Test metrics were computed once, after the threshold was frozen."
+      ],
+      "error": null,
+      "model": {
+        "framework": "scikit-learn",
+        "config": {
+          "penalty": "l2",
+          "C": 1.0,
+          "solver": "lbfgs",
+          "max_iter": 2000,
+          "tol": 0.0001,
+          "class_weight": "balanced",
+          "random_state": 42
+        },
+        "seed": 42,
+        "train_rows": 4225,
+        "fit_seconds": 0.023243699979502708,
+        "feature_count": 49,
+        "artifact_path": "artifacts/evaluation/telco-mlp-primary-evaluation/models/logistic_regression/model.joblib",
+        "model_sha256": "9414af8a05292da8c6252e415af8c192721b398e75bf08632d42a1d603d24255"
+      },
+      "class_weight": {
+        "0": 0.6805734536082474,
+        "1": 1.884478144513827
+      },
+      "threshold": {
+        "selected": 0.61,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.61,
+          "n": 1409,
+          "n_positive": 374,
+          "n_negative": 1035,
+          "positive_rate": 0.2654364797728886,
+          "predicted_positive": 472,
+          "predicted_positive_rate": 0.33498935415188075,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                842,
+                193
+              ],
+              [
+                95,
+                279
+              ]
+            ],
+            "tn": 842,
+            "fp": 193,
+            "fn": 95,
+            "tp": 279,
+            "n": 1409
+          },
+          "accuracy": 0.7955997161107168,
+          "precision": 0.5911016949152542,
+          "recall": 0.7459893048128342,
+          "f1": 0.6595744680851064,
+          "specificity": 0.8135265700483092,
+          "balanced_accuracy": 0.7797579374305716,
+          "macro_precision": 0.744857144149196,
+          "macro_recall": 0.7797579374305716,
+          "macro_f1": 0.7567649216693281,
+          "roc_auc": 0.859846547314578,
+          "pr_auc": 0.6784646403970226,
+          "brier": 0.16150715736593413,
+          "log_loss": 0.4804716243752373,
+          "class_metrics": {
+            "0": {
+              "precision": 0.8986125933831377,
+              "recall": 0.8135265700483092,
+              "f1": 0.8539553752535497,
+              "support": 1035
+            },
+            "1": {
+              "precision": 0.5911016949152542,
+              "recall": 0.7459893048128342,
+              "f1": 0.6595744680851064,
+              "support": 374
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.61,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 472,
+        "predicted_positive_rate": 0.33498935415188075,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              842,
+              193
+            ],
+            [
+              95,
+              279
+            ]
+          ],
+          "tn": 842,
+          "fp": 193,
+          "fn": 95,
+          "tp": 279,
+          "n": 1409
+        },
+        "accuracy": 0.7955997161107168,
+        "precision": 0.5911016949152542,
+        "recall": 0.7459893048128342,
+        "f1": 0.6595744680851064,
+        "specificity": 0.8135265700483092,
+        "balanced_accuracy": 0.7797579374305716,
+        "macro_precision": 0.744857144149196,
+        "macro_recall": 0.7797579374305716,
+        "macro_f1": 0.7567649216693281,
+        "roc_auc": 0.859846547314578,
+        "pr_auc": 0.6784646403970226,
+        "brier": 0.16150715736593413,
+        "log_loss": 0.4804716243752373,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8986125933831377,
+            "recall": 0.8135265700483092,
+            "f1": 0.8539553752535497,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5911016949152542,
+            "recall": 0.7459893048128342,
+            "f1": 0.6595744680851064,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "validation_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 605,
+        "predicted_positive_rate": 0.42938254080908445,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              742,
+              293
+            ],
+            [
+              62,
+              312
+            ]
+          ],
+          "tn": 742,
+          "fp": 293,
+          "fn": 62,
+          "tp": 312,
+          "n": 1409
+        },
+        "accuracy": 0.7480482611781405,
+        "precision": 0.515702479338843,
+        "recall": 0.8342245989304813,
+        "f1": 0.6373850868232891,
+        "specificity": 0.7169082125603865,
+        "balanced_accuracy": 0.7755664057454339,
+        "macro_precision": 0.7192940257390732,
+        "macro_recall": 0.7755664057454339,
+        "macro_f1": 0.7221726956683058,
+        "roc_auc": 0.859846547314578,
+        "pr_auc": 0.6784646403970226,
+        "brier": 0.16150715736593413,
+        "log_loss": 0.4804716243752373,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9228855721393034,
+            "recall": 0.7169082125603865,
+            "f1": 0.8069603045133225,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.515702479338843,
+            "recall": 0.8342245989304813,
+            "f1": 0.6373850868232891,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.61,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 475,
+        "predicted_positive_rate": 0.3371185237757275,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              823,
+              212
+            ],
+            [
+              111,
+              263
+            ]
+          ],
+          "tn": 823,
+          "fp": 212,
+          "fn": 111,
+          "tp": 263,
+          "n": 1409
+        },
+        "accuracy": 0.7707594038325053,
+        "precision": 0.5536842105263158,
+        "recall": 0.7032085561497327,
+        "f1": 0.6195524146054181,
+        "specificity": 0.7951690821256039,
+        "balanced_accuracy": 0.7491888191376683,
+        "macro_precision": 0.717420263721402,
+        "macro_recall": 0.7491888191376683,
+        "macro_f1": 0.7277548766780265,
+        "roc_auc": 0.8379601643028753,
+        "pr_auc": 0.6510479258722627,
+        "brier": 0.1691087558423002,
+        "log_loss": 0.5002475947355967,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8811563169164882,
+            "recall": 0.7951690821256039,
+            "f1": 0.8359573387506349,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5536842105263158,
+            "recall": 0.7032085561497327,
+            "f1": 0.6195524146054181,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 598,
+        "predicted_positive_rate": 0.42441447835344215,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              739,
+              296
+            ],
+            [
+              72,
+              302
+            ]
+          ],
+          "tn": 739,
+          "fp": 296,
+          "fn": 72,
+          "tp": 302,
+          "n": 1409
+        },
+        "accuracy": 0.7388218594748048,
+        "precision": 0.5050167224080268,
+        "recall": 0.8074866310160428,
+        "f1": 0.6213991769547326,
+        "specificity": 0.7140096618357488,
+        "balanced_accuracy": 0.7607481464258958,
+        "macro_precision": 0.708118718787244,
+        "macro_recall": 0.7607481464258958,
+        "macro_f1": 0.7110246155629567,
+        "roc_auc": 0.8379601643028753,
+        "pr_auc": 0.6510479258722627,
+        "brier": 0.1691087558423002,
+        "log_loss": 0.5002475947355967,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9112207151664612,
+            "recall": 0.7140096618357488,
+            "f1": 0.8006500541711808,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5050167224080268,
+            "recall": 0.8074866310160428,
+            "f1": 0.6213991769547326,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "train_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.61,
+        "n": 4225,
+        "n_positive": 1121,
+        "n_negative": 3104,
+        "positive_rate": 0.26532544378698225,
+        "predicted_positive": 1348,
+        "predicted_positive_rate": 0.3190532544378698,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              2545,
+              559
+            ],
+            [
+              332,
+              789
+            ]
+          ],
+          "tn": 2545,
+          "fp": 559,
+          "fn": 332,
+          "tp": 789,
+          "n": 4225
+        },
+        "accuracy": 0.7891124260355029,
+        "precision": 0.5853115727002968,
+        "recall": 0.703835860838537,
+        "f1": 0.6391251518833536,
+        "specificity": 0.819909793814433,
+        "balanced_accuracy": 0.761872827326485,
+        "macro_precision": 0.734956794344587,
+        "macro_recall": 0.761872827326485,
+        "macro_f1": 0.7450767040139056,
+        "roc_auc": 0.8508116200097483,
+        "pr_auc": 0.66560034086579,
+        "brier": 0.16202059074065653,
+        "log_loss": 0.4835035167576824,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8846020159888773,
+            "recall": 0.819909793814433,
+            "f1": 0.8510282561444575,
+            "support": 3104
+          },
+          "1": {
+            "precision": 0.5853115727002968,
+            "recall": 0.703835860838537,
+            "f1": 0.6391251518833536,
+            "support": 1121
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "curves": {
+        "roc": {
+          "auc": 0.8379601643028753,
+          "points": 398
+        },
+        "pr": {
+          "pr_auc": 0.6510479258722627,
+          "points": 1408
+        },
+        "file": "curves.json"
+      },
+      "generalisation": {
+        "train_f1_minus_validation_f1": -0.020449316201752832,
+        "train_roc_auc_minus_validation_roc_auc": -0.009034927304829687,
+        "test_f1_minus_validation_f1": -0.040022053479688346,
+        "note": "Train metrics are in-sample; they are reported only as an overfitting signal, never as performance evidence."
+      }
+    },
+    "random_forest": {
+      "family": "random_forest",
+      "label": "Random Forest",
+      "status": "completed",
+      "source": "fitted_in_phase7",
+      "notes": [
+        "Fitted in Phase 7 on the Phase 5 training partition with the documented fixed hyperparameters; no test row was used.",
+        "Test metrics were computed once, after the threshold was frozen."
+      ],
+      "error": null,
+      "model": {
+        "framework": "scikit-learn",
+        "config": {
+          "n_estimators": 300,
+          "max_depth": null,
+          "min_samples_split": 2,
+          "min_samples_leaf": 2,
+          "max_features": "sqrt",
+          "bootstrap": true,
+          "class_weight": "balanced_subsample",
+          "n_jobs": 1,
+          "random_state": 42
+        },
+        "seed": 42,
+        "train_rows": 4225,
+        "fit_seconds": 1.0965377999818884,
+        "feature_count": 49,
+        "artifact_path": "artifacts/evaluation/telco-mlp-primary-evaluation/models/random_forest/model.joblib",
+        "model_sha256": "a2c634c82fdf297fd2706c1f15b2ef0415755146eaddddd9983c49c946c6ebc7"
+      },
+      "class_weight": {
+        "0": 0.6805734536082474,
+        "1": 1.884478144513827
+      },
+      "threshold": {
+        "selected": 0.39,
+        "strategy": "max_f1",
+        "selected_on": "validation",
+        "recall_floor": null,
+        "objective": "maximum validation positive-class F1",
+        "validation_metrics": {
+          "positive_class": 1,
+          "positive_label": null,
+          "threshold": 0.39,
+          "n": 1409,
+          "n_positive": 374,
+          "n_negative": 1035,
+          "positive_rate": 0.2654364797728886,
+          "predicted_positive": 498,
+          "predicted_positive_rate": 0.3534421575585522,
+          "confusion_matrix": {
+            "labels": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                813,
+                222
+              ],
+              [
+                98,
+                276
+              ]
+            ],
+            "tn": 813,
+            "fp": 222,
+            "fn": 98,
+            "tp": 276,
+            "n": 1409
+          },
+          "accuracy": 0.772888573456352,
+          "precision": 0.5542168674698795,
+          "recall": 0.7379679144385026,
+          "f1": 0.6330275229357797,
+          "specificity": 0.7855072463768116,
+          "balanced_accuracy": 0.7617375804076572,
+          "macro_precision": 0.7233213865340615,
+          "macro_recall": 0.7617375804076572,
+          "macro_f1": 0.7342938231328436,
+          "roc_auc": 0.8473197447622,
+          "pr_auc": 0.6543439010044231,
+          "brier": 0.13845469810597644,
+          "log_loss": 0.42688002980512857,
+          "class_metrics": {
+            "0": {
+              "precision": 0.8924259055982436,
+              "recall": 0.7855072463768116,
+              "f1": 0.8355601233299076,
+              "support": 1035
+            },
+            "1": {
+              "precision": 0.5542168674698795,
+              "recall": 0.7379679144385026,
+              "f1": 0.6330275229357797,
+              "support": 374
+            }
+          },
+          "undefined": [],
+          "notes": []
+        },
+        "notes": [
+          "The threshold was chosen on validation predictions and frozen before the test partition was evaluated.",
+          "ROC-AUC ranks across all thresholds; the threshold above is a separate operating point, not the AUC."
+        ],
+        "default": 0.5
+      },
+      "validation_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.39,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 498,
+        "predicted_positive_rate": 0.3534421575585522,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              813,
+              222
+            ],
+            [
+              98,
+              276
+            ]
+          ],
+          "tn": 813,
+          "fp": 222,
+          "fn": 98,
+          "tp": 276,
+          "n": 1409
+        },
+        "accuracy": 0.772888573456352,
+        "precision": 0.5542168674698795,
+        "recall": 0.7379679144385026,
+        "f1": 0.6330275229357797,
+        "specificity": 0.7855072463768116,
+        "balanced_accuracy": 0.7617375804076572,
+        "macro_precision": 0.7233213865340615,
+        "macro_recall": 0.7617375804076572,
+        "macro_f1": 0.7342938231328436,
+        "roc_auc": 0.8473197447622,
+        "pr_auc": 0.6543439010044231,
+        "brier": 0.13845469810597644,
+        "log_loss": 0.42688002980512857,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8924259055982436,
+            "recall": 0.7855072463768116,
+            "f1": 0.8355601233299076,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5542168674698795,
+            "recall": 0.7379679144385026,
+            "f1": 0.6330275229357797,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "validation_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 380,
+        "predicted_positive_rate": 0.26969481902058196,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              889,
+              146
+            ],
+            [
+              140,
+              234
+            ]
+          ],
+          "tn": 889,
+          "fp": 146,
+          "fn": 140,
+          "tp": 234,
+          "n": 1409
+        },
+        "accuracy": 0.7970191625266146,
+        "precision": 0.6157894736842106,
+        "recall": 0.6256684491978609,
+        "f1": 0.6206896551724138,
+        "specificity": 0.8589371980676328,
+        "balanced_accuracy": 0.7423028236327469,
+        "macro_precision": 0.7398675259577515,
+        "macro_recall": 0.7423028236327469,
+        "macro_f1": 0.7410618818497727,
+        "roc_auc": 0.8473197447622,
+        "pr_auc": 0.6543439010044231,
+        "brier": 0.13845469810597644,
+        "log_loss": 0.42688002980512857,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8639455782312925,
+            "recall": 0.8589371980676328,
+            "f1": 0.8614341085271316,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.6157894736842106,
+            "recall": 0.6256684491978609,
+            "f1": 0.6206896551724138,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.39,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 497,
+        "predicted_positive_rate": 0.35273243435060325,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              802,
+              233
+            ],
+            [
+              110,
+              264
+            ]
+          ],
+          "tn": 802,
+          "fp": 233,
+          "fn": 110,
+          "tp": 264,
+          "n": 1409
+        },
+        "accuracy": 0.7565649396735273,
+        "precision": 0.5311871227364185,
+        "recall": 0.7058823529411765,
+        "f1": 0.606199770378875,
+        "specificity": 0.77487922705314,
+        "balanced_accuracy": 0.7403807899971583,
+        "macro_precision": 0.7052865438243496,
+        "macro_recall": 0.7403807899971583,
+        "macro_f1": 0.7150156530374087,
+        "roc_auc": 0.8212573303366142,
+        "pr_auc": 0.6186066247461819,
+        "brier": 0.14980629611055565,
+        "log_loss": 0.45586665618902583,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8793859649122807,
+            "recall": 0.77487922705314,
+            "f1": 0.8238315356959424,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5311871227364185,
+            "recall": 0.7058823529411765,
+            "f1": 0.606199770378875,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "test_metrics_at_0_5": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.5,
+        "n": 1409,
+        "n_positive": 374,
+        "n_negative": 1035,
+        "positive_rate": 0.2654364797728886,
+        "predicted_positive": 372,
+        "predicted_positive_rate": 0.2640170333569908,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              874,
+              161
+            ],
+            [
+              163,
+              211
+            ]
+          ],
+          "tn": 874,
+          "fp": 161,
+          "fn": 163,
+          "tp": 211,
+          "n": 1409
+        },
+        "accuracy": 0.7700496806245565,
+        "precision": 0.5672043010752689,
+        "recall": 0.5641711229946524,
+        "f1": 0.5656836461126007,
+        "specificity": 0.8444444444444444,
+        "balanced_accuracy": 0.7043077837195484,
+        "macro_precision": 0.7050100579628996,
+        "macro_recall": 0.7043077837195484,
+        "macro_f1": 0.7046564948709721,
+        "roc_auc": 0.8212573303366142,
+        "pr_auc": 0.6186066247461819,
+        "brier": 0.14980629611055565,
+        "log_loss": 0.45586665618902583,
+        "class_metrics": {
+          "0": {
+            "precision": 0.8428158148505304,
+            "recall": 0.8444444444444444,
+            "f1": 0.8436293436293436,
+            "support": 1035
+          },
+          "1": {
+            "precision": 0.5672043010752689,
+            "recall": 0.5641711229946524,
+            "f1": 0.5656836461126007,
+            "support": 374
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "train_metrics": {
+        "positive_class": 1,
+        "positive_label": null,
+        "threshold": 0.39,
+        "n": 4225,
+        "n_positive": 1121,
+        "n_negative": 3104,
+        "positive_rate": 0.26532544378698225,
+        "predicted_positive": 1446,
+        "predicted_positive_rate": 0.3422485207100592,
+        "confusion_matrix": {
+          "labels": [
+            0,
+            1
+          ],
+          "matrix": [
+            [
+              2778,
+              326
+            ],
+            [
+              1,
+              1120
+            ]
+          ],
+          "tn": 2778,
+          "fp": 326,
+          "fn": 1,
+          "tp": 1120,
+          "n": 4225
+        },
+        "accuracy": 0.9226035502958579,
+        "precision": 0.7745504840940526,
+        "recall": 0.9991079393398751,
+        "f1": 0.872613946240748,
+        "specificity": 0.8949742268041238,
+        "balanced_accuracy": 0.9470410830719994,
+        "macro_precision": 0.8870953212121937,
+        "macro_recall": 0.9470410830719994,
+        "macro_f1": 0.9085150302340915,
+        "roc_auc": 0.9914485467228267,
+        "pr_auc": 0.9744447155591305,
+        "brier": 0.055711289375300226,
+        "log_loss": 0.21498983184744572,
+        "class_metrics": {
+          "0": {
+            "precision": 0.9996401583303347,
+            "recall": 0.8949742268041238,
+            "f1": 0.9444161142274351,
+            "support": 3104
+          },
+          "1": {
+            "precision": 0.7745504840940526,
+            "recall": 0.9991079393398751,
+            "f1": 0.872613946240748,
+            "support": 1121
+          }
+        },
+        "undefined": [],
+        "notes": []
+      },
+      "curves": {
+        "roc": {
+          "auc": 0.8212573303366142,
+          "points": 420
+        },
+        "pr": {
+          "pr_auc": 0.6186066247461819,
+          "points": 1366
+        },
+        "file": "curves.json"
+      },
+      "generalisation": {
+        "train_f1_minus_validation_f1": 0.23958642330496827,
+        "train_roc_auc_minus_validation_roc_auc": 0.14412880196062672,
+        "test_f1_minus_validation_f1": -0.026827752556904727,
+        "note": "Train metrics are in-sample; they are reported only as an overfitting signal, never as performance evidence."
+      }
+    }
+  },
+  "comparison_table": [
+    {
+      "family": "logistic_regression",
+      "label": "Logistic Regression",
+      "threshold": 0.61,
+      "accuracy": 0.7707594038325053,
+      "precision": 0.5536842105263158,
+      "recall": 0.7032085561497327,
+      "f1": 0.6195524146054181,
+      "roc_auc": 0.8379601643028753,
+      "pr_auc": 0.6510479258722627,
+      "brier": 0.1691087558423002,
+      "tn": 823,
+      "fp": 212,
+      "fn": 111,
+      "tp": 263,
+      "n": 1409
+    },
+    {
+      "family": "random_forest",
+      "label": "Random Forest",
+      "threshold": 0.39,
+      "accuracy": 0.7565649396735273,
+      "precision": 0.5311871227364185,
+      "recall": 0.7058823529411765,
+      "f1": 0.606199770378875,
+      "roc_auc": 0.8212573303366142,
+      "pr_auc": 0.6186066247461819,
+      "brier": 0.14980629611055565,
+      "tn": 802,
+      "fp": 233,
+      "fn": 110,
+      "tp": 264,
+      "n": 1409
+    },
+    {
+      "family": "mlp",
+      "label": "MLP Neural Network",
+      "threshold": 0.59,
+      "accuracy": 0.7721788502484032,
+      "precision": 0.5574837310195228,
+      "recall": 0.6871657754010695,
+      "f1": 0.615568862275449,
+      "roc_auc": 0.8342375158231935,
+      "pr_auc": 0.6269586432772275,
+      "brier": 0.1696324811441204,
+      "tn": 831,
+      "fp": 204,
+      "fn": 117,
+      "tp": 257,
+      "n": 1409
+    }
+  ],
+  "selection": {
+    "selection_metric": "f1",
+    "selected_family": "mlp",
+    "selected_label": "MLP Neural Network",
+    "selected_validation_value": 0.6533018867924528,
+    "threshold": 0.59,
+    "selected_on": "validation",
+    "test_used_for_selection": false,
+    "recall_floor": null,
+    "ranking": [
+      {
+        "family": "logistic_regression",
+        "label": "Logistic Regression",
+        "metric": "f1",
+        "validation_value": 0.6595744680851064,
+        "validation_recall": 0.7459893048128342,
+        "validation_f1": 0.6595744680851064,
+        "validation_roc_auc": 0.859846547314578,
+        "test_value": 0.6195524146054181,
+        "rank": 1
+      },
+      {
+        "family": "mlp",
+        "label": "MLP Neural Network",
+        "metric": "f1",
+        "validation_value": 0.6533018867924528,
+        "validation_recall": 0.7406417112299465,
+        "validation_f1": 0.6533018867924528,
+        "validation_roc_auc": 0.8555865560980651,
+        "test_value": 0.615568862275449,
+        "rank": 2
+      },
+      {
+        "family": "random_forest",
+        "label": "Random Forest",
+        "metric": "f1",
+        "validation_value": 0.6330275229357797,
+        "validation_recall": 0.7379679144385026,
+        "validation_f1": 0.6330275229357797,
+        "validation_roc_auc": 0.8473197447622,
+        "test_value": 0.606199770378875,
+        "rank": 3
+      }
+    ],
+    "rationale": "Selected the required primary model MLP Neural Network using validation f1 (0.6533); other families are comparison baselines. The test partition was not used to choose the model.",
+    "notes": [
+      "The configured primary family is fixed by the product objective.",
+      "Its threshold is chosen using validation rows only."
+    ]
+  },
+  "error_analysis": {
+    "interpretation": "A false positive is a retained customer predicted to churn (wasted retention spend). A false negative is a churner predicted to stay (missed save opportunity). Recall drives missed churners; precision drives outreach cost.",
+    "test_rows": 1409,
+    "test_positive_rows": 374,
+    "families": {
+      "logistic_regression": {
+        "false_positives": 212,
+        "false_negatives": 111,
+        "false_positive_rate_of_negatives": 0.20483091787439614,
+        "false_negative_rate_of_positives": 0.2967914438502674,
+        "mean_probability_false_positives": 0.7450291798944153,
+        "mean_probability_false_negatives": 0.4011605692164907,
+        "note": "Aggregate counts and mean probabilities only; no customer identifiers or raw records are exposed."
+      },
+      "random_forest": {
+        "false_positives": 233,
+        "false_negatives": 110,
+        "false_positive_rate_of_negatives": 0.2251207729468599,
+        "false_negative_rate_of_positives": 0.29411764705882354,
+        "mean_probability_false_positives": 0.595552238351793,
+        "mean_probability_false_negatives": 0.23835791615487362,
+        "note": "Aggregate counts and mean probabilities only; no customer identifiers or raw records are exposed."
+      },
+      "mlp": {
+        "false_positives": 204,
+        "false_negatives": 117,
+        "false_positive_rate_of_negatives": 0.19710144927536233,
+        "false_negative_rate_of_positives": 0.31283422459893045,
+        "mean_probability_false_positives": 0.7457372403027964,
+        "mean_probability_false_negatives": 0.40411504057164377,
+        "note": "Aggregate counts and mean probabilities only; no customer identifiers or raw records are exposed."
+      }
+    }
+  },
+  "cross_validation": {
+    "enabled": false,
+    "folds": 0,
+    "scope": "train+validation rows only",
+    "status": "disabled",
+    "preprocessing": {
+      "strategy": "refit per fold from the Phase 5 base frame",
+      "fold_safe": false,
+      "verified_against_phase5": false,
+      "by_family": {}
+    },
+    "notes": [
+      "CV metrics are a stability estimate at the 0.5 reference threshold; the held-out test result remains the primary evidence.",
+      "Each fold refits the Phase 5 column plan, imputers, scaler and encoder on its own training rows; validation rows are transform-only.",
+      "The base frame is reconstructed from the recorded raw artifact and accepted only if a full-training refit reproduces the Phase 5 matrices exactly; otherwise CV is reported as unavailable."
+    ]
+  },
+  "plots": {
+    "confusion_matrix_logistic_regression": "confusion_matrix_logistic_regression.png",
+    "confusion_matrix_random_forest": "confusion_matrix_random_forest.png",
+    "confusion_matrix_mlp": "confusion_matrix_mlp.png",
+    "roc_curves": "roc_curves.png",
+    "precision_recall_curves": "precision_recall_curves.png",
+    "metric_comparison": "metric_comparison.png",
+    "threshold_analysis": "threshold_analysis.png",
+    "probability_distributions": "probability_distributions.png"
+  },
+  "artifacts": {
+    "root": "artifacts/evaluation/telco-mlp-primary-evaluation",
+    "metrics": "artifacts/evaluation/telco-mlp-primary-evaluation/metrics.json",
+    "benchmark_markdown": "artifacts/evaluation/telco-mlp-primary-evaluation/benchmark.md",
+    "curves": "artifacts/evaluation/telco-mlp-primary-evaluation/curves.json",
+    "threshold_analysis": "artifacts/evaluation/telco-mlp-primary-evaluation/threshold_analysis.json",
+    "predictions": "artifacts/evaluation/telco-mlp-primary-evaluation/predictions.npz",
+    "run_manifest": "artifacts/evaluation/telco-mlp-primary-evaluation/run_manifest.json",
+    "plots": {
+      "confusion_matrix_logistic_regression": "artifacts/evaluation/telco-mlp-primary-evaluation/confusion_matrix_logistic_regression.png",
+      "confusion_matrix_random_forest": "artifacts/evaluation/telco-mlp-primary-evaluation/confusion_matrix_random_forest.png",
+      "confusion_matrix_mlp": "artifacts/evaluation/telco-mlp-primary-evaluation/confusion_matrix_mlp.png",
+      "roc_curves": "artifacts/evaluation/telco-mlp-primary-evaluation/roc_curves.png",
+      "precision_recall_curves": "artifacts/evaluation/telco-mlp-primary-evaluation/precision_recall_curves.png",
+      "metric_comparison": "artifacts/evaluation/telco-mlp-primary-evaluation/metric_comparison.png",
+      "threshold_analysis": "artifacts/evaluation/telco-mlp-primary-evaluation/threshold_analysis.png",
+      "probability_distributions": "artifacts/evaluation/telco-mlp-primary-evaluation/probability_distributions.png"
+    },
+    "baseline_models": {
+      "logistic_regression": "artifacts/evaluation/telco-mlp-primary-evaluation/models/logistic_regression/model.joblib",
+      "random_forest": "artifacts/evaluation/telco-mlp-primary-evaluation/models/random_forest/model.joblib"
+    }
+  },
+  "environment": {
+    "python": "3.13.0",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.4",
+    "code_version": "0.10.0",
+    "pandas": "2.3.3",
+    "scikit_learn": "1.7.2",
+    "tensorflow": "2.21.0",
+    "keras": "3.15.1"
+  },
+  "validity": {
+    "roc_auc_above_chance": true,
+    "test_roc_auc_by_family": {
+      "logistic_regression": 0.8379601643028753,
+      "random_forest": 0.8212573303366142,
+      "mlp": 0.8342375158231935
+    },
+    "test_evaluation_calls": 1,
+    "test_metric_evaluations": 3,
+    "test_evaluated_once": true,
+    "thresholds_frozen_before_test": true,
+    "flags": []
+  },
+  "complete": true,
+  "missing_families": [],
+  "warnings": [],
+  "limitations": [
+    "Metrics describe one held-out split; they are not a guarantee of future churn behaviour or causal retention impact.",
+    "A threshold selected to maximise validation F1 is a statistical choice, not automatically the best business decision; contact costs and capacity are modeled in later phases.",
+    "The benchmark compares model families on one dataset; results do not transfer automatically to other customer bases.",
+    "Test metrics were computed once. Re-running this benchmark on a new split produces a new evaluation, not a re-tuned score for this one.",
+    "Cross-validation was disabled for this run.",
+    "Probability calibration is summarised by the Brier score only; no recalibration was fitted."
+  ]
+}

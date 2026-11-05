@@ -1,0 +1,703 @@
+{
+  "family": "mlp",
+  "output_space": "probability",
+  "probability": 0.7796602249145508,
+  "predicted_class": 1,
+  "threshold": 0.59,
+  "positive_label": "Yes",
+  "base_value": 0.4674999713897705,
+  "model_output": 0.7796602249145508,
+  "contributions": [
+    {
+      "feature": "Contract",
+      "kind": "categorical",
+      "contribution": 0.07407194651663303,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "Contract=Month-to-month",
+      "columns": [
+        {
+          "name": "categorical__Contract_Month-to-month",
+          "value": 1.0,
+          "contribution": 0.035805292576551434
+        },
+        {
+          "name": "categorical__Contract_One year",
+          "value": 0.0,
+          "contribution": 0.012047212943434716
+        },
+        {
+          "name": "categorical__Contract_Two year",
+          "value": 0.0,
+          "contribution": 0.02621944099664688
+        }
+      ]
+    },
+    {
+      "feature": "tenure",
+      "kind": "numeric",
+      "contribution": 0.0574848820679762,
+      "direction": "increases_churn",
+      "value": -1.1955867238642264,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__tenure",
+          "value": -1.1955867238642264,
+          "contribution": 0.0574848820679762
+        }
+      ]
+    },
+    {
+      "feature": "OnlineSecurity",
+      "kind": "categorical",
+      "contribution": 0.047568966774269944,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "OnlineSecurity=No",
+      "columns": [
+        {
+          "name": "categorical__OnlineSecurity_No",
+          "value": 1.0,
+          "contribution": 0.017902620611712338
+        },
+        {
+          "name": "categorical__OnlineSecurity_No internet service",
+          "value": 0.0,
+          "contribution": 0.0033920367807149885
+        },
+        {
+          "name": "categorical__OnlineSecurity_Yes",
+          "value": 0.0,
+          "contribution": 0.026274309381842612
+        }
+      ]
+    },
+    {
+      "feature": "PaperlessBilling",
+      "kind": "boolean",
+      "contribution": -0.04570873814150999,
+      "direction": "decreases_churn",
+      "value": -1.1869203560411916,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "boolean__PaperlessBilling",
+          "value": -1.1869203560411916,
+          "contribution": -0.04570873814150999
+        }
+      ]
+    },
+    {
+      "feature": "tenure_band",
+      "kind": "categorical",
+      "contribution": 0.043274705545045436,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "tenure_band=0-6",
+      "columns": [
+        {
+          "name": "categorical__tenure_band_0-6",
+          "value": 1.0,
+          "contribution": 0.028400615975260734
+        },
+        {
+          "name": "categorical__tenure_band_12-24",
+          "value": 0.0,
+          "contribution": 0.0061000589281320575
+        },
+        {
+          "name": "categorical__tenure_band_24-48",
+          "value": 0.0,
+          "contribution": 0.009284862279891969
+        },
+        {
+          "name": "categorical__tenure_band_48+",
+          "value": 0.0,
+          "contribution": 0.0015081903571262955
+        },
+        {
+          "name": "categorical__tenure_band_6-12",
+          "value": 0.0,
+          "contribution": -0.0020190219953656195
+        }
+      ]
+    },
+    {
+      "feature": "tenure_years",
+      "kind": "numeric",
+      "contribution": 0.04067051166920496,
+      "direction": "increases_churn",
+      "value": -1.1955867238642266,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__tenure_years",
+          "value": -1.1955867238642266,
+          "contribution": 0.04067051166920496
+        }
+      ]
+    },
+    {
+      "feature": "PaymentMethod",
+      "kind": "categorical",
+      "contribution": 0.038456741720438,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "PaymentMethod=Electronic check",
+      "columns": [
+        {
+          "name": "categorical__PaymentMethod_Bank transfer (automatic)",
+          "value": 0.0,
+          "contribution": 0.006142671890556812
+        },
+        {
+          "name": "categorical__PaymentMethod_Credit card (automatic)",
+          "value": 0.0,
+          "contribution": 0.004219237035140395
+        },
+        {
+          "name": "categorical__PaymentMethod_Electronic check",
+          "value": 1.0,
+          "contribution": 0.02842587426304817
+        },
+        {
+          "name": "categorical__PaymentMethod_Mailed check",
+          "value": 0.0,
+          "contribution": -0.0003310414683073759
+        }
+      ]
+    },
+    {
+      "feature": "InternetService",
+      "kind": "categorical",
+      "contribution": 0.03157391377957538,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "InternetService=Fiber optic",
+      "columns": [
+        {
+          "name": "categorical__InternetService_DSL",
+          "value": 0.0,
+          "contribution": 0.02195865847170353
+        },
+        {
+          "name": "categorical__InternetService_Fiber optic",
+          "value": 1.0,
+          "contribution": 0.010701756918570027
+        },
+        {
+          "name": "categorical__InternetService_No",
+          "value": 0.0,
+          "contribution": -0.0010865016106981784
+        }
+      ]
+    },
+    {
+      "feature": "TechSupport",
+      "kind": "categorical",
+      "contribution": 0.028642648425884543,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "TechSupport=No",
+      "columns": [
+        {
+          "name": "categorical__TechSupport_No",
+          "value": 1.0,
+          "contribution": 0.007743324737530202
+        },
+        {
+          "name": "categorical__TechSupport_No internet service",
+          "value": 0.0,
+          "contribution": 0.00040546839823946357
+        },
+        {
+          "name": "categorical__TechSupport_Yes",
+          "value": 0.0,
+          "contribution": 0.02049385529011488
+        }
+      ]
+    },
+    {
+      "feature": "avg_monthly_charge",
+      "kind": "numeric",
+      "contribution": 0.022499166830275016,
+      "direction": "increases_churn",
+      "value": 0.8064014999915332,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__avg_monthly_charge",
+          "value": 0.8064014999915332,
+          "contribution": 0.022499166830275016
+        }
+      ]
+    },
+    {
+      "feature": "MonthlyCharges",
+      "kind": "numeric",
+      "contribution": 0.02239628018555424,
+      "direction": "increases_churn",
+      "value": 0.8411431856026196,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__MonthlyCharges",
+          "value": 0.8411431856026196,
+          "contribution": 0.02239628018555424
+        }
+      ]
+    },
+    {
+      "feature": "MultipleLines",
+      "kind": "categorical",
+      "contribution": -0.02091920337174088,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "MultipleLines=No",
+      "columns": [
+        {
+          "name": "categorical__MultipleLines_No",
+          "value": 1.0,
+          "contribution": -0.011649729674682021
+        },
+        {
+          "name": "categorical__MultipleLines_No phone service",
+          "value": 0.0,
+          "contribution": 0.00032024748157709836
+        },
+        {
+          "name": "categorical__MultipleLines_Yes",
+          "value": 0.0,
+          "contribution": -0.009589721178635956
+        }
+      ]
+    },
+    {
+      "feature": "OnlineBackup",
+      "kind": "categorical",
+      "contribution": -0.01779923780297395,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "OnlineBackup=Yes",
+      "columns": [
+        {
+          "name": "categorical__OnlineBackup_No",
+          "value": 0.0,
+          "contribution": -0.005786086911684834
+        },
+        {
+          "name": "categorical__OnlineBackup_No internet service",
+          "value": 0.0,
+          "contribution": 0.006393648497760296
+        },
+        {
+          "name": "categorical__OnlineBackup_Yes",
+          "value": 1.0,
+          "contribution": -0.018406799389049412
+        }
+      ]
+    },
+    {
+      "feature": "PhoneService",
+      "kind": "boolean",
+      "contribution": -0.012810386687187885,
+      "direction": "decreases_churn",
+      "value": 0.3295950617794655,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "boolean__PhoneService",
+          "value": 0.3295950617794655,
+          "contribution": -0.012810386687187885
+        }
+      ]
+    },
+    {
+      "feature": "gender",
+      "kind": "categorical",
+      "contribution": -0.011463780923513696,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "gender=Male",
+      "columns": [
+        {
+          "name": "categorical__gender_Female",
+          "value": 0.0,
+          "contribution": 0.0032270913769025357
+        },
+        {
+          "name": "categorical__gender_Male",
+          "value": 1.0,
+          "contribution": -0.01469087230041623
+        }
+      ]
+    },
+    {
+      "feature": "TotalCharges",
+      "kind": "numeric",
+      "contribution": 0.009571791185504957,
+      "direction": "increases_churn",
+      "value": -0.8877436627291655,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__TotalCharges",
+          "value": -0.8877436627291655,
+          "contribution": 0.009571791185504957
+        }
+      ]
+    },
+    {
+      "feature": "SeniorCitizen",
+      "kind": "categorical",
+      "contribution": -0.008185533898358698,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "SeniorCitizen=0",
+      "columns": [
+        {
+          "name": "categorical__SeniorCitizen_0",
+          "value": 1.0,
+          "contribution": -0.008269280828535557
+        },
+        {
+          "name": "categorical__SeniorCitizen_1",
+          "value": 0.0,
+          "contribution": 8.374693017685786e-05
+        }
+      ]
+    },
+    {
+      "feature": "Partner",
+      "kind": "boolean",
+      "contribution": -0.006652308465959009,
+      "direction": "decreases_churn",
+      "value": -0.9639625222446345,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "boolean__Partner",
+          "value": -0.9639625222446345,
+          "contribution": -0.006652308465959009
+        }
+      ]
+    },
+    {
+      "feature": "StreamingMovies",
+      "kind": "categorical",
+      "contribution": 0.006225247523761936,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "StreamingMovies=Yes",
+      "columns": [
+        {
+          "name": "categorical__StreamingMovies_No",
+          "value": 0.0,
+          "contribution": 0.007139142252854071
+        },
+        {
+          "name": "categorical__StreamingMovies_No internet service",
+          "value": 0.0,
+          "contribution": 0.000919898721986101
+        },
+        {
+          "name": "categorical__StreamingMovies_Yes",
+          "value": 1.0,
+          "contribution": -0.0018337934510782362
+        }
+      ]
+    },
+    {
+      "feature": "StreamingTV",
+      "kind": "categorical",
+      "contribution": 0.004925476759672165,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "StreamingTV=No",
+      "columns": [
+        {
+          "name": "categorical__StreamingTV_No",
+          "value": 1.0,
+          "contribution": -0.00790773743763566
+        },
+        {
+          "name": "categorical__StreamingTV_No internet service",
+          "value": 0.0,
+          "contribution": 0.0034816030040383337
+        },
+        {
+          "name": "categorical__StreamingTV_Yes",
+          "value": 0.0,
+          "contribution": 0.009351611193269492
+        }
+      ]
+    },
+    {
+      "feature": "DeviceProtection",
+      "kind": "categorical",
+      "contribution": 0.004402703520900103,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "DeviceProtection=Yes",
+      "columns": [
+        {
+          "name": "categorical__DeviceProtection_No",
+          "value": 0.0,
+          "contribution": -0.003530948048864957
+        },
+        {
+          "name": "categorical__DeviceProtection_No internet service",
+          "value": 0.0,
+          "contribution": -0.0003046108712442219
+        },
+        {
+          "name": "categorical__DeviceProtection_Yes",
+          "value": 1.0,
+          "contribution": 0.008238262441009283
+        }
+      ]
+    },
+    {
+      "feature": "Dependents",
+      "kind": "boolean",
+      "contribution": 0.00393448832516282,
+      "direction": "increases_churn",
+      "value": -0.6518879056125982,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "boolean__Dependents",
+          "value": -0.6518879056125982,
+          "contribution": 0.00393448832516282
+        }
+      ]
+    }
+  ],
+  "top_positive": [
+    {
+      "feature": "Contract",
+      "kind": "categorical",
+      "contribution": 0.07407194651663303,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "Contract=Month-to-month",
+      "columns": [
+        {
+          "name": "categorical__Contract_Month-to-month",
+          "value": 1.0,
+          "contribution": 0.035805292576551434
+        },
+        {
+          "name": "categorical__Contract_One year",
+          "value": 0.0,
+          "contribution": 0.012047212943434716
+        },
+        {
+          "name": "categorical__Contract_Two year",
+          "value": 0.0,
+          "contribution": 0.02621944099664688
+        }
+      ]
+    },
+    {
+      "feature": "tenure",
+      "kind": "numeric",
+      "contribution": 0.0574848820679762,
+      "direction": "increases_churn",
+      "value": -1.1955867238642264,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__tenure",
+          "value": -1.1955867238642264,
+          "contribution": 0.0574848820679762
+        }
+      ]
+    },
+    {
+      "feature": "OnlineSecurity",
+      "kind": "categorical",
+      "contribution": 0.047568966774269944,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "OnlineSecurity=No",
+      "columns": [
+        {
+          "name": "categorical__OnlineSecurity_No",
+          "value": 1.0,
+          "contribution": 0.017902620611712338
+        },
+        {
+          "name": "categorical__OnlineSecurity_No internet service",
+          "value": 0.0,
+          "contribution": 0.0033920367807149885
+        },
+        {
+          "name": "categorical__OnlineSecurity_Yes",
+          "value": 0.0,
+          "contribution": 0.026274309381842612
+        }
+      ]
+    },
+    {
+      "feature": "tenure_band",
+      "kind": "categorical",
+      "contribution": 0.043274705545045436,
+      "direction": "increases_churn",
+      "value": 1.0,
+      "active_level": "tenure_band=0-6",
+      "columns": [
+        {
+          "name": "categorical__tenure_band_0-6",
+          "value": 1.0,
+          "contribution": 0.028400615975260734
+        },
+        {
+          "name": "categorical__tenure_band_12-24",
+          "value": 0.0,
+          "contribution": 0.0061000589281320575
+        },
+        {
+          "name": "categorical__tenure_band_24-48",
+          "value": 0.0,
+          "contribution": 0.009284862279891969
+        },
+        {
+          "name": "categorical__tenure_band_48+",
+          "value": 0.0,
+          "contribution": 0.0015081903571262955
+        },
+        {
+          "name": "categorical__tenure_band_6-12",
+          "value": 0.0,
+          "contribution": -0.0020190219953656195
+        }
+      ]
+    },
+    {
+      "feature": "tenure_years",
+      "kind": "numeric",
+      "contribution": 0.04067051166920496,
+      "direction": "increases_churn",
+      "value": -1.1955867238642266,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "numeric__tenure_years",
+          "value": -1.1955867238642266,
+          "contribution": 0.04067051166920496
+        }
+      ]
+    }
+  ],
+  "top_negative": [
+    {
+      "feature": "PaperlessBilling",
+      "kind": "boolean",
+      "contribution": -0.04570873814150999,
+      "direction": "decreases_churn",
+      "value": -1.1869203560411916,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "boolean__PaperlessBilling",
+          "value": -1.1869203560411916,
+          "contribution": -0.04570873814150999
+        }
+      ]
+    },
+    {
+      "feature": "MultipleLines",
+      "kind": "categorical",
+      "contribution": -0.02091920337174088,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "MultipleLines=No",
+      "columns": [
+        {
+          "name": "categorical__MultipleLines_No",
+          "value": 1.0,
+          "contribution": -0.011649729674682021
+        },
+        {
+          "name": "categorical__MultipleLines_No phone service",
+          "value": 0.0,
+          "contribution": 0.00032024748157709836
+        },
+        {
+          "name": "categorical__MultipleLines_Yes",
+          "value": 0.0,
+          "contribution": -0.009589721178635956
+        }
+      ]
+    },
+    {
+      "feature": "OnlineBackup",
+      "kind": "categorical",
+      "contribution": -0.01779923780297395,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "OnlineBackup=Yes",
+      "columns": [
+        {
+          "name": "categorical__OnlineBackup_No",
+          "value": 0.0,
+          "contribution": -0.005786086911684834
+        },
+        {
+          "name": "categorical__OnlineBackup_No internet service",
+          "value": 0.0,
+          "contribution": 0.006393648497760296
+        },
+        {
+          "name": "categorical__OnlineBackup_Yes",
+          "value": 1.0,
+          "contribution": -0.018406799389049412
+        }
+      ]
+    },
+    {
+      "feature": "PhoneService",
+      "kind": "boolean",
+      "contribution": -0.012810386687187885,
+      "direction": "decreases_churn",
+      "value": 0.3295950617794655,
+      "active_level": null,
+      "columns": [
+        {
+          "name": "boolean__PhoneService",
+          "value": 0.3295950617794655,
+          "contribution": -0.012810386687187885
+        }
+      ]
+    },
+    {
+      "feature": "gender",
+      "kind": "categorical",
+      "contribution": -0.011463780923513696,
+      "direction": "decreases_churn",
+      "value": 1.0,
+      "active_level": "gender=Male",
+      "columns": [
+        {
+          "name": "categorical__gender_Female",
+          "value": 0.0,
+          "contribution": 0.0032270913769025357
+        },
+        {
+          "name": "categorical__gender_Male",
+          "value": 1.0,
+          "contribution": -0.01469087230041623
+        }
+      ]
+    }
+  ],
+  "summary": "The model predicts churn probability 0.780 at threshold 0.59; predicted class 1 (Yes). Largest upward contributions: Contract (Contract=Month-to-month) +0.074, tenure (transformed value -1.196) +0.057, OnlineSecurity (OnlineSecurity=No) +0.048. Largest downward contributions: PaperlessBilling (transformed value -1.187) -0.046, MultipleLines (MultipleLines=No) -0.021, OnlineBackup (OnlineBackup=Yes) -0.018. These are SHAP attributions of the model output, not causal effects; changing a feature is not guaranteed to change churn by the shown amount.",
+  "additivity_error": 1.0256428628618863e-07,
+  "row_position": 603,
+  "plot_path": "artifacts/explanations/telco-teacher-mlp-global-shap-20261106/local/row_00603.png",
+  "warnings": [
+    "Contributions for one-hot encoded features were aggregated by summation; raw column detail is included."
+  ]
+}

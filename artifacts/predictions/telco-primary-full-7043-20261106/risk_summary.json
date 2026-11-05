@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "phase": 9,
+  "run_id": "telco-primary-full-7043-20261106",
+  "generated_at": "2026-11-05T20:01:05Z",
+  "n_rows": 7043,
+  "model": {
+    "family": "mlp",
+    "model_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp",
+    "model_sha256": "8f1c26089a266f5f95ea17969f3be3acea4f9f5b12a97cd5aec84573c35456cf",
+    "preprocessing_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+    "benchmark_run_id": "telco-mlp-primary-evaluation",
+    "positive_label": "Yes"
+  },
+  "classification_threshold": 0.59,
+  "risk_thresholds": {
+    "boundaries": [
+      0.3,
+      0.5,
+      0.7
+    ],
+    "labels": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "semantics": "lower-inclusive, upper-exclusive; final tier is upper-inclusive"
+  },
+  "population": {
+    "split": "input",
+    "received": 7043,
+    "scored": 7043,
+    "rejected": 0
+  },
+  "tier_counts": {
+    "low": {
+      "count": 2847,
+      "pct": 0.4042311514979412
+    },
+    "medium": {
+      "count": 1103,
+      "pct": 0.15660939940366322
+    },
+    "high": {
+      "count": 1308,
+      "pct": 0.18571631407070852
+    },
+    "critical": {
+      "count": 1785,
+      "pct": 0.25344313502768706
+    }
+  },
+  "probability": {
+    "min": 0.0012644786620512605,
+    "max": 0.973790168762207,
+    "mean": 0.42685490619973626,
+    "median": 0.4331182837486267
+  },
+  "predicted_class_counts": {
+    "churn": 2423,
+    "retained": 4620
+  },
+  "explanations": {
+    "available": 1000,
+    "unavailable": 6043
+  },
+  "value_at_risk": {
+    "available": true,
+    "column": "MonthlyCharges",
+    "horizon_months": 6.0,
+    "rows_with_value": 7043
+  },
+  "provenance": {
+    "model_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp",
+    "model_sha256": "8f1c26089a266f5f95ea17969f3be3acea4f9f5b12a97cd5aec84573c35456cf",
+    "model_path": "artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/model.keras",
+    "framework": "tensorflow.keras",
+    "preprocessing_run_id": "20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep",
+    "benchmark_run_id": "telco-mlp-primary-evaluation",
+    "selected_metric": "f1",
+    "selected_value": 0.6533018867924528,
+    "dataset_id": "fixture-wa-fn-usec-telco-customer-churn-88be4b93",
+    "dataset_sha256": "88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a",
+    "split_fingerprint": "5368065bd03180ded359a09e3df7c74d3e36406553ddad9cd280614e6cb20113",
+    "preprocessor_hash": "64094e20109f86e2aa23c2469d7d14cfb452d2afaa9f237a6d3ce63341922764",
+    "feature_count": 49,
+    "positive_label": "Yes"
+  },
+  "warnings": [
+    "input column(s) not used by the model were ignored: Churn"
+  ],
+  "limitations": [
+    "Probabilities are model estimates, not guaranteed outcomes.",
+    "SHAP drivers describe model behaviour, not causal effects.",
+    "Risk tiers are configurable business categories, not calibrated decisions."
+  ],
+  "privacy": "scored rows use opaque references; raw identifiers and unconfigured customer fields are not exported",
+  "observed_outcome": {
+    "available": true,
+    "note": "source labels are retained for audit only; they are not model predictions",
+    "positive": 1869,
+    "negative": 5174
+  },
+  "source_label": "Primary dataset · Telco Customer Churn (teacher-provided)",
+  "paths": {
+    "root": "artifacts/predictions/telco-primary-full-7043-20261106",
+    "churn_scores": "artifacts/predictions/telco-primary-full-7043-20261106/churn_scores.parquet",
+    "risk_summary": "artifacts/predictions/telco-primary-full-7043-20261106/risk_summary.json",
+    "tiers": "artifacts/predictions/telco-primary-full-7043-20261106/tiers.csv",
+    "run_manifest": "artifacts/predictions/telco-primary-full-7043-20261106/run_manifest.json",
+    "drivers": "artifacts/predictions/telco-primary-full-7043-20261106/drivers.json"
+  }
+}

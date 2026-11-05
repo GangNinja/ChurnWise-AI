@@ -11,9 +11,12 @@ Streamlit dashboard exposes the persisted results; every reported number is tied
 to a saved artifact.
 
 > **Status:** portfolio and research system, verified through Phase 13 and four
-> post-Phase-13 validation workstreams. It is **not** production-deployed,
-> causally validated or proven to generalise to other customer populations. See
-> [VALIDATION_SUMMARY.md](docs/VALIDATION_SUMMARY.md) for the evidence boundary.
+> post-Phase-13 validation workstreams. The public Streamlit app is a demo, not a
+> production service; it is not causally validated or proven to generalise to
+> other customer populations. See [VALIDATION_SUMMARY.md](docs/VALIDATION_SUMMARY.md)
+> for the evidence boundary.
+
+**Live demo:** [ChurnWise AI on Streamlit](https://gangninja-churnwise-ai-churnwisedashboardapp-lanwl3.streamlit.app)
 
 ![ChurnWise AI Executive Dashboard](docs/screenshots/redesign-executive.png)
 
@@ -38,7 +41,7 @@ explicit instead of hiding them behind a single accuracy number.
 | --- | --- |
 | Primary dataset | Instructor-provided IBM Telco Customer Churn CSV, 7,043 rows, 21 columns; 1,869 observed churn labels (26.54%) |
 | Primary model | Multilayer Perceptron (MLP), selected and scored on the matching Telco dataset digest |
-| Held-out test | MLP F1 **0.6075**, accuracy **0.7771**, precision **0.5704**, recall **0.6497** at the validation-selected threshold **0.62** (1,409 test rows) |
+| Held-out test | MLP F1 **0.6156**, accuracy **0.7722**, precision **0.5575**, recall **0.6872** at the validation-selected threshold **0.59** (1,409 test rows) |
 | Pipeline | Seven stages: source → preprocess → train → evaluate → explain → score → simulate |
 | Dashboard | 5 Streamlit pages over persisted artifacts |
 | Default suite | **634 passed, 17 skipped** (post-audit rerun) |
@@ -259,18 +262,26 @@ focused suites and browser setup.
 
 ## Data provenance
 
-The primary reference dataset is OpenML `46915`: 5,000 rows, 20 raw columns,
-`CustomerChurned` target, 14.14% positive and an MIT licence. SHA-256:
-`87bc2dd76e08b5bffa37fdd97d3d418b41036fec3d4cbf7e31377542b8e85fb6`.
-The 3,000 / 1,000 / 1,000 split has a recorded fingerprint. No datasets or model
-binaries are committed; the fixture is synthetic and the live data is downloaded
-on demand.
+The primary dashboard uses the teacher-provided IBM Telco Customer Churn CSV:
+7,043 rows, 21 columns, and 1,869 observed churn labels (26.54%). Its SHA-256 is
+`88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a`. Churn is
+retained for audit and dashboard reporting; it is excluded from model inputs.
+OpenML `46915` remains a separate, 5,000-row reference dataset used by earlier
+experiments.
 
-The repository deliberately keeps generated run artifacts and model binaries
-out of Git. Small synthetic workflow fixtures and upload-demo CSVs are tracked;
-curated machine-readable evidence is tracked under
-[docs/evidence](docs/evidence/README.md), while full run trees are reproducible
-and remain Git-ignored.
+Generated run artifacts remain ignored except for the small, curated default
+dashboard snapshot: the matching MLP and preprocessor, evaluation metrics,
+global/local SHAP explanations, and the 7,043-customer scoring run. Other local
+run histories remain out of Git. The model uses a validation-selected 0.59
+classification threshold; its scores are predictions, while the observed churn
+labels are shown separately for audit.
+
+## Streamlit Cloud
+
+The repository deploys `churnwise/dashboard/app.py` from the `main` branch. The
+curated snapshot is stored at the normal `data/` and `artifacts/` paths so the
+Executive Dashboard opens on the teacher-provided full population. Cloud
+rebuilds after each push to `main`; refresh the app after the rebuild completes.
 
 ## Documentation
 

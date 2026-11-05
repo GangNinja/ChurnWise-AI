@@ -33,6 +33,51 @@ artifacts/*
 reports/*
 !reports/.gitkeep
 
+# Streamlit Cloud's default dashboard is backed by one curated teacher-dataset
+# snapshot. Keep every other downloaded dataset and generated run ignored.
+!data/cache/
+!data/cache/sha256/
+!data/cache/sha256/88be4b93fbe0cc83421af1c503794c97c342eca914c1576db7c276e61d61358a
+!data/manifests/
+!data/manifests/fixture-wa-fn-usec-telco-customer-churn-88be4b93.json
+!data/manifests/fixture-wa-fn-usec-telco-customer-churn-88be4b93.profile.json
+!data/raw/
+!data/raw/teacher_provided/
+!data/raw/teacher_provided/fixture-wa-fn-usec-telco-customer-churn-88be4b93/
+!data/raw/teacher_provided/fixture-wa-fn-usec-telco-customer-churn-88be4b93/2026-10-30/
+!data/raw/teacher_provided/fixture-wa-fn-usec-telco-customer-churn-88be4b93/2026-10-30/WA_Fn-UseC_-Telco-Customer-Churn.csv
+!data/source/
+!data/source/WA_Fn-UseC_-Telco-Customer-Churn.csv
+!reports/validation/
+!reports/validation/fixture-wa-fn-usec-telco-customer-churn-88be4b93.json
+!reports/validation/fixture-wa-fn-usec-telco-customer-churn-88be4b93.md
+!reports/eda/
+!reports/eda/fixture-wa-fn-usec-telco-customer-churn-88be4b93*
+!artifacts/evaluation/
+!artifacts/evaluation/telco-mlp-primary-evaluation/
+artifacts/evaluation/telco-mlp-primary-evaluation/models/
+!artifacts/explanations/
+!artifacts/explanations/telco-teacher-mlp-global-shap-20261106/
+!artifacts/explanations/telco-teacher-mlp-global-shap-20261106/**
+!artifacts/models/
+!artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/
+!artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/
+!artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/model.keras
+!artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/metadata.json
+!artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/history.json
+!artifacts/models/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-mlp/mlp/learning_curves.png
+!artifacts/predictions/
+!artifacts/predictions/telco-primary-full-7043-20261106/
+!artifacts/predictions/telco-primary-full-7043-20261106/**
+!artifacts/preprocessors/
+!artifacts/preprocessors/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep/
+!artifacts/preprocessors/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep/**
+!artifacts/prepared/
+!artifacts/prepared/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep/
+!artifacts/prepared/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep/**
+!artifacts/splits/
+!artifacts/splits/20261030T171452Z-wa-fn-usec-telco-customer-churn-066103c0-prep.json
+
 # --- Streamlit --------------------------------------------------------------
 .streamlit/secrets.toml
 
