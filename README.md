@@ -278,10 +278,17 @@ labels are shown separately for audit.
 
 ## Streamlit Cloud
 
-The repository deploys `churnwise/dashboard/app.py` from the `main` branch. The
-curated snapshot is stored at the normal `data/` and `artifacts/` paths so the
-Executive Dashboard opens on the teacher-provided full population. Cloud
-rebuilds after each push to `main`; refresh the app after the rebuild completes.
+**Live dashboard:** [https://gangninja-churnwise-ai-churnwisedashboardapp-lanwl3.streamlit.app/](https://gangninja-churnwise-ai-churnwisedashboardapp-lanwl3.streamlit.app/)
+
+Streamlit Cloud deploys `churnwise/dashboard/app.py` from the `main` branch.
+The committed dashboard snapshot opens on all 7,043 rows of the teacher-provided
+Telco Customer Churn dataset, scored by the MLP at its validation-selected
+0.59 threshold. The default population run is
+`telco-primary-full-7043-20261106`; the stored global SHAP explanation is
+`telco-teacher-mlp-global-shap-20261106`. The Executive Dashboard includes the
+observed churn audit, customer and revenue charts, attention list, model metrics,
+and SHAP drivers. After a new push, Streamlit Cloud rebuilds the app; refresh the
+live URL when that rebuild completes.
 
 ## Documentation
 
@@ -358,5 +365,6 @@ live pipeline, second-dataset experiment and calibration experiment require
 network access and generated artifacts; their commands and limitations are
 documented in [VALIDATION_SUMMARY.md](docs/VALIDATION_SUMMARY.md#9-reproduction).
 
-This repository describes a local system; it does not include a deployment. The
-selected model, threshold and validation artifacts are unchanged.
+The live dashboard is a public demonstration backed by committed, curated
+artifacts. Uploaded datasets are session inputs and are not persisted to the
+public repository.
